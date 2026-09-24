@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Meleg, sötét „barber shop” színvilág */
+@theme inline {
+  --color-background: #17120e;
+  --color-surface: #221a14;
+  --color-line: #3a2e24;
+  --color-foreground: #f3e9dc;
+  --color-muted: #b3a393;
+  --color-brass: #c8a165;
+  --color-ok: #6fbf73;
+  --color-pending: #e6b84a;
+  --color-danger: #d9644a;
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
