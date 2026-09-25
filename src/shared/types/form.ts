@@ -5,11 +5,13 @@
  * - success: sikerüzenet
  * - values: a beküldött értékek, hogy hiba után ne kelljen újra begépelni
  * - redirectTo: siker után ide töltse be a böngésző az oldalt (teljes oldalbetöltéssel)
+ * - warning: siker, de valamire figyelni kell (pl. a magánprogram egy foglalásra esik)
  */
 export type FormState = {
   error?: string;
   fieldErrors?: Record<string, string>;
   success?: string;
+  warning?: string;
   values?: Record<string, string>;
   redirectTo?: string;
 };

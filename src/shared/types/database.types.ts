@@ -512,6 +512,39 @@ export type Database = {
         Returns: undefined
       }
       admin_stats: { Args: never; Returns: Json }
+      create_manual_booking: {
+        Args: {
+          p_customer_id?: string
+          p_guest_name?: string
+          p_guest_phone?: string
+          p_note?: string
+          p_service_id: string
+          p_starts_at: string
+        }
+        Returns: string
+      }
+      get_my_private_event_occurrences: {
+        Args: { p_from: string; p_to: string }
+        Returns: {
+          all_day: boolean
+          ends_at: string
+          event_id: string
+          note: string
+          occurrence_date: string
+          repeat: Database["public"]["Enums"]["event_repeat"]
+          repeat_until: string
+          starts_at: string
+          title: string
+        }[]
+      }
+      get_private_event_conflicts: {
+        Args: { p_event_id: string }
+        Returns: {
+          booking_id: string
+          ends_at: string
+          starts_at: string
+        }[]
+      }
       reapply_as_barber: { Args: never; Returns: undefined }
       timemultirange: { Args: never; Returns: unknown }
     }

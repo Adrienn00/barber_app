@@ -12,6 +12,7 @@ backend/
   profile/     saját profil (név, telefon)
   barbers/     barberjelentkezés, barberprofil
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
+  calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás
   health/      rendszerállapot-ellenőrzés
 ```
 
