@@ -1,12 +1,34 @@
 # backend/ – szerveroldali kód
 
-Ez a kód **csak a szerveren fut**, soha nem jut el a böngészőbe (minden fájl elején `import "server-only"` védi).
-Itt lehetnek titkos kulcsok és itt beszélünk az adatbázissal.
+Ez a kód **csak a szerveren fut**, soha nem jut el a böngészőbe (a fájlok elején `import "server-only"` védi).
+Itt beszélünk az adatbázissal, és itt lehetnek titkos kulcsok.
 
-| Mappa | Mi van benne |
+## Felépítés: témánként egy mappa, bennük mindig ugyanaz a három réteg
+
+```
+backend/
+  core/        közös alap: adatbázis-kapcsolat, bejelentkezés-frissítés, hibaüzenetek
+  auth/        belépés, regisztráció, kilépés, „ki van bejelentkezve”, oldalvédelem
+  profile/     saját profil (név, telefon)
+  barbers/     barberjelentkezés, barberprofil
+  admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
+  health/      rendszerállapot-ellenőrzés
+```
+
+| Fájl | Mi van benne | Ki hívja |
+| --- | --- | --- |
+| `*.actions.ts` | Az űrlapok ide küldenek: ellenőrzi a beküldött adatot, meghívja a service-t, továbbirányít | a frontend űrlapjai |
+| `*.service.ts` | Üzleti logika: mit szabad, mi történjen, milyen formában kapja a frontend az adatot | actions és oldalak (`app/`) |
+| `*.queries.ts` | Supabase-hívások: csak lekérdez / ír, döntést nem hoz | csak a saját mappája service-e |
+
+**Új téma** (pl. foglalások) → új mappa `bookings/` a három fájllal: `bookings.actions.ts`, `bookings.service.ts`, `bookings.queries.ts`.
+
+## core/
+
+| Fájl | Mi ez |
 | --- | --- |
-| `supabase/` | Adatbázis-kapcsolat: `server-client.ts` (bejelentkezett felhasználó nevében), `session.ts` (bejelentkezés frissítése minden kérésnél) |
-| `services/` | Üzleti logika témánként, egy fájl = egy téma: `health.service.ts`, később `barbers.service.ts`, `bookings.service.ts`, `slots.service.ts`… |
-| `actions/` *(2. fázistól)* | Űrlapok beküldése (server actions): belépés, foglalás, jóváhagyás… – ezek hívják a service-eket |
+| `server-client.ts` | Adatbázis-kapcsolat a bejelentkezett felhasználó nevében (`createClient`, `DbClient` típus) |
+| `session.ts` | Minden kérés előtt: bejelentkezés frissítése, védett oldalak átirányítása (a `src/proxy.ts` hívja) |
+| `errors.ts` | Supabase-hibák magyar üzenetre fordítása |
 
 **Hol van maga az adatbázis?** A projekt gyökerében, a `supabase/` mappában: táblák és jogosultságok (`migrations/`), tesztadatok (`seed.sql`).

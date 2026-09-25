@@ -1,9 +1,21 @@
 import type { ReactNode } from "react";
 
-/** Az oldal tartalmát keretező, mobilra optimalizált keskeny oszlop. */
-export function PageContainer({ children }: { children: ReactNode }) {
+type PageContainerProps = {
+  children: ReactNode;
+  /** narrow: űrlapok (alapból), wide: listák, admin felület */
+  width?: "narrow" | "wide";
+  /** Függőlegesen középre (pl. belépés oldal) */
+  centered?: boolean;
+};
+
+/** Az oldal tartalmát keretező, mobilra optimalizált oszlop. */
+export function PageContainer({ children, width = "narrow", centered = false }: PageContainerProps) {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-5 py-12">
+    <main
+      className={`mx-auto flex w-full flex-1 flex-col gap-8 px-5 py-10 ${width === "wide" ? "max-w-3xl" : "max-w-md"} ${
+        centered ? "justify-center" : ""
+      }`}
+    >
       {children}
     </main>
   );

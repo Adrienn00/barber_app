@@ -1,4 +1,4 @@
-import type { SupabaseHealth } from "@/backend/services/health.service";
+import type { SupabaseHealth } from "@/backend/health/health.service";
 import { Card } from "@/frontend/components/ui/Card";
 import { StatusRow } from "@/frontend/components/ui/StatusRow";
 import { formatDateTimeHu } from "@/shared/datetime/datetime";

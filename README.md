@@ -66,13 +66,14 @@ src/
     styles/                    színek, betűtípusok
     lib/                       böngészős segédkód (supabase-browser.ts)
   backend/                   SZERVEROLDAL – soha nem kerül a böngészőbe
-    supabase/                  adatbázis-kapcsolat, bejelentkezés frissítése
-    services/                  üzleti logika témánként (*.service.ts)
-    actions/                   űrlapok beküldése (2. fázistól)
+    core/                      közös: adatbázis-kapcsolat, bejelentkezés frissítése, hibaüzenetek
+    auth/ profile/ barbers/    témánként egy mappa, mindegyikben:
+    admin/ health/               *.actions.ts (űrlapok) → *.service.ts (logika) → *.queries.ts (Supabase)
   shared/                    KÖZÖS – frontend és backend is használja
-    config/                    környezeti változók
+    config/                    környezeti változók, útvonalak
     datetime/                  dátum, időzóna
-    types/                     adatbázis-típusok (generált)
+    validation/                űrlapok ellenőrzése, telefonszám, barberlink
+    types/                     adatbázis-típusok (generált), közös típusok
   proxy.ts                   minden kérés előtt fut (bejelentkezés frissítése)
 supabase/                    AZ ADATBÁZIS
   migrations/                  táblák, jogosultságok (RLS) – minden változás új fájl

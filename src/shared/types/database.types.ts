@@ -503,6 +503,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_set_barber_status: {
+        Args: {
+          p_barber_id: string
+          p_reason?: string
+          p_status: Database["public"]["Enums"]["barber_status"]
+        }
+        Returns: undefined
+      }
+      admin_stats: { Args: never; Returns: Json }
+      reapply_as_barber: { Args: never; Returns: undefined }
       timemultirange: { Args: never; Returns: unknown }
     }
     Enums: {

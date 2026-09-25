@@ -1,8 +1,12 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { supabaseEnv } from "@/shared/config/env";
 import type { Database } from "@/shared/types/database.types";
+
+/** A típusos adatbázis-kliens – a *.queries.ts fájlok ezt kapják paraméterként. */
+export type DbClient = SupabaseClient<Database>;
 
 /**
  * Supabase kliens szerver komponensekhez, server actionökhöz és route handlerekhez.
