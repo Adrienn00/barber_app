@@ -1,18 +1,23 @@
 @import "tailwindcss";
 
-/* Meleg, sötét „barber shop” színvilág */
+/*
+ * ChairTime színvilág: sötét, meleg barnásfekete alap, réz-arany kiemelés, krémfehér szöveg.
+ * Minden szín itt van – ha változtatni kell, csak ezt a blokkot kell átírni.
+ */
 @theme inline {
-  --color-background: #17120e;
-  --color-surface: #221a14;
-  --color-line: #3a2e24;
-  --color-foreground: #f3e9dc;
-  --color-muted: #b3a393;
-  --color-brass: #c8a165;
-  --color-ok: #6fbf73;
-  --color-pending: #e6b84a;
-  --color-danger: #d9644a;
+  --color-background: #13100d; /* oldal háttere */
+  --color-surface: #1c1814; /* kártyák, dobozok */
+  --color-surface-2: #241f1a; /* kiemelt dobozok, lenyíló menü */
+  --color-line: #332c25; /* keretek, elválasztók */
+  --color-foreground: #f2ebe1; /* fő szöveg */
+  --color-muted: #a89d90; /* másodlagos szöveg */
+  --color-brass: #d4a95e; /* arany kiemelés, fő gomb */
+  --color-brass-dark: #b88c42; /* arany gomb lenyomva */
+  --color-ok: #7dbb7f; /* megerősített, siker */
+  --color-pending: #e8b94f; /* függőben */
+  --color-danger: #e0694f; /* hiba, elutasítás */
   --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
+  --font-display: var(--font-oswald);
 }
 
 html {
@@ -23,4 +28,13 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* A nagy címek a keskeny display betűvel, szorosabb sorközzel */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
 }

@@ -11,7 +11,7 @@ const TONES: Record<AlertTone, string> = {
 /** Kiemelt üzenetdoboz: hiba (piros), siker (zöld) vagy tájékoztatás (szürke). */
 export function Alert({ tone = "info", children }: { tone?: AlertTone; children: ReactNode }) {
   return (
-    <div role={tone === "error" ? "alert" : "status"} className={`rounded-xl border px-4 py-3 text-sm ${TONES[tone]}`}>
+    <div role={tone === "error" ? "alert" : "status"} className={`rounded-lg border px-4 py-3 text-sm ${TONES[tone]}`}>
       {children}
     </div>
   );

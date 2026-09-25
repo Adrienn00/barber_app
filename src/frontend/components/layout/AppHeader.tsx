@@ -1,21 +1,18 @@
-import Link from "next/link";
 import { LinkButton } from "@/frontend/components/ui/Button";
-import { APP_NAME } from "@/shared/config/app";
 import { ROUTES } from "@/shared/config/routes";
+import { Logo } from "./Logo";
 import { UserMenu, type UserMenuUser } from "./UserMenu";
 
 /** Az oldal teteje: logó bal oldalt, jobb oldalt belépés gomb vagy a felhasználói menü. */
 export function AppHeader({ user }: { user: UserMenuUser | null }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-5">
-        <Link href={ROUTES.home} className="font-serif text-xl font-bold">
-          {APP_NAME}
-        </Link>
+    <header className="sticky top-0 z-20 border-b border-line bg-background/85 backdrop-blur">
+      <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-5">
+        <Logo />
         {user ? (
           <UserMenu user={user} />
         ) : (
-          <LinkButton href={ROUTES.login} variant="secondary" className="min-h-10 px-4 text-sm">
+          <LinkButton href={ROUTES.login} variant="secondary" className="min-h-11 px-4 text-sm">
             Belépés
           </LinkButton>
         )}

@@ -14,3 +14,11 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 10. Elutasított barber újra jelentkezhet; a slug módosítható (a régi link megszűnik); a 18:00 után leadott, másnapi foglalás azonnal kap emlékeztetőt.
 11. **Az app neve: ChairTime** (2026-09-25). Továbbra is csak barbereknek szól (más szépségipari szakma nem);
     a felület nyelve magyar, a „barber” szó marad.
+
+## Egységek (üzletek) – 2026-09-25
+
+12. **Egység (üzlet):** a barber dolgozhat **önállóan** vagy egy **egység** tagjaként. Az egység saját nyilvános oldalt kap, rajta a csapatával.
+13. **Csatlakozás meghívással:** az egység vezetője meghívja a barbert, a barber elfogadja. Csatlakozás után a barber **nem jelenik meg önállóként** a listában, csak az egység oldalán.
+14. **Barberenkénti árlista:** az egységen belül is minden barber a saját szolgáltatásait és árait adja meg.
+15. **A vezető csak látja** a tagjai naptárát (áttekintés); a foglalásokat mindenki maga kezeli. Magánprogramok tartalmát a vezető sem látja, csak hogy az idő foglalt.
+16. **Kilépéskor** a barber újra önálló lesz, a jövőbeli foglalásai nála maradnak.

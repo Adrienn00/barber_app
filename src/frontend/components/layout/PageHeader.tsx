@@ -1,17 +1,19 @@
+import { Eyebrow } from "@/frontend/components/ui/Eyebrow";
+
 type PageHeaderProps = {
-  /** Kis felirat a cím fölött */
+  /** Kis arany felirat a cím fölött */
   eyebrow?: string;
   title: string;
   subtitle?: string;
 };
 
-/** Oldalcím: felső kis felirat, nagy cím, alcím. */
+/** Oldalcím: kis arany felirat, nagy keskeny cím, alcím. */
 export function PageHeader({ eyebrow, title, subtitle }: PageHeaderProps) {
   return (
-    <header className="space-y-2">
-      {eyebrow && <p className="text-sm uppercase tracking-[0.2em] text-brass">{eyebrow}</p>}
-      <h1 className="font-serif text-4xl font-bold">{title}</h1>
-      {subtitle && <p className="text-muted">{subtitle}</p>}
+    <header className="space-y-3">
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <h1 className="text-4xl font-bold sm:text-5xl">{title}</h1>
+      {subtitle && <p className="text-lg text-muted">{subtitle}</p>}
     </header>
   );
 }

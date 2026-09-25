@@ -1,4 +1,4 @@
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Oswald } from "next/font/google";
 
 /** Szövegtörzs betűtípusa */
 export const sansFont = Inter({
@@ -6,8 +6,9 @@ export const sansFont = Inter({
   subsets: ["latin", "latin-ext"],
 });
 
-/** Címek betűtípusa (klasszikus „barber shop” hangulat) */
-export const serifFont = Playfair_Display({
-  variable: "--font-playfair",
+/** Címek betűtípusa: magas, keskeny, erős – férfias, barber shop hangulat */
+export const displayFont = Oswald({
+  variable: "--font-oswald",
   subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700"],
 });

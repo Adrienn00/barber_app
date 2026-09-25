@@ -22,7 +22,7 @@ export function TextField({ label, name, error, hint, prefix, id, className = ""
         {label}
       </label>
       <div
-        className={`flex min-h-12 items-center rounded-xl border bg-background focus-within:border-brass ${
+        className={`flex min-h-12 items-center rounded-lg border bg-surface focus-within:border-brass ${
           error ? "border-danger" : "border-line"
         }`}
       >

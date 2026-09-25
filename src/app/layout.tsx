@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { getCurrentUser } from "@/backend/auth/auth.service";
 import { AppHeader } from "@/frontend/components/layout/AppHeader";
-import { sansFont, serifFont } from "@/frontend/styles/fonts";
+import { sansFont, displayFont } from "@/frontend/styles/fonts";
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/shared/config/app";
 import "@/frontend/styles/globals.css";
 
@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const user = await getCurrentUser();
 
   return (
-    <html lang="hu" className={`${sansFont.variable} ${serifFont.variable} h-full antialiased`}>
+    <html lang="hu" className={`${sansFont.variable} ${displayFont.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <AppHeader
           user={

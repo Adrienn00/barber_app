@@ -20,7 +20,7 @@ export function TextArea({ label, name, error, hint, id, rows = 4, ...props }: T
         name={name}
         rows={rows}
         aria-invalid={Boolean(error)}
-        className={`w-full rounded-xl border bg-background px-4 py-3 outline-none placeholder:text-muted/60 focus:border-brass ${
+        className={`w-full rounded-lg border bg-surface px-4 py-3 outline-none placeholder:text-muted/60 focus:border-brass ${
           error ? "border-danger" : "border-line"
         }`}
         {...props}

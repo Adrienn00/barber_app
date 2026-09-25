@@ -30,14 +30,14 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
 
   return (
     <details ref={menuRef} className="group relative">
-      <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-xl border border-line px-3 text-sm hover:border-brass">
+      <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-lg border border-line px-3 text-sm hover:border-brass">
         <span className="flex size-6 items-center justify-center rounded-full bg-brass text-xs font-bold text-background">
           {user.name.charAt(0).toUpperCase()}
         </span>
         <span className="max-w-32 truncate">{user.name}</span>
         <span aria-hidden className="text-muted transition group-open:rotate-180">▾</span>
       </summary>
-      <nav className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-line bg-surface shadow-xl">
+      <nav className="absolute right-0 mt-2 w-56 overflow-hidden rounded-lg border border-line bg-surface-2 shadow-xl">
         {links.map((link) => (
           <Link key={link.href} href={link.href} className="block px-4 py-3 hover:bg-line">
             {link.label}

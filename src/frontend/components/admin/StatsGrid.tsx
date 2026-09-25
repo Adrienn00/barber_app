@@ -14,9 +14,9 @@ export function StatsGrid({ stats }: { stats: AdminStats }) {
   return (
     <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {ITEMS.map((item) => (
-        <div key={item.key} className="rounded-2xl border border-line bg-surface p-4">
+        <div key={item.key} className="rounded-xl border border-line bg-surface p-4">
           <dt className="text-sm text-muted">{item.label}</dt>
-          <dd className="mt-1 font-serif text-3xl font-bold">{stats[item.key]}</dd>
+          <dd className="mt-1 font-display text-3xl font-bold">{stats[item.key]}</dd>
         </div>
       ))}
     </dl>
