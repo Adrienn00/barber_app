@@ -88,3 +88,33 @@ export function validateBarberApplication(input: BarberApplicationInput) {
   }
   return result(errors, { ...input, slug, phone, instagram });
 }
+
+// --- Egység (üzlet) ----------------------------------------------------------
+export type ShopInput = {
+  name: string;
+  slug: string;
+  city: string;
+  address: string;
+  phone: string;
+  bio: string;
+  instagram: string;
+};
+
+/** Ugyanazok a szabályok, mint a barberprofilnál (név, link, cím, telefon, bemutatkozás, Instagram) */
+export function validateShop(input: ShopInput): Validated<ShopInput> {
+  const checked = validateBarberApplication({ ...input, displayName: input.name });
+  if (!checked.ok) {
+    const { displayName, ...rest } = checked.fieldErrors;
+    return { ok: false, fieldErrors: displayName ? { ...rest, name: displayName.replace("megjelenített név", "név") } : rest };
+  }
+  const { displayName, ...data } = checked.data;
+  return { ok: true, data: { ...data, name: displayName } };
+}
+
+// --- Meghívó -----------------------------------------------------------------
+export function validateInviteEmail(email: string): Validated<{ email: string }> {
+  const normalized = email.trim().toLowerCase();
+  return EMAIL_RE.test(normalized)
+    ? { ok: true, data: { email: normalized } }
+    : { ok: false, fieldErrors: { email: "Adj meg egy érvényes e-mail-címet." } };
+}

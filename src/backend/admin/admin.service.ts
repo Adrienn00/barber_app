@@ -23,10 +23,28 @@ export type AdminBarber = {
   approvedAt: string | null;
 };
 
+export type AdminShop = {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  address: string;
+  phone: string;
+  bio: string | null;
+  instagram: string | null;
+  status: BarberStatus;
+  rejectReason: string | null;
+  createdAt: string;
+  approvedAt: string | null;
+  ownerName: string;
+};
+
 export type AdminStats = {
   barbers_approved: number;
   barbers_pending: number;
   barbers_suspended: number;
+  shops_approved: number;
+  shops_pending: number;
   customers: number;
   bookings_total: number;
   bookings_upcoming: number;
@@ -62,5 +80,33 @@ export async function setBarberStatus(
   reason?: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const { error } = await q.setBarberStatus(await createClient(), barberId, status, reason);
+  return error ? { ok: false, error: dbErrorMessage(error, "Nem sikerült a státuszváltás.") } : { ok: true };
+}
+
+export async function listShopsForAdmin(): Promise<AdminShop[]> {
+  const { data } = await q.selectAllShops(await createClient());
+  return (data ?? []).map((s) => ({
+    id: s.id,
+    name: s.name,
+    slug: s.slug,
+    city: s.city,
+    address: s.address,
+    phone: s.phone,
+    bio: s.bio,
+    instagram: s.instagram,
+    status: s.status,
+    rejectReason: s.reject_reason,
+    createdAt: s.created_at,
+    approvedAt: s.approved_at,
+    ownerName: s.owner?.display_name ?? "",
+  }));
+}
+
+export async function setShopStatus(
+  shopId: string,
+  status: BarberStatus,
+  reason?: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { error } = await q.setShopStatus(await createClient(), shopId, status, reason);
   return error ? { ok: false, error: dbErrorMessage(error, "Nem sikerült a státuszváltás.") } : { ok: true };
 }

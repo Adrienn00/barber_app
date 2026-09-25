@@ -122,6 +122,7 @@ export type Database = {
           is_listed: boolean
           phone: string
           reject_reason: string | null
+          shop_id: string | null
           slug: string
           status: Database["public"]["Enums"]["barber_status"]
           user_id: string
@@ -139,6 +140,7 @@ export type Database = {
           is_listed?: boolean
           phone: string
           reject_reason?: string | null
+          shop_id?: string | null
           slug: string
           status?: Database["public"]["Enums"]["barber_status"]
           user_id: string
@@ -156,11 +158,19 @@ export type Database = {
           is_listed?: boolean
           phone?: string
           reject_reason?: string | null
+          shop_id?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["barber_status"]
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "barbers_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "barbers_user_id_fkey"
             columns: ["user_id"]
@@ -466,6 +476,109 @@ export type Database = {
           },
         ]
       }
+      shop_invites: {
+        Row: {
+          answered_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          shop_id: string
+          status: Database["public"]["Enums"]["invite_status"]
+          token: string
+        }
+        Insert: {
+          answered_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          shop_id: string
+          status?: Database["public"]["Enums"]["invite_status"]
+          token?: string
+        }
+        Update: {
+          answered_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          shop_id?: string
+          status?: Database["public"]["Enums"]["invite_status"]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_invites_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          address: string
+          approved_at: string | null
+          avatar_path: string | null
+          bio: string | null
+          city: string
+          created_at: string
+          id: string
+          instagram: string | null
+          is_listed: boolean
+          name: string
+          owner_barber_id: string
+          phone: string
+          reject_reason: string | null
+          slug: string
+          status: Database["public"]["Enums"]["barber_status"]
+        }
+        Insert: {
+          address: string
+          approved_at?: string | null
+          avatar_path?: string | null
+          bio?: string | null
+          city: string
+          created_at?: string
+          id?: string
+          instagram?: string | null
+          is_listed?: boolean
+          name: string
+          owner_barber_id: string
+          phone: string
+          reject_reason?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["barber_status"]
+        }
+        Update: {
+          address?: string
+          approved_at?: string | null
+          avatar_path?: string | null
+          bio?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          instagram?: string | null
+          is_listed?: boolean
+          name?: string
+          owner_barber_id?: string
+          phone?: string
+          reject_reason?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["barber_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shops_owner_barber_id_fkey"
+            columns: ["owner_barber_id"]
+            isOneToOne: true
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       working_hours: {
         Row: {
           barber_id: string
@@ -503,10 +616,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_shop_invite: { Args: { p_token: string }; Returns: string }
       admin_set_barber_status: {
         Args: {
           p_barber_id: string
           p_reason?: string
+          p_status: Database["public"]["Enums"]["barber_status"]
+        }
+        Returns: undefined
+      }
+      admin_set_shop_status: {
+        Args: {
+          p_reason?: string
+          p_shop_id: string
           p_status: Database["public"]["Enums"]["barber_status"]
         }
         Returns: undefined
@@ -523,6 +645,7 @@ export type Database = {
         }
         Returns: string
       }
+      decline_shop_invite: { Args: { p_token: string }; Returns: undefined }
       get_my_private_event_occurrences: {
         Args: { p_from: string; p_to: string }
         Returns: {
@@ -545,7 +668,46 @@ export type Database = {
           starts_at: string
         }[]
       }
+      get_shop_calendar: {
+        Args: { p_from: string; p_to: string }
+        Returns: {
+          barber_id: string
+          barber_name: string
+          customer_name: string
+          ends_at: string
+          kind: string
+          service_name: string
+          starts_at: string
+          status: Database["public"]["Enums"]["booking_status"]
+        }[]
+      }
+      get_shop_invite: {
+        Args: { p_token: string }
+        Returns: {
+          email: string
+          is_expired: boolean
+          is_for_me: boolean
+          shop_city: string
+          shop_name: string
+          shop_slug: string
+          status: Database["public"]["Enums"]["invite_status"]
+        }[]
+      }
+      get_shop_members: {
+        Args: { p_shop_id: string }
+        Returns: {
+          avatar_path: string
+          barber_id: string
+          bio: string
+          display_name: string
+          is_owner: boolean
+          slug: string
+        }[]
+      }
+      leave_shop: { Args: never; Returns: undefined }
       reapply_as_barber: { Args: never; Returns: undefined }
+      reapply_shop: { Args: never; Returns: undefined }
+      remove_shop_member: { Args: { p_barber_id: string }; Returns: undefined }
       timemultirange: { Args: never; Returns: unknown }
     }
     Enums: {
@@ -558,6 +720,7 @@ export type Database = {
         | "cancelled"
       cancelled_by: "customer" | "barber"
       event_repeat: "none" | "weekly"
+      invite_status: "pending" | "accepted" | "declined" | "revoked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -698,6 +861,7 @@ export const Constants = {
       ],
       cancelled_by: ["customer", "barber"],
       event_repeat: ["none", "weekly"],
+      invite_status: ["pending", "accepted", "declined", "revoked"],
     },
   },
 } as const

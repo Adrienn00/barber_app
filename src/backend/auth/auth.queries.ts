@@ -11,7 +11,16 @@ export function selectProfile(db: DbClient, userId: string) {
 }
 
 export function selectBarberOfUser(db: DbClient, userId: string) {
-  return db.from("barbers").select("id, slug, display_name, status, reject_reason").eq("user_id", userId).maybeSingle();
+  return db
+    .from("barbers")
+    .select("id, slug, display_name, status, reject_reason, shop_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+}
+
+/** Az egység, amelyet a barber vezet (ha van) */
+export function selectOwnedShop(db: DbClient, barberId: string) {
+  return db.from("shops").select("id, slug, name, status, reject_reason").eq("owner_barber_id", barberId).maybeSingle();
 }
 
 export function getVerifiedClaims(db: DbClient) {

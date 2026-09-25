@@ -15,6 +15,12 @@ export const ROUTES = {
   barberRequests: "/keresek",
   barberSettings: "/beallitasok",
   platform: "/platform",
+  /** Az egység vezetőjének oldala: adatok, tagok, meghívók, áttekintés */
+  myShop: "/egysegem",
+  /** Meghívó elfogadása: /meghivas/[token] */
+  invite: "/meghivas",
+  /** Egység nyilvános oldala: /u/[slug] */
+  shopPage: "/u",
   privacy: "/adatvedelem",
   terms: "/aszf",
 } as const;
@@ -27,6 +33,8 @@ export const PROTECTED_PREFIXES = [
   ROUTES.barberRequests,
   ROUTES.barberSettings,
   ROUTES.platform,
+  ROUTES.myShop,
+  ROUTES.invite,
 ];
 
 /** Bejelentkezett felhasználónak nincs itt dolga (a proxy továbbküldi). */

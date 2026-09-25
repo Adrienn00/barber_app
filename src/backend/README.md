@@ -13,6 +13,7 @@ backend/
   barbers/     barberjelentkezés, barberprofil
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
   calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás
+  shops/       egységek (üzletek): létrehozás, meghívók, csatlakozás/kilépés, a vezető áttekintése
   health/      rendszerállapot-ellenőrzés
 ```
 
@@ -31,5 +32,6 @@ backend/
 | `server-client.ts` | Adatbázis-kapcsolat a bejelentkezett felhasználó nevében (`createClient`, `DbClient` típus) |
 | `session.ts` | Minden kérés előtt: bejelentkezés frissítése, védett oldalak átirányítása (a `src/proxy.ts` hívja) |
 | `errors.ts` | Supabase-hibák magyar üzenetre fordítása |
+| `origin.ts` | Az app címe (linkek összerakásához, pl. meghívó link) |
 
 **Hol van maga az adatbázis?** A projekt gyökerében, a `supabase/` mappában: táblák és jogosultságok (`migrations/`), tesztadatok (`seed.sql`).

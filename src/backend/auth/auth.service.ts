@@ -1,8 +1,8 @@
 import "server-only";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { authErrorMessage } from "@/backend/core/errors";
+import { appOrigin } from "@/backend/core/origin";
 import { type DbClient, createClient } from "@/backend/core/server-client";
 import { supabaseEnv } from "@/shared/config/env";
 import { ROUTES, loginPath } from "@/shared/config/routes";
@@ -19,6 +19,17 @@ export type BarberSummary = {
   displayName: string;
   status: BarberStatus;
   rejectReason: string | null;
+  /** Melyik egység tagja (null = önálló) */
+  shopId: string | null;
+};
+
+/** Az egység, amelyet a felhasználó vezet */
+export type OwnedShopSummary = {
+  id: string;
+  slug: string;
+  name: string;
+  status: BarberStatus;
+  rejectReason: string | null;
 };
 
 export type CurrentUser = {
@@ -30,6 +41,8 @@ export type CurrentUser = {
   termsAccepted: boolean;
   /** Barberjelentkezés / barberprofil, ha van */
   barber: BarberSummary | null;
+  /** Az általa vezetett egység, ha van */
+  ownedShop: OwnedShopSummary | null;
   /** Név, telefon és elfogadott feltételek megvannak */
   isProfileComplete: boolean;
   isApprovedBarber: boolean;
@@ -41,6 +54,7 @@ async function loadUserContext(db: DbClient, userId: string, email: string): Pro
     q.selectBarberOfUser(db, userId),
   ]);
 
+  const { data: shop } = barber ? await q.selectOwnedShop(db, barber.id) : { data: null };
   const fullName = profile?.full_name ?? null;
   const phone = profile?.phone ?? null;
   const termsAccepted = Boolean(profile?.terms_accepted_at);
@@ -59,7 +73,11 @@ async function loadUserContext(db: DbClient, userId: string, email: string): Pro
           displayName: barber.display_name,
           status: barber.status,
           rejectReason: barber.reject_reason,
+          shopId: barber.shop_id,
         }
+      : null,
+    ownedShop: shop
+      ? { id: shop.id, slug: shop.slug, name: shop.name, status: shop.status, rejectReason: shop.reject_reason }
       : null,
     isProfileComplete: Boolean(fullName && phone && termsAccepted),
     isApprovedBarber: barber?.status === "approved",
@@ -128,16 +146,6 @@ export async function requireAdmin(nextPath: string): Promise<CurrentUser> {
 export type AuthResult =
   | { ok: true; needsEmailConfirmation?: boolean }
   | { ok: false; error: string };
-
-/** Az app címe (pl. http://localhost:3000) – a visszairányító linkekhez */
-async function appOrigin(): Promise<string> {
-  const h = await headers();
-  const origin = h.get("origin");
-  if (origin) return origin;
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-  const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${proto}://${host}`;
-}
 
 async function callbackUrl(nextPath: string | null): Promise<string> {
   const base = `${await appOrigin()}${ROUTES.authCallback}`;

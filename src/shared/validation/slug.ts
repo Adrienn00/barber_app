@@ -4,15 +4,15 @@
  */
 export const RESERVED_SLUGS = [
   "admin", "api", "app", "auth", "aszf", "adatvedelem", "barber", "barberek", "barber-leszek",
-  "beallitasok", "belepes", "foglalas", "foglalasaim", "keresek", "kijelentkezes", "naptar",
-  "platform", "profil", "regisztracio", "static", "www",
+  "beallitasok", "belepes", "egyseg", "egysegek", "foglalas", "foglalasaim", "keresek", "kijelentkezes",
+  "meghivas", "naptar", "platform", "profil", "regisztracio", "static", "www",
 ];
 
 /** Linkjavaslat névből: „Kovács Péter” → „kovacs-peter” */
 export function slugify(text: string): string {
   return text
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "") // ékezetek le
+    .replace(/[\u0300-\u036f]/g, "") // ékezetek (kombináló jelek) le
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
