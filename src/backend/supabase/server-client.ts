@@ -1,7 +1,8 @@
+import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { supabaseEnv } from "@/lib/env";
-import type { Database } from "./database.types";
+import { supabaseEnv } from "@/shared/config/env";
+import type { Database } from "@/shared/types/database.types";
 
 /**
  * Supabase kliens szerver komponensekhez, server actionökhöz és route handlerekhez.

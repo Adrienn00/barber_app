@@ -1,4 +1,5 @@
-import { hasSupabaseEnv, supabaseEnv } from "@/lib/env";
+import "server-only";
+import { hasSupabaseEnv, supabaseEnv } from "@/shared/config/env";
 
 export type SupabaseHealth = { ok: true } | { ok: false; reason: string };
 

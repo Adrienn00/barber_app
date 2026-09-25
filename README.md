@@ -56,21 +56,35 @@ Munka végén: `npm run db:stop`, és a Docker Desktop bezárható.
 ## Mappaszerkezet
 
 ```
-docs/                  specifikáció
-src/app/               oldalak (App Router)
-src/components/        közös UI komponensek
-src/lib/               logika (datetime, env)
-src/lib/supabase/      Supabase kliensek (böngésző, szerver, proxy)
-src/proxy.ts           munkamenet-frissítés minden kérésnél (Next 16: a middleware új neve)
-supabase/migrations/   adatbázis-migrációk – minden sémaváltozás ide kerül
-supabase/seed.sql      helyi tesztadatok (élesbe nem kerül)
-tests/db/              adatbázis-tesztek (RLS, megkötések)
+docs/                        specifikáció és döntések
+src/
+  app/                       OLDALAK – csak vékony fájlok: adatot kér a backendtől, megjeleníti a frontenddel
+  frontend/                  AMIT A FELHASZNÁLÓ LÁT
+    components/ui/             általános építőkockák (Card, StatusRow, később Button, Input…)
+    components/layout/         oldalkeretek (PageContainer, PageHeader…)
+    components/<téma>/         témánkénti komponensek (system/, később booking/, calendar/…)
+    styles/                    színek, betűtípusok
+    lib/                       böngészős segédkód (supabase-browser.ts)
+  backend/                   SZERVEROLDAL – soha nem kerül a böngészőbe
+    supabase/                  adatbázis-kapcsolat, bejelentkezés frissítése
+    services/                  üzleti logika témánként (*.service.ts)
+    actions/                   űrlapok beküldése (2. fázistól)
+  shared/                    KÖZÖS – frontend és backend is használja
+    config/                    környezeti változók
+    datetime/                  dátum, időzóna
+    types/                     adatbázis-típusok (generált)
+  proxy.ts                   minden kérés előtt fut (bejelentkezés frissítése)
+supabase/                    AZ ADATBÁZIS
+  migrations/                  táblák, jogosultságok (RLS) – minden változás új fájl
+  seed.sql                     helyi tesztadatok (élesbe nem kerül)
+tests/db/                    adatbázis-tesztek (RLS, megkötések)
 ```
 
+Minden fő mappában van egy rövid `README.md`, ami elmondja, mi van benne.
 A specifikációt kiegészítő döntések: [docs/dontesek.md](docs/dontesek.md).
 
 ## Szabályok
 
-- Minden időpontot UTC-ben (`timestamptz`) tárolunk, a megjelenítés `Europe/Bucharest` időzónában történik (`src/lib/datetime.ts`).
+- Minden időpontot UTC-ben (`timestamptz`) tárolunk, a megjelenítés `Europe/Bucharest` időzónában történik (`src/shared/datetime/datetime.ts`).
 - Titkos kulcs (`SUPABASE_SECRET_KEY`, VAPID, Resend) soha nem kaphat `NEXT_PUBLIC_` előtagot, és soha nem kerül gitbe.
 - A felület kizárólag magyar nyelvű.

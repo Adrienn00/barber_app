@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { hasSupabaseEnv, supabaseEnv } from "@/lib/env";
-import type { Database } from "./database.types";
+import { hasSupabaseEnv, supabaseEnv } from "@/shared/config/env";
+import type { Database } from "@/shared/types/database.types";
 
 /**
  * Minden kérésnél frissíti a Supabase munkamenet sütijeit.

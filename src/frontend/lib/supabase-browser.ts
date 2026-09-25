@@ -1,6 +1,6 @@
 import { createBrowserClient } from "@supabase/ssr";
-import { supabaseEnv } from "@/lib/env";
-import type { Database } from "./database.types";
+import { supabaseEnv } from "@/shared/config/env";
+import type { Database } from "@/shared/types/database.types";
 
 /** Supabase kliens böngészőben futó (client) komponensekhez. */
 export function createClient() {
