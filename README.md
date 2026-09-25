@@ -1,4 +1,4 @@
-# Barber időpontfoglaló platform
+# ChairTime – időpontfoglaló app barbereknek
 
 Mobilra optimalizált webapp (PWA), amelyen önálló barberek kezelik az időpontjaikat, a vendégek pedig foglalási kérést küldenek nekik.
 Specifikáció: [docs/barber_app_specifikacio_v1.1.pdf](docs/barber_app_specifikacio_v1.1.pdf) (az 1.0 elavult).

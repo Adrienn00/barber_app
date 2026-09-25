@@ -12,3 +12,5 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 8. **Vendég fióktörlésekor** a jövőbeli foglalásai lemondódnak, a barber értesítést kap.
 9. **Nincs barberenkénti időzóna:** csak romániai barberek, fixen Europe/Bucharest.
 10. Elutasított barber újra jelentkezhet; a slug módosítható (a régi link megszűnik); a 18:00 után leadott, másnapi foglalás azonnal kap emlékeztetőt.
+11. **Az app neve: ChairTime** (2026-09-25). Továbbra is csak barbereknek szól (más szépségipari szakma nem);
+    a felület nyelve magyar, a „barber” szó marad.

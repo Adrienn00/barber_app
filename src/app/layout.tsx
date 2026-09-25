@@ -2,11 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { getCurrentUser } from "@/backend/auth/auth.service";
 import { AppHeader } from "@/frontend/components/layout/AppHeader";
 import { sansFont, serifFont } from "@/frontend/styles/fonts";
+import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/shared/config/app";
 import "@/frontend/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Barber – időpontfoglalás",
-  description: "Foglalj időpontot a barberedhez néhány kattintással.",
+  title: { default: `${APP_NAME} – ${APP_TAGLINE}`, template: `%s | ${APP_NAME}` },
+  description: APP_DESCRIPTION,
+  applicationName: APP_NAME,
 };
 
 export const viewport: Viewport = {

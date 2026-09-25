@@ -2,7 +2,7 @@
 
 # Projekt
 
-Barber időpontfoglaló platform. Spec: `docs/barber_app_specifikacio_v1.1.pdf` (az 1.0 elavult),
+ChairTime – időpontfoglaló platform barbereknek (csak barberek, más szakma nem). Spec: `docs/barber_app_specifikacio_v1.1.pdf` (az 1.0 elavult),
 kiegészítő döntések: `docs/dontesek.md` (ezek felülírják a PDF-et).
 Fázisonként haladunk (spec 12. fejezet); minden fázis végén megállás, összefoglaló, jóváhagyás.
 
