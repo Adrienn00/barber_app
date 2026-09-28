@@ -8,6 +8,8 @@ import { type FormState, field } from "@/shared/types/form";
 import { validateManualBooking, validatePrivateEvent } from "@/shared/validation/calendar";
 import {
   createManualBooking,
+  createQuickBreak,
+  movePrivateEvent,
   getCalendar,
   getPrivateEventForEdit,
   removePrivateEvent,
@@ -15,6 +17,14 @@ import {
 } from "./calendar.service";
 
 const MAX_RANGE_DAYS = 62;
+const QUICK_BREAK_MINUTES = [10, 15, 20, 30, 45, 60];
+
+/** Figyelmeztetés, ha egy magánprogram foglalásra esik (nem akadály – docs/dontesek.md 10.) */
+function conflictWarning(conflicts: string[]): string | undefined {
+  if (!conflicts.length) return undefined;
+  const list = conflicts.slice(0, 3).join("; ") + (conflicts.length > 3 ? "; …" : "");
+  return `Figyelem: ez ${conflicts.length} foglalással ütközik (${list}). A foglalások megmaradtak – szükség esetén mondd le őket.`;
+}
 
 async function currentBarberId(): Promise<string> {
   const user = await requireApprovedBarber(ROUTES.barberCalendar);
@@ -61,12 +71,7 @@ export async function savePrivateEventAction(_prev: FormState, formData: FormDat
   if (!result.ok) return { error: result.error, values };
 
   revalidatePath(ROUTES.barberCalendar);
-  const warning = result.conflicts.length
-    ? `Figyelem: ez a program ${result.conflicts.length} foglalással ütközik (${result.conflicts.slice(0, 3).join("; ")}${
-        result.conflicts.length > 3 ? "; …" : ""
-      }). A foglalások megmaradtak – szükség esetén mondd le őket.`
-    : undefined;
-  return { success: "Program elmentve.", warning };
+  return { success: "Program elmentve.", warning: conflictWarning(result.conflicts) };
 }
 
 /** Magánprogram törlése: scope = "series" (az egész) vagy "occurrence" (csak ez az alkalom) */
@@ -104,4 +109,32 @@ export async function createManualBookingAction(_prev: FormState, formData: Form
 
   revalidatePath(ROUTES.barberCalendar);
   return { success: "Foglalás felvéve." };
+}
+
+/** Gyors szünet „mostantól” (pl. 15 perc) – egy koppintással a naptár tetejéről */
+export async function quickBreakAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const barberId = await currentBarberId();
+  const minutes = Number(field(formData, "minutes"));
+  if (!QUICK_BREAK_MINUTES.includes(minutes)) return { error: "Érvénytelen időtartam." };
+
+  const result = await createQuickBreak(barberId, minutes);
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath(ROUTES.barberCalendar);
+  return { success: `Szünet beírva ${minutes} percre.`, warning: conflictWarning(result.conflicts) };
+}
+
+/** Magánprogram áthelyezése / nyújtása húzással (egyszeri programnál) */
+export async function movePrivateEventAction(eventId: string, startsAt: string, endsAt: string): Promise<FormState> {
+  await currentBarberId();
+  const start = new Date(startsAt);
+  const end = new Date(endsAt);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
+    return { error: "Érvénytelen időpont." };
+  }
+  const result = await movePrivateEvent(eventId, start.toISOString(), end.toISOString());
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath(ROUTES.barberCalendar);
+  return { success: "Program áthelyezve.", warning: conflictWarning(result.conflicts) };
 }

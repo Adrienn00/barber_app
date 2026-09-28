@@ -39,3 +39,17 @@ export function addDaysToDate(date: string, days: number): string {
   const [y, m, d] = date.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
 }
+
+/**
+ * A naptár „lebegő” időt használ: a bukaresti helyi időt UTC-nek álcázva kapja meg, így a néző gépének
+ * időzónájától függetlenül mindig bukaresti időt mutat. Ez a függvény egy ilyen naptár-dátumot
+ * alakít vissza helyi szöveggé: pl. 14:00 → „2026-10-03T14:00”.
+ */
+export function floatingToLocal(date: Date): string {
+  return date.toISOString().slice(0, 16);
+}
+
+/** Egy „lebegő” naptár-dátum valódi időpontja (UTC ISO) – óraátállításkor is helyesen */
+export function floatingToUtcIso(date: Date): string {
+  return bucharestToUtc(floatingToLocal(date)).toISOString();
+}

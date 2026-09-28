@@ -1,0 +1,94 @@
+/*
+ * A naptár (FullCalendar) kinézete a ChairTime színvilágában.
+ * Színkódolás (spec 5.1): függő = sárga szaggatott keret, megerősített = zöld,
+ * magánprogram / szünet = szürke csíkos, munkaidőn kívül = halványítva.
+ */
+.fc {
+  --fc-border-color: var(--color-line);
+  --fc-page-bg-color: var(--color-background);
+  --fc-neutral-bg-color: var(--color-surface);
+  --fc-non-business-color: rgba(0, 0, 0, 0.35);
+  --fc-today-bg-color: rgba(212, 169, 94, 0.06);
+  --fc-now-indicator-color: var(--color-danger);
+  --fc-highlight-color: rgba(212, 169, 94, 0.25);
+  --fc-button-bg-color: var(--color-surface);
+  --fc-button-border-color: var(--color-line);
+  --fc-button-text-color: var(--color-foreground);
+  --fc-button-hover-bg-color: var(--color-surface-2);
+  --fc-button-hover-border-color: var(--color-brass);
+  --fc-button-active-bg-color: var(--color-brass);
+  --fc-button-active-border-color: var(--color-brass);
+  --fc-event-border-color: transparent;
+  font-size: 0.875rem;
+}
+
+.fc .fc-toolbar-title {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.fc .fc-button {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  box-shadow: none !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  color: var(--color-background);
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-timegrid-slot-label-cushion {
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.fc .fc-timegrid-slot {
+  height: 3rem; /* magasabb sáv: a 10–15 perces szünetek is jól olvashatók */
+}
+
+/* --- Események ------------------------------------------------------------ */
+.fc .ct-event {
+  border-radius: 0.375rem;
+  border-width: 1px;
+  padding: 1px 3px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fc .ct-event-confirmed {
+  background: rgba(125, 187, 127, 0.25);
+  border-color: var(--color-ok);
+  border-left-width: 4px;
+}
+
+.fc .ct-event-pending {
+  background: rgba(232, 185, 79, 0.15);
+  border: 2px dashed var(--color-pending);
+}
+
+.fc .ct-event-private {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(168, 157, 144, 0.28) 0 6px,
+    rgba(168, 157, 144, 0.14) 6px 12px
+  );
+  border-color: var(--color-muted);
+  border-left-width: 4px;
+}
+
+.fc .ct-event .fc-event-main,
+.fc .ct-event .fc-event-title,
+.fc .ct-event .fc-event-time {
+  color: var(--color-foreground);
+}
+
+/* Rövid (pl. 10 perces) eseménynél is olvasható maradjon egy sorban */
+.fc .fc-timegrid-event-short .fc-event-time::after {
+  content: " ·";
+}

@@ -57,3 +57,13 @@ describe("bucharestToUtc – óraátállítás", () => {
     expect(bucharestToUtc("2026-03-29T14:00").toISOString()).toBe("2026-03-29T11:00:00.000Z");
   });
 });
+
+describe("lebegő naptár-idő", () => {
+  it("a naptár 14:00-ja bukaresti 14:00 – nyáron és télen is", async () => {
+    const { floatingToLocal, floatingToUtcIso } = await import("./datetime");
+    const summer = new Date("2026-10-24T14:00:00Z");
+    expect(floatingToLocal(summer)).toBe("2026-10-24T14:00");
+    expect(floatingToUtcIso(summer)).toBe("2026-10-24T11:00:00.000Z");
+    expect(floatingToUtcIso(new Date("2026-10-26T14:00:00Z"))).toBe("2026-10-26T12:00:00.000Z");
+  });
+});

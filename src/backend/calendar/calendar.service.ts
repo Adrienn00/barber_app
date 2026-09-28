@@ -167,3 +167,41 @@ export async function listMyCustomers(barberId: string): Promise<CustomerOption[
     .map((c) => ({ id: c.customer_id, name: c.customer?.full_name ?? "Névtelen", phone: c.customer?.phone ?? null }))
     .sort((a, b) => a.name.localeCompare(b.name, "hu"));
 }
+
+/** Gyors szünet „mostantól” N percre (5 percre lefelé kerekítve kezdődik) */
+export async function createQuickBreak(
+  barberId: string,
+  minutes: number,
+): Promise<Result<{ id: string; conflicts: string[] }>> {
+  const step = 5 * 60_000;
+  const start = new Date(Math.floor(Date.now() / step) * step);
+  const end = new Date(start.getTime() + minutes * 60_000);
+  return savePrivateEvent(barberId, null, {
+    title: "Szünet",
+    note: null,
+    startsAt: start.toISOString(),
+    endsAt: end.toISOString(),
+    allDay: false,
+    repeat: "none",
+    repeatUntil: null,
+  });
+}
+
+/** Egyszeri magánprogram áthelyezése / hosszának módosítása (húzás a naptárban) */
+export async function movePrivateEvent(
+  eventId: string,
+  startsAt: string,
+  endsAt: string,
+): Promise<Result<{ conflicts: string[] }>> {
+  const db = await createClient();
+  const { data: existing } = await q.selectPrivateEvent(db, eventId);
+  if (!existing) return { ok: false, error: "A program nem található." };
+  if (existing.repeat !== "none") {
+    return { ok: false, error: "Heti ismétlődő programot a szerkesztő ablakban módosíts." };
+  }
+  const saved = await q.updatePrivateEvent(db, eventId, { starts_at: startsAt, ends_at: endsAt });
+  if (saved.error || !saved.data) return { ok: false, error: dbErrorMessage(saved.error, "Nem sikerült áthelyezni.") };
+
+  const { data: conflicts } = await q.selectPrivateEventConflicts(db, eventId);
+  return { ok: true, conflicts: (conflicts ?? []).map((c) => formatDateTimeHu(c.starts_at)) };
+}

@@ -1,10 +1,11 @@
 @import "tailwindcss";
+@import "./calendar.css";
 
 /*
  * ChairTime színvilág: sötét, meleg barnásfekete alap, réz-arany kiemelés, krémfehér szöveg.
  * Minden szín itt van – ha változtatni kell, csak ezt a blokkot kell átírni.
  */
-@theme inline {
+@theme {
   --color-background: #13100d; /* oldal háttere */
   --color-surface: #1c1814; /* kártyák, dobozok */
   --color-surface-2: #241f1a; /* kiemelt dobozok, lenyíló menü */

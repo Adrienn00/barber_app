@@ -53,6 +53,10 @@ Előfeltétel: fut a Docker Desktop. `npm run db:start` után:
 
 Munka végén: `npm run db:stop`, és a Docker Desktop bezárható.
 
+**Ha valami nem indul:**
+- „failed to connect to the docker API” → nem fut a Docker Desktop: indítsd el, várd meg az „Engine running” jelzést.
+- `db:reset` „error running container” hibát ad → futtasd újra: `npm run db:start`, majd `npm run db:reset` (Windowson néha elsőre beakad).
+
 ## Mappaszerkezet
 
 ```
