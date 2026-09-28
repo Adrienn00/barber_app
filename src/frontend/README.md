@@ -9,6 +9,7 @@
 | `components/profile/` | `ProfileForm` (név, telefon) |
 | `components/barber/` | Barberjelentkezés: `BarberApplicationForm`, `ApplicationStatusCard`, `BarberStatusBadge`, `BecomeBarberIntro` |
 | `components/calendar/` | Barber naptár: `BarberCalendar` (fő komponens, FullCalendar), `QuickBreakBar` („Szünet most” gombok), `NewEntryPanel`, `PrivateEventForm`, `ManualBookingForm`, `BookingDetails`, `PrivateEventDetails`, `CalendarLegend` |
+| `components/pricelist/` | Árlista szerkesztése: `PriceListEditor` (lista + ablak), `ServiceForm` (név, saját időtartam, ár), `ServiceRow` (egy sor gombokkal) |
 | `components/admin/` | Platform admin: `StatsGrid`, `BarberAdminCard`, `BarberDetails`, `BarberStatusActions` |
 | `components/system/` | `SystemStatusCard` (az `/allapot` oldalhoz) |
 | `styles/` | `globals.css` (**az összes szín egy helyen**), `calendar.css` (a naptár kinézete, színkódok), `fonts.ts` (Oswald címekhez, Inter szöveghez) |

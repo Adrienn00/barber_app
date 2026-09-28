@@ -12,7 +12,8 @@ backend/
   profile/     saját profil (név, telefon)
   barbers/     barberjelentkezés, barberprofil
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
-  calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás
+  calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás, gyors szünet
+  pricelist/   a barber árlistája: szolgáltatások saját időtartammal és árral
   shops/       egységek (üzletek): létrehozás, meghívók, csatlakozás/kilépés, a vezető áttekintése
   health/      rendszerállapot-ellenőrzés
 ```

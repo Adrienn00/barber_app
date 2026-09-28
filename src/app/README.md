@@ -14,7 +14,8 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | `profil/page.tsx` | `/profil` | bejelentkezett | saját adatok, kötelező telefonszám |
 | `barber-leszek/page.tsx` | `/barber-leszek` | mindenki | barberjelentkezés és állapota |
 | `(barber)/layout.tsx` | – | jóváhagyott barber | védi a barber oldalakat |
-| `(barber)/naptar/page.tsx` | `/naptar` | jóváhagyott barber | naptár (3. fázis) |
+| `(barber)/naptar/page.tsx` | `/naptar` | jóváhagyott barber | naptár: foglalások, programok, gyors szünet, kézi foglalás |
+| `(barber)/beallitasok/page.tsx` | `/beallitasok` | jóváhagyott barber | beállítások: szolgáltatások saját időtartammal és árral |
 | `platform/page.tsx` | `/platform` | admin | barberek jóváhagyása, alapszámok |
 | `allapot/page.tsx` | `/allapot` | mindenki | technikai állapot |
 | `aszf/`, `adatvedelem/` | `/aszf`, `/adatvedelem` | mindenki | jogi oldalak (szöveg a 8. fázisban) |

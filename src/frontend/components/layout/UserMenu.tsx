@@ -22,7 +22,12 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
   }, [pathname]);
 
   const links = [
-    ...(user.isApprovedBarber ? [{ href: ROUTES.barberCalendar, label: "Naptáram" }] : []),
+    ...(user.isApprovedBarber
+      ? [
+          { href: ROUTES.barberCalendar, label: "Naptáram" },
+          { href: ROUTES.barberSettings, label: "Szolgáltatásaim és árak" },
+        ]
+      : []),
     ...(user.isAdmin ? [{ href: ROUTES.platform, label: "Platform admin" }] : []),
     ...(!user.isApprovedBarber ? [{ href: ROUTES.becomeBarber, label: "Barber vagyok" }] : []),
     { href: ROUTES.profile, label: "Profilom" },
