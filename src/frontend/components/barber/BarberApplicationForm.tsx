@@ -23,7 +23,8 @@ export function BarberApplicationForm({ initial, submitLabel }: BarberApplicatio
 
   // A linket a névből javasoljuk, amíg a felhasználó kézzel át nem írja
   const [displayName, setDisplayName] = useState(values.displayName);
-  const [slug, setSlug] = useState(values.slug);
+  // Előre kitöltött névből is azonnal javaslunk linket (ha a nevet nem írják át, se maradjon üres)
+  const [slug, setSlug] = useState(values.slug || slugify(values.displayName));
   const [slugTouched, setSlugTouched] = useState(Boolean(initial.slug));
 
   return (

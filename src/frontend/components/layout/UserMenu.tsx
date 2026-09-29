@@ -26,6 +26,7 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
       ? [
           { href: ROUTES.barberCalendar, label: "Naptáram" },
           { href: ROUTES.barberSettings, label: "Szolgáltatásaim és árak" },
+          { href: ROUTES.myShop, label: "Egységem" },
         ]
       : []),
     ...(user.isAdmin ? [{ href: ROUTES.platform, label: "Platform admin" }] : []),

@@ -36,7 +36,8 @@ export async function saveBarberApplicationAction(_prev: FormState, formData: Fo
     return result.field ? { fieldErrors: { [result.field]: result.error }, values } : { error: result.error, values };
   }
 
-  revalidatePath(ROUTES.becomeBarber);
+  // Az egész oldal frissüljön (pl. a meghívó oldala a profil mentése után engedi a csatlakozást)
+  revalidatePath("/", "layout");
   return {
     success: user.barber
       ? "Jelentkezésed frissítve. Az admin hamarosan elbírálja."

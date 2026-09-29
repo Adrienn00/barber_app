@@ -3,7 +3,9 @@ import type { AdminStats } from "@/backend/admin/admin.service";
 const ITEMS: { key: keyof AdminStats; label: string }[] = [
   { key: "barbers_approved", label: "Aktív barber" },
   { key: "barbers_pending", label: "Függő jelentkezés" },
-  { key: "barbers_suspended", label: "Felfüggesztett" },
+  { key: "barbers_suspended", label: "Felfüggesztett barber" },
+  { key: "shops_approved", label: "Aktív egység" },
+  { key: "shops_pending", label: "Függő egység" },
   { key: "customers", label: "Vendég" },
   { key: "bookings_upcoming", label: "Közelgő foglalás" },
   { key: "bookings_total", label: "Összes foglalás" },

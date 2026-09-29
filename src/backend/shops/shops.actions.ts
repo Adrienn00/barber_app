@@ -73,7 +73,10 @@ export async function inviteBarberAction(_prev: FormState, formData: FormData): 
   revalidatePath(ROUTES.myShop);
   // Az e-mail értesítés a 8. fázisban jön – addig a vezető maga küldi el a linket
   const link = `${await appOrigin()}${ROUTES.invite}/${result.token}`;
-  return { success: `Meghívó létrehozva. Küldd el ezt a linket a barbernek (7 napig érvényes): ${link}` };
+  return {
+    success: "Meghívó létrehozva. Küldd el ezt a linket a barbernek (pl. WhatsAppon) – 7 napig érvényes.",
+    values: { link },
+  };
 }
 
 export async function revokeInviteAction(_prev: FormState, formData: FormData): Promise<FormState> {
