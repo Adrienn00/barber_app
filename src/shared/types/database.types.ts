@@ -708,6 +708,7 @@ export type Database = {
       reapply_as_barber: { Args: never; Returns: undefined }
       reapply_shop: { Args: never; Returns: undefined }
       remove_shop_member: { Args: { p_barber_id: string }; Returns: undefined }
+      set_my_working_hours: { Args: { p_slots: Json }; Returns: undefined }
       timemultirange: { Args: never; Returns: unknown }
     }
     Enums: {

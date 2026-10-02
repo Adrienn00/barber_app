@@ -6,6 +6,7 @@ import { Alert } from "@/frontend/components/ui/Alert";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextArea } from "@/frontend/components/ui/TextArea";
 import { TextField } from "@/frontend/components/ui/TextField";
+import { useSubmitWithoutReset } from "@/frontend/lib/useSubmitWithoutReset";
 import type { FormState } from "@/shared/types/form";
 import type { ShopInput } from "@/shared/validation/forms";
 import { slugify } from "@/shared/validation/slug";
@@ -17,7 +18,9 @@ type ShopFormProps = {
 
 /** Az egység adatai: név, egyedi link, város, cím, telefon, bemutatkozás, Instagram. */
 export function ShopForm({ initial, submitLabel }: ShopFormProps) {
-  const [state, action] = useActionState<FormState, FormData>(saveShopAction, {});
+  const [state, action, pending] = useActionState<FormState, FormData>(saveShopAction, {});
+  // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
+  const onSubmit = useSubmitWithoutReset(action);
   const values = { ...initial, ...state.values };
 
   // A linket a névből javasoljuk, amíg kézzel át nem írják
@@ -27,7 +30,7 @@ export function ShopForm({ initial, submitLabel }: ShopFormProps) {
   const [slugTouched, setSlugTouched] = useState(Boolean(initial.slug));
 
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.error && <Alert tone="error">{state.error}</Alert>}
       {state.success && <Alert tone="success">{state.success}</Alert>}
 
@@ -61,7 +64,7 @@ export function ShopForm({ initial, submitLabel }: ShopFormProps) {
       <TextField label="Cím" name="address" placeholder="utca, házszám" defaultValue={values.address} error={state.fieldErrors?.address} />
       <TextArea label="Bemutatkozás (nem kötelező)" name="bio" defaultValue={values.bio} error={state.fieldErrors?.bio} />
       <TextField label="Instagram (nem kötelező)" name="instagram" prefix="@" defaultValue={values.instagram} error={state.fieldErrors?.instagram} />
-      <SubmitButton pendingText="Mentés…">{submitLabel}</SubmitButton>
+      <SubmitButton forcePending={pending} pendingText="Mentés…">{submitLabel}</SubmitButton>
     </form>
   );
 }

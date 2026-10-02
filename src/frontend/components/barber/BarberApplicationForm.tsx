@@ -6,6 +6,7 @@ import { Alert } from "@/frontend/components/ui/Alert";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextArea } from "@/frontend/components/ui/TextArea";
 import { TextField } from "@/frontend/components/ui/TextField";
+import { useSubmitWithoutReset } from "@/frontend/lib/useSubmitWithoutReset";
 import type { FormState } from "@/shared/types/form";
 import type { BarberApplicationInput } from "@/shared/validation/forms";
 import { slugify } from "@/shared/validation/slug";
@@ -18,7 +19,9 @@ type BarberApplicationFormProps = {
 
 /** Barberprofil adatai: név, egyedi link, város, cím, telefon, bemutatkozás, Instagram. */
 export function BarberApplicationForm({ initial, submitLabel }: BarberApplicationFormProps) {
-  const [state, action] = useActionState<FormState, FormData>(saveBarberApplicationAction, {});
+  const [state, action, pending] = useActionState<FormState, FormData>(saveBarberApplicationAction, {});
+  // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
+  const onSubmit = useSubmitWithoutReset(action);
   const values = state.values ?? initial;
 
   // A linket a névből javasoljuk, amíg a felhasználó kézzel át nem írja
@@ -28,7 +31,7 @@ export function BarberApplicationForm({ initial, submitLabel }: BarberApplicatio
   const [slugTouched, setSlugTouched] = useState(Boolean(initial.slug));
 
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.error && <Alert tone="error">{state.error}</Alert>}
       {state.success && <Alert tone="success">{state.success}</Alert>}
 
@@ -86,7 +89,7 @@ export function BarberApplicationForm({ initial, submitLabel }: BarberApplicatio
         defaultValue={values.instagram}
         error={state.fieldErrors?.instagram}
       />
-      <SubmitButton pendingText="Küldés…">{submitLabel}</SubmitButton>
+      <SubmitButton forcePending={pending} pendingText="Küldés…">{submitLabel}</SubmitButton>
     </form>
   );
 }

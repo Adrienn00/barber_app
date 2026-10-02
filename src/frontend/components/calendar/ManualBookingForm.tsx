@@ -9,6 +9,7 @@ import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextArea } from "@/frontend/components/ui/TextArea";
 import { TextField } from "@/frontend/components/ui/TextField";
 import type { CustomerOption, ServiceOption } from "@/shared/types/calendar";
+import { useSubmitWithoutReset } from "@/frontend/lib/useSubmitWithoutReset";
 import type { FormState } from "@/shared/types/form";
 
 type ManualBookingFormProps = {
@@ -21,7 +22,9 @@ type ManualBookingFormProps = {
 
 /** Kézi foglalás (pl. telefonon jelentkező vendégnek) – azonnal megerősített. */
 export function ManualBookingForm({ services, customers, date, time, onSaved }: ManualBookingFormProps) {
-  const [state, action] = useActionState<FormState, FormData>(createManualBookingAction, {});
+  const [state, action, pending] = useActionState<FormState, FormData>(createManualBookingAction, {});
+  // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
+  const onSubmit = useSubmitWithoutReset(action);
   useOnActionResult(state, onSaved, true);
   const values: Record<string, string | undefined> = { date, time, ...state.values };
   const [customerId, setCustomerId] = useState(values.customerId ?? "");
@@ -31,7 +34,7 @@ export function ManualBookingForm({ services, customers, date, time, onSaved }: 
   }
 
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.error && <Alert tone="error">{state.error}</Alert>}
 
       <Select
@@ -76,7 +79,7 @@ export function ManualBookingForm({ services, customers, date, time, onSaved }: 
 
       <TextArea label="Megjegyzés (nem kötelező)" name="note" rows={2} defaultValue={values.note} error={state.fieldErrors?.note} />
 
-      <SubmitButton pendingText="Mentés…">Foglalás felvétele</SubmitButton>
+      <SubmitButton forcePending={pending} pendingText="Mentés…">Foglalás felvétele</SubmitButton>
     </form>
   );
 }

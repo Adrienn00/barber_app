@@ -8,6 +8,7 @@ import { Checkbox } from "@/frontend/components/ui/Checkbox";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextArea } from "@/frontend/components/ui/TextArea";
 import { TextField } from "@/frontend/components/ui/TextField";
+import { useSubmitWithoutReset } from "@/frontend/lib/useSubmitWithoutReset";
 import type { FormState } from "@/shared/types/form";
 import type { PrivateEventInput } from "@/shared/validation/calendar";
 
@@ -22,7 +23,9 @@ type PrivateEventFormProps = {
 
 /** Magánprogram / szünet felvétele vagy szerkesztése – akár 5 perces pontossággal. */
 export function PrivateEventForm({ initial, onSaved }: PrivateEventFormProps) {
-  const [state, action] = useActionState<FormState, FormData>(savePrivateEventAction, {});
+  const [state, action, pending] = useActionState<FormState, FormData>(savePrivateEventAction, {});
+  // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
+  const onSubmit = useSubmitWithoutReset(action);
   useOnActionResult(state, onSaved, true);
 
   const values = { ...initial, ...state.values };
@@ -31,7 +34,7 @@ export function PrivateEventForm({ initial, onSaved }: PrivateEventFormProps) {
   const [repeatWeekly, setRepeatWeekly] = useState(initial.repeatWeekly);
 
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.error && <Alert tone="error">{state.error}</Alert>}
       {initial.id && <input type="hidden" name="eventId" value={initial.id} />}
 
@@ -119,7 +122,7 @@ export function PrivateEventForm({ initial, onSaved }: PrivateEventFormProps) {
 
       <TextArea label="Megjegyzés (csak te látod)" name="note" rows={2} defaultValue={values.note} error={state.fieldErrors?.note} />
 
-      <SubmitButton pendingText="Mentés…">{initial.id ? "Módosítások mentése" : "Mentés a naptárba"}</SubmitButton>
+      <SubmitButton forcePending={pending} pendingText="Mentés…">{initial.id ? "Módosítások mentése" : "Mentés a naptárba"}</SubmitButton>
     </form>
   );
 }

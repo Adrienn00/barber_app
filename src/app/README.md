@@ -15,7 +15,7 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | `barber-leszek/page.tsx` | `/barber-leszek` | mindenki | barberjelentkezés és állapota |
 | `(barber)/layout.tsx` | – | jóváhagyott barber | védi a barber oldalakat |
 | `(barber)/naptar/page.tsx` | `/naptar` | jóváhagyott barber | naptár: foglalások, programok, gyors szünet, kézi foglalás |
-| `(barber)/beallitasok/page.tsx` | `/beallitasok` | jóváhagyott barber | beállítások: szolgáltatások saját időtartammal és árral |
+| `(barber)/beallitasok/page.tsx` | `/beallitasok` | jóváhagyott barber | beállítások: szolgáltatások, munkaidő, foglalási szabályok |
 | `(barber)/egysegem/page.tsx` | `/egysegem` | jóváhagyott barber | egység: létrehozás; vezetőként csapat, meghívók, áttekintés; tagként kilépés |
 | `meghivas/[token]/page.tsx` | `/meghivas/…` | bejelentkezett | meghívó egy egységbe: elfogadás / elutasítás |
 | `platform/page.tsx` | `/platform` | admin | barberek és egységek jóváhagyása, alapszámok |

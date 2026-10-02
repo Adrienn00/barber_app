@@ -14,6 +14,7 @@ backend/
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
   calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás, gyors szünet
   pricelist/   a barber árlistája: szolgáltatások saját időtartammal és árral
+  schedule/    munkaidő (heti sávok) és foglalási szabályok
   shops/       egységek (üzletek): létrehozás, meghívók, csatlakozás/kilépés, a vezető áttekintése
   health/      rendszerállapot-ellenőrzés
 ```

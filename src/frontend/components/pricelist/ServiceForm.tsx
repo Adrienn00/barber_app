@@ -6,6 +6,7 @@ import { useOnActionResult } from "@/frontend/lib/useOnActionResult";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextField } from "@/frontend/components/ui/TextField";
+import { useSubmitWithoutReset } from "@/frontend/lib/useSubmitWithoutReset";
 import type { FormState } from "@/shared/types/form";
 
 /** Gyakori időtartamok egy koppintással (percben) */
@@ -19,7 +20,9 @@ type ServiceFormProps = {
 
 /** Szolgáltatás felvétele / szerkesztése: név, a barber SAJÁT időtartama, ár. */
 export function ServiceForm({ service, onSaved }: ServiceFormProps) {
-  const [state, action] = useActionState<FormState, FormData>(saveServiceAction, {});
+  const [state, action, pending] = useActionState<FormState, FormData>(saveServiceAction, {});
+  // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
+  const onSubmit = useSubmitWithoutReset(action);
   useOnActionResult(state, onSaved, true);
 
   const values = {
@@ -31,7 +34,7 @@ export function ServiceForm({ service, onSaved }: ServiceFormProps) {
   const [duration, setDuration] = useState(values.durationMin);
 
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.error && <Alert tone="error">{state.error}</Alert>}
       {service && <input type="hidden" name="serviceId" value={service.id} />}
 
@@ -80,7 +83,7 @@ export function ServiceForm({ service, onSaved }: ServiceFormProps) {
         <p className="text-sm text-muted">Az új időtartam csak az új foglalásokra vonatkozik – a meglévők nem változnak.</p>
       )}
 
-      <SubmitButton pendingText="Mentés…">{service ? "Módosítások mentése" : "Szolgáltatás felvétele"}</SubmitButton>
+      <SubmitButton forcePending={pending} pendingText="Mentés…">{service ? "Módosítások mentése" : "Szolgáltatás felvétele"}</SubmitButton>
     </form>
   );
 }
