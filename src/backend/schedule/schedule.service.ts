@@ -53,3 +53,14 @@ export async function saveBookingRules(barberId: string, rules: BookingRules): P
   });
   return error || !data ? { ok: false, error: dbErrorMessage(error, "Nem sikerült menteni.") } : { ok: true };
 }
+
+export type SetupStatus = { hasServices: boolean; hasWorkingHours: boolean; isReady: boolean };
+
+/** Kész-e a barber a foglalásra: van aktív szolgáltatása és munkaideje (különben nem foglalható) */
+export async function getSetupStatus(barberId: string): Promise<SetupStatus> {
+  const db = await createClient();
+  const [services, hours] = await Promise.all([q.countActiveServices(db, barberId), q.countWorkingHours(db, barberId)]);
+  const hasServices = (services.count ?? 0) > 0;
+  const hasWorkingHours = (hours.count ?? 0) > 0;
+  return { hasServices, hasWorkingHours, isReady: hasServices && hasWorkingHours };
+}

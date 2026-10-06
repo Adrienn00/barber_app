@@ -34,3 +34,13 @@ export function selectSettings(db: DbClient, barberId: string) {
 export function updateSettings(db: DbClient, barberId: string, fields: SettingsUpdate) {
   return db.from("barber_settings").update(fields).eq("barber_id", barberId).select("barber_id").maybeSingle();
 }
+
+/** Hány aktív szolgáltatása van a barbernek (a „Kezdő lépések” dobozhoz) */
+export function countActiveServices(db: DbClient, barberId: string) {
+  return db.from("services").select("id", { count: "exact", head: true }).eq("barber_id", barberId).eq("is_active", true);
+}
+
+/** Hány munkaidő-sávja van a barbernek */
+export function countWorkingHours(db: DbClient, barberId: string) {
+  return db.from("working_hours").select("id", { count: "exact", head: true }).eq("barber_id", barberId);
+}

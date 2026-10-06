@@ -11,7 +11,8 @@ type ApplicationStatusCardProps = {
 
 const TEXTS: Record<BarberStatus, string> = {
   pending: "Jelentkezésed megkaptuk, az admin hamarosan elbírálja. Addig az adataidat még javíthatod.",
-  approved: "Jelentkezésed jóváhagytuk! Innen a naptáradban kezelheted az időpontjaidat.",
+  approved:
+    "Jelentkezésed jóváhagytuk! Következő lépés: add meg a szolgáltatásaidat (időtartam, ár) és a munkaidődet – a naptáradban végigvezetünk rajta.",
   rejected: "Jelentkezésed most nem hagytuk jóvá. Javítsd az adataidat, és küldd be újra.",
   suspended: "A barberfiókod jelenleg fel van függesztve, így nem fogadhatsz foglalást.",
 };
