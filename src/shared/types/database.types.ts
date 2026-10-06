@@ -646,6 +646,12 @@ export type Database = {
         Returns: string
       }
       decline_shop_invite: { Args: { p_token: string }; Returns: undefined }
+      get_available_slots: {
+        Args: { p_barber_id: string; p_date: string; p_service_id: string }
+        Returns: {
+          starts_at: string
+        }[]
+      }
       get_my_private_event_occurrences: {
         Args: { p_from: string; p_to: string }
         Returns: {
@@ -708,6 +714,10 @@ export type Database = {
       reapply_as_barber: { Args: never; Returns: undefined }
       reapply_shop: { Args: never; Returns: undefined }
       remove_shop_member: { Args: { p_barber_id: string }; Returns: undefined }
+      request_booking: {
+        Args: { p_note?: string; p_service_id: string; p_starts_at: string }
+        Returns: string
+      }
       set_my_working_hours: { Args: { p_slots: Json }; Returns: undefined }
       timemultirange: { Args: never; Returns: unknown }
     }
