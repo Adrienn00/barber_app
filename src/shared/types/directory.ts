@@ -10,6 +10,8 @@ export type DirectoryEntry = {
   city: string;
   address: string;
   bio: string | null;
+  /** Profilkép (vagy egység logója) nyilvános címe */
+  avatarUrl: string | null;
   memberCount: number;
   minPrice: number | null;
 };
@@ -24,6 +26,7 @@ export type PublicBarber = {
   slug: string;
   name: string;
   bio: string | null;
+  avatarUrl: string | null;
   city: string;
   address: string;
   phone: string;
@@ -41,6 +44,7 @@ export type PublicShop = {
   slug: string;
   name: string;
   bio: string | null;
+  avatarUrl: string | null;
   city: string;
   address: string;
   phone: string;

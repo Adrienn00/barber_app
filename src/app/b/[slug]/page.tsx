@@ -33,6 +33,7 @@ export default async function BarberPage({ params }: PageProps<"/b/[slug]">) {
       <ProfileHero
         eyebrow={barber.shop ? barber.shop.name : "Barber"}
         name={barber.name}
+        avatarUrl={barber.avatarUrl}
         bio={barber.bio}
         address={`${barber.city}, ${barber.address}`}
         phone={barber.phone}

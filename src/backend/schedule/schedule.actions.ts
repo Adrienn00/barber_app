@@ -15,6 +15,7 @@ async function currentBarberId(): Promise<string> {
 function refresh() {
   revalidatePath(ROUTES.barberSettings);
   revalidatePath(ROUTES.barberCalendar);
+  revalidatePath(ROUTES.barberSetup); // a beállító varázsló is ezeket a szerkesztőket használja
 }
 
 /** Heti munkaidő mentése. Az űrlap a hetet JSON-ként küldi („week” mező). */

@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
+import { Avatar } from "@/frontend/components/ui/Avatar";
 import { Eyebrow } from "@/frontend/components/ui/Eyebrow";
 import { Icon } from "@/frontend/components/ui/Icon";
 
 type ProfileHeroProps = {
   eyebrow: string;
   name: string;
+  avatarUrl: string | null;
   bio: string | null;
   address: string;
   phone: string;
@@ -14,7 +16,7 @@ type ProfileHeroProps = {
 };
 
 /** Barber vagy egység oldalának nyitó része: név, bemutatkozás, cím, telefon, Instagram. */
-export function ProfileHero({ eyebrow, name, bio, address, phone, instagram, actions }: ProfileHeroProps) {
+export function ProfileHero({ eyebrow, name, avatarUrl, bio, address, phone, instagram, actions }: ProfileHeroProps) {
   return (
     <section className="relative overflow-hidden border-b border-line">
       <div
@@ -25,7 +27,10 @@ export function ProfileHero({ eyebrow, name, bio, address, phone, instagram, act
         <div>
           <Eyebrow pill>{eyebrow}</Eyebrow>
         </div>
-        <h1 className="text-5xl font-bold sm:text-6xl">{name}</h1>
+        <div className="flex items-center gap-5">
+          {avatarUrl && <Avatar url={avatarUrl} name={name} size={96} />}
+          <h1 className="text-5xl font-bold sm:text-6xl">{name}</h1>
+        </div>
         {bio && <p className="max-w-2xl text-lg text-muted">{bio}</p>}
         <ul className="flex flex-wrap gap-x-6 gap-y-2 text-muted">
           <li className="flex items-center gap-2">

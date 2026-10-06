@@ -29,3 +29,8 @@ export function validateSlug(slug: string): string | null {
   if (RESERVED_SLUGS.includes(slug)) return "Ez a link foglalt, válassz másikat.";
   return null;
 }
+
+/** Kereséshez: kisbetű, ékezet nélkül (pl. „Tóth Ánna” → „toth anna”), így „toth” is megtalálja */
+export function normalizeSearch(text: string): string {
+  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
+}

@@ -16,6 +16,8 @@ export const ROUTES = {
   barberCalendar: "/naptar",
   barberRequests: "/keresek",
   barberSettings: "/beallitasok",
+  /** Beállító varázsló az új barbernek: profil → szolgáltatások → munkaidő → szabályok → kész */
+  barberSetup: "/kezdes",
   platform: "/platform",
   /** Az egység vezetőjének oldala: adatok, tagok, meghívók, áttekintés */
   myShop: "/egysegem",
@@ -37,6 +39,7 @@ export const PROTECTED_PREFIXES = [
   ROUTES.barberCalendar,
   ROUTES.barberRequests,
   ROUTES.barberSettings,
+  ROUTES.barberSetup,
   ROUTES.platform,
   ROUTES.myShop,
   ROUTES.invite,

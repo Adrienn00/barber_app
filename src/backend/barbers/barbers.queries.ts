@@ -12,7 +12,7 @@ type BarberUpdate = Database["public"]["Tables"]["barbers"]["Update"];
 export function selectApplicationOfUser(db: DbClient, userId: string) {
   return db
     .from("barbers")
-    .select("display_name, slug, city, address, phone, bio, instagram, status, reject_reason")
+    .select("display_name, slug, city, address, phone, bio, instagram, status, reject_reason, avatar_path, is_listed")
     .eq("user_id", userId)
     .maybeSingle();
 }
@@ -28,4 +28,13 @@ export function updateBarber(db: DbClient, barberId: string, fields: BarberUpdat
 /** Elutasított jelentkezés újraküldése (adatbázis-függvény) */
 export function reapplyAsBarber(db: DbClient) {
   return db.rpc("reapply_as_barber");
+}
+
+/** Profilkép feltöltése a barber saját mappájába (a Storage-szabály csak oda engedi) */
+export function uploadAvatarFile(db: DbClient, path: string, bytes: Buffer) {
+  return db.storage.from("avatars").upload(path, bytes, { contentType: "image/webp", cacheControl: "31536000" });
+}
+
+export function removeAvatarFiles(db: DbClient, paths: string[]) {
+  return db.storage.from("avatars").remove(paths);
 }

@@ -45,3 +45,9 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     A barber kézi foglalásáról senki nem kap értesítést. Az aznapra szóló (aznap megerősített) foglalás nem kap emlékeztetőt.
 20. **Kijelentkezéskor** az adott eszköz push-feliratkozása törlődik (a közös telefonon a következő felhasználó ne kapja
     az előző értesítéseit); ha ugyanazon az eszközön más lép be és bekapcsolja, a feliratkozás az övé lesz.
+
+## Natív app – 2026-10-06
+
+21. **Az app webappként (PWA) indul**, a weboldalról telepíthető a kezdőképernyőre. Áruházi (natív) változat csak az
+    élesítés után, ha bevált: **9. fázis** – először Android (Google Play, a webapp becsomagolásával), igény esetén iPhone
+    (App Store; évi díj, Apple-ellenőrzés, natív push). Ugyanabból a kódból készül, a mostani munka megmarad.

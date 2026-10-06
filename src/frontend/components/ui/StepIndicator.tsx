@@ -4,7 +4,7 @@ type StepIndicatorProps = {
   current: number;
 };
 
-/** Lépésjelző a foglalás tetején: 1 Szolgáltatás — 2 Időpont — 3 Megerősítés */
+/** Lépésjelző (pl. foglalás: 1 Szolgáltatás — 2 Időpont — 3 Megerősítés; beállító varázsló) */
 export function StepIndicator({ steps, current }: StepIndicatorProps) {
   return (
     <ol className="flex items-center gap-2">

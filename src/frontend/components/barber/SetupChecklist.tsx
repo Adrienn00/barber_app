@@ -15,13 +15,13 @@ const STEPS = [
     key: "hasServices" as const,
     title: "Szolgáltatások és árak",
     text: "Mit vállalsz, mennyi idő nálad, mennyibe kerül.",
-    href: `${ROUTES.barberSettings}#szolgaltatasok`,
+    href: `${ROUTES.barberSetup}?lepes=2`,
   },
   {
     key: "hasWorkingHours" as const,
     title: "Munkaidő",
     text: "Mely napokon és mikor foglalhatnak nálad.",
-    href: `${ROUTES.barberSettings}#munkaido`,
+    href: `${ROUTES.barberSetup}?lepes=3`,
   },
 ];
 
@@ -39,6 +39,7 @@ export function SetupChecklist({ status, publicPath }: SetupChecklistProps) {
         {remaining === 1 ? "Már csak egy lépés" : "Még két lépés"}, és a vendégek foglalhatnak nálad – addig a listában
         sem jelensz meg.
       </p>
+      <LinkButton href={ROUTES.barberSetup}>Beállító varázsló indítása</LinkButton>
       <ol className="space-y-3">
         {STEPS.map((step, i) => {
           const done = status[step.key];

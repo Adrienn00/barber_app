@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Avatar } from "@/frontend/components/ui/Avatar";
 import { Badge } from "@/frontend/components/ui/Badge";
 import { Icon } from "@/frontend/components/ui/Icon";
 import { barberPath, shopPath } from "@/shared/config/routes";
@@ -13,7 +14,10 @@ export function DirectoryCard({ entry }: { entry: DirectoryEntry }) {
       className="group flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 transition hover:border-brass"
     >
       <div className="flex items-start justify-between gap-3">
-        <h2 className="text-2xl font-bold group-hover:text-brass">{entry.name}</h2>
+        <div className="flex items-center gap-3">
+          <Avatar url={entry.avatarUrl} name={entry.name} size={56} />
+          <h2 className="text-2xl font-bold group-hover:text-brass">{entry.name}</h2>
+        </div>
         {entry.kind === "shop" && <Badge>Egység · {entry.memberCount} barber</Badge>}
       </div>
       <p className="flex items-center gap-2 text-muted">

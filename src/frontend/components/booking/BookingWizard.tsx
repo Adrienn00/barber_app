@@ -15,7 +15,7 @@ import type { FormState } from "@/shared/types/form";
 import { type BookingDay, DayPicker } from "./DayPicker";
 import { ServicePicker } from "./ServicePicker";
 import { SlotGrid } from "./SlotGrid";
-import { StepIndicator } from "./StepIndicator";
+import { StepIndicator } from "@/frontend/components/ui/StepIndicator";
 
 type BookingWizardProps = {
   barber: { id: string; name: string; address: string };

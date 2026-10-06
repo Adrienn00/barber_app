@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { safeNextPath } from "../config/routes";
 import { formatPhone, normalizePhone } from "./phone";
-import { slugify, validateSlug } from "./slug";
+import { normalizeSearch, slugify, validateSlug } from "./slug";
 
 describe("normalizePhone", () => {
   it.each([
@@ -47,5 +47,11 @@ describe("safeNextPath", () => {
     expect(safeNextPath("https://gonosz.hu")).toBeNull();
     expect(safeNextPath("//gonosz.hu")).toBeNull();
     expect(safeNextPath(null)).toBeNull();
+  });
+});
+
+describe("normalizeSearch", () => {
+  it("kisbetű, ékezet nélkül – „toth” megtalálja „Tóth”-ot", () => {
+    expect(normalizeSearch("  Tóth Ánna Őrs Űr ")).toBe("toth anna ors ur");
   });
 });

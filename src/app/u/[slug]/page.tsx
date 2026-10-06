@@ -24,6 +24,7 @@ export default async function ShopPage({ params }: PageProps<"/u/[slug]">) {
       <ProfileHero
         eyebrow="Barbershop"
         name={shop.name}
+        avatarUrl={shop.avatarUrl}
         bio={shop.bio}
         address={`${shop.city}, ${shop.address}`}
         phone={shop.phone}

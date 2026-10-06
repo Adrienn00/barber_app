@@ -15,11 +15,20 @@ type BarberApplicationFormProps = {
   /** Meglévő jelentkezés adatai (javításhoz), vagy üres új jelentkezésnél */
   initial: BarberApplicationInput;
   submitLabel: string;
+  /** Jóváhagyott barbernél a profil mentése (alapból: jelentkezés beküldése) */
+  action?: (prev: FormState, formData: FormData) => Promise<FormState>;
+  /** A link mezője alatti tipp (pl. hogy a régi link megszűnik) */
+  slugHint?: string;
 };
 
-/** Barberprofil adatai: név, egyedi link, város, cím, telefon, bemutatkozás, Instagram. */
-export function BarberApplicationForm({ initial, submitLabel }: BarberApplicationFormProps) {
-  const [state, action, pending] = useActionState<FormState, FormData>(saveBarberApplicationAction, {});
+/** Barberprofil adatai: név, egyedi link, város, cím, telefon, bemutatkozás, Instagram (jelentkezéskor és utána is). */
+export function BarberApplicationForm({
+  initial,
+  submitLabel,
+  action: submit = saveBarberApplicationAction,
+  slugHint = "Ezt a linket oszthatod meg a vendégeiddel. Kisbetű, szám, kötőjel.",
+}: BarberApplicationFormProps) {
+  const [state, action, pending] = useActionState<FormState, FormData>(submit, {});
   // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
   const onSubmit = useSubmitWithoutReset(action);
   const values = state.values ?? initial;
@@ -33,7 +42,8 @@ export function BarberApplicationForm({ initial, submitLabel }: BarberApplicatio
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.error && <Alert tone="error">{state.error}</Alert>}
-      {state.success && <Alert tone="success">{state.success}</Alert>}
+      {state.success && !state.warning && <Alert tone="success">{state.success}</Alert>}
+      {state.warning && <Alert tone="info">{state.warning}</Alert>}
 
       <TextField
         label="Megjelenített név"
@@ -55,7 +65,7 @@ export function BarberApplicationForm({ initial, submitLabel }: BarberApplicatio
           setSlugTouched(true);
           setSlug(e.target.value.toLowerCase());
         }}
-        hint="Ezt a linket oszthatod meg a vendégeiddel. Kisbetű, szám, kötőjel."
+        hint={slugHint}
         error={state.fieldErrors?.slug}
       />
       <div className="grid gap-4 sm:grid-cols-2">

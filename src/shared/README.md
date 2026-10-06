@@ -3,6 +3,7 @@
 | Mappa / fájl | Mi van benne |
 | --- | --- |
 | `config/env.ts` | Környezeti változók (Supabase cím, kulcs) beolvasása |
+| `config/storage.ts` | Profilképek nyilvános címe (`avatarUrl`) |
 | `config/routes.ts` | **Az összes útvonal egy helyen** (`ROUTES`), mely oldalak védettek, biztonságos visszatérési cím |
 | `datetime/` | Dátumformázás magyarul, bukaresti időzóna, óraátállítás – mellette a tesztje |
 | `validation/forms.ts` | Űrlapok ellenőrzése magyar hibaüzenetekkel (belépés, regisztráció, profil, barberjelentkezés) |

@@ -10,7 +10,8 @@ backend/
   core/        közös alap: adatbázis-kapcsolat, bejelentkezés-frissítés, hibaüzenetek
   auth/        belépés, regisztráció, kilépés, „ki van bejelentkezve”, oldalvédelem
   profile/     saját profil (név, telefon)
-  barbers/     barberjelentkezés, barberprofil
+  barbers/     barberjelentkezés, barberprofil (jóváhagyás után is), profilkép (Storage), megjelenés a listában
+  customers/   a barber vendégei: látogatások, megbízható vendég jelölése
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
   calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás, gyors szünet
   pricelist/   a barber árlistája: szolgáltatások saját időtartammal és árral

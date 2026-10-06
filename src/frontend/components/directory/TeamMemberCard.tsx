@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Avatar } from "@/frontend/components/ui/Avatar";
 import { LinkButton } from "@/frontend/components/ui/Button";
 import { barberPath, bookingPath } from "@/shared/config/routes";
 import type { PublicBarber } from "@/shared/types/directory";
@@ -9,9 +10,7 @@ export function TeamMemberCard({ barber }: { barber: PublicBarber }) {
   return (
     <article className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5">
       <div className="flex items-center gap-4">
-        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brass font-display text-2xl font-bold text-background">
-          {barber.name.charAt(0).toUpperCase()}
-        </span>
+        <Avatar url={barber.avatarUrl} name={barber.name} size={56} />
         <div>
           <h3 className="text-2xl font-bold">
             <Link href={barberPath(barber.slug)} className="hover:text-brass">

@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/backend/core/server-client";
 import type { DirectoryEntry, OpeningDay, PublicBarber, PublicShop } from "@/shared/types/directory";
+import { avatarUrl } from "@/shared/config/storage";
 import { formatPhone } from "@/shared/validation/phone";
 import { WEEK_DAYS } from "@/shared/validation/schedule";
 import * as q from "./directory.queries";
@@ -18,6 +19,7 @@ export async function getDirectory(search: string | null): Promise<DirectoryEntr
     city: r.city,
     address: r.address,
     bio: r.bio,
+    avatarUrl: avatarUrl(r.avatar_path),
     memberCount: r.member_count,
     minPrice: r.min_price === null ? null : Number(r.min_price),
   }));
@@ -40,6 +42,7 @@ async function loadBarberDetails(barber: {
   address: string;
   phone: string;
   instagram: string | null;
+  avatar_path: string | null;
   shop_id: string | null;
 }): Promise<PublicBarber> {
   const db = await createClient();
@@ -69,6 +72,7 @@ async function loadBarberDetails(barber: {
     slug: barber.slug,
     name: barber.display_name,
     bio: barber.bio,
+    avatarUrl: avatarUrl(barber.avatar_path),
     city: barber.city,
     address: barber.address,
     phone: formatPhone(barber.phone),
@@ -99,6 +103,7 @@ export async function getPublicShop(slug: string): Promise<PublicShop | null> {
     slug: shop.slug,
     name: shop.name,
     bio: shop.bio,
+    avatarUrl: avatarUrl(shop.avatar_path),
     city: shop.city,
     address: shop.address,
     phone: formatPhone(shop.phone),
