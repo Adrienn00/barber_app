@@ -634,6 +634,11 @@ export type Database = {
         Returns: undefined
       }
       admin_stats: { Args: never; Returns: Json }
+      approve_booking: { Args: { p_booking_id: string }; Returns: undefined }
+      cancel_booking: {
+        Args: { p_booking_id: string; p_note?: string }
+        Returns: undefined
+      }
       create_manual_booking: {
         Args: {
           p_customer_id?: string
@@ -646,6 +651,12 @@ export type Database = {
         Returns: string
       }
       decline_shop_invite: { Args: { p_token: string }; Returns: undefined }
+      get_alternative_slots: {
+        Args: { p_booking_id: string }
+        Returns: {
+          starts_at: string
+        }[]
+      }
       get_available_slots: {
         Args: { p_barber_id: string; p_date: string; p_service_id: string }
         Returns: {
@@ -748,6 +759,10 @@ export type Database = {
       }
       reapply_as_barber: { Args: never; Returns: undefined }
       reapply_shop: { Args: never; Returns: undefined }
+      reject_booking: {
+        Args: { p_booking_id: string; p_note?: string }
+        Returns: undefined
+      }
       remove_shop_member: { Args: { p_barber_id: string }; Returns: undefined }
       request_booking: {
         Args: { p_note?: string; p_service_id: string; p_starts_at: string }
