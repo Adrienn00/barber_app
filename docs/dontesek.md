@@ -22,3 +22,13 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 14. **Barberenkénti árlista:** az egységen belül is minden barber a saját szolgáltatásait és árait adja meg.
 15. **A vezető csak látja** a tagjai naptárát (áttekintés); a foglalásokat mindenki maga kezeli. Magánprogramok tartalmát a vezető sem látja, csak hogy az idő foglalt.
 16. **Kilépéskor** a barber újra önálló lesz, a jövőbeli foglalásai nála maradnak.
+
+## Áthelyezés – 2026-10-06
+
+17. **A barber áthelyezheti** a megerősített, jövőbeli foglalást (a naptárban rákattintva vagy áthúzva), kétféleképpen:
+    - **javaslattal:** a vendég elfogadja vagy elutasítja; a válaszra annyi ideje van, mint a barbernek a jóváhagyásra
+      (legkésőbb a régi / új időpont kezdetéig). Addig az új időpont foglalt, és a régi is megmarad.
+      Ha a vendég **nem fogadja el vagy nem válaszol**, a régi időpont marad, és a **barber dönt**: marad a régi, vagy lemondja (indoklással).
+    - **közvetlenül** („már megbeszéltük telefonon”): egy „Biztos?” lépés után azonnal átkerül, a vendég nem kap kérdést,
+      csak a foglalásainál látja: „Áthelyezve (korábban: …)”. Fiók nélküli (kézi) vendégnél csak ez a mód van.
+    - Az áthelyezés – a kézi foglaláshoz hasonlóan – munkaidőn kívülre is lehet, de más foglalással nem ütközhet.

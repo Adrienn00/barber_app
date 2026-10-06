@@ -1,6 +1,7 @@
 const ITEMS = [
   { label: "Megerősített", className: "border-l-4 border-ok bg-ok/25" },
   { label: "Függőben", className: "border-2 border-dashed border-pending bg-pending/15" },
+  { label: "Áthelyezési javaslat", className: "border-2 border-dotted border-brass bg-brass/10" },
   {
     label: "Magánprogram / szünet",
     className:

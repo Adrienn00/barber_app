@@ -17,7 +17,8 @@ backend/
   schedule/    munkaidő (heti sávok) és foglalási szabályok
   directory/   nyilvános oldalak: barberlista (keresés), barber oldala, egység oldala
   booking/     vendég foglalás: szabad időpontok, foglalási kérés, „Foglalásaim”, alternatív időpontok
-  requests/    döntések: függő kérések listája és száma, jóváhagyás, elutasítás, lemondás (barber és vendég)
+  requests/    döntések: függő kérések listája és száma, jóváhagyás, elutasítás, lemondás (barber és vendég),
+               áthelyezés (javaslat / közvetlen), a vendég válasza, a barber döntése elutasított javaslat után
   shops/       egységek (üzletek): létrehozás, meghívók, csatlakozás/kilépés, a vezető áttekintése
   health/      rendszerállapot-ellenőrzés
 ```

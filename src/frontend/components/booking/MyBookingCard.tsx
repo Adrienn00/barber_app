@@ -4,6 +4,7 @@ import { Badge, type BadgeTone } from "@/frontend/components/ui/Badge";
 import { Icon } from "@/frontend/components/ui/Icon";
 import { AlternativeSlots } from "./AlternativeSlots";
 import { CancelMyBooking } from "./CancelMyBooking";
+import { ProposalResponse } from "./ProposalResponse";
 import { barberPath } from "@/shared/config/routes";
 import { formatDateTimeHu, toBucharestTime } from "@/shared/datetime/datetime";
 import type { BookingStatus } from "@/shared/types/domain";
@@ -44,6 +45,15 @@ export function MyBookingCard({ booking }: { booking: MyBooking }) {
       <p className="flex items-center gap-2 text-sm text-muted">
         <Icon name="mapPin" size={16} /> {booking.address}
       </p>
+      {booking.movedFrom && booking.status === "confirmed" && (
+        <p className="text-sm text-brass">Áthelyezve (korábban: {formatDateTimeHu(booking.movedFrom)}).</p>
+      )}
+      {booking.proposal && <ProposalResponse proposal={booking.proposal} />}
+      {booking.awaitingBarberDecision && booking.status === "confirmed" && (
+        <p className="rounded-lg bg-background px-3 py-2 text-sm">
+          A javasolt új időpont nem jött létre – a régi időpontod él. Ha a barbernek mégsem jó, itt látni fogod.
+        </p>
+      )}
       {booking.decisionNote && (
         <p className="rounded-lg bg-background px-3 py-2 text-sm">
           <span className="text-muted">A barber üzenete: </span>

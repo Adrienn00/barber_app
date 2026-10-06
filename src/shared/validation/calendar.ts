@@ -138,3 +138,26 @@ export function validateManualBooking(input: ManualBookingInput): Validated<Manu
     note: input.note.trim() || null,
   });
 }
+
+// -----------------------------------------------------------------------------
+// Áthelyezés: új nap + kezdés, módja (javaslat a vendégnek / közvetlen), üzenet
+// -----------------------------------------------------------------------------
+export type RescheduleMode = "propose" | "move";
+
+export type RescheduleInput = { date: string; time: string; mode: string; note: string };
+
+export type RescheduleData = { startsAt: string; mode: RescheduleMode; note: string | null };
+
+export function validateReschedule(input: RescheduleInput): Validated<RescheduleData> {
+  const errors: Record<string, string> = {};
+  if (!DATE_RE.test(input.date)) errors.date = "Válaszd ki a napot.";
+  if (!TIME_RE.test(input.time)) errors.time = "Add meg az új kezdést.";
+  if (input.mode !== "propose" && input.mode !== "move") errors.mode = "Válaszd ki, hogyan helyezed át.";
+  if (input.note.length > 500) errors.note = "Az üzenet legfeljebb 500 karakter lehet.";
+
+  return result(errors, {
+    startsAt: errors.date || errors.time ? "" : bucharestToUtc(`${input.date}T${input.time}`).toISOString(),
+    mode: input.mode as RescheduleMode,
+    note: input.note.trim() || null,
+  });
+}

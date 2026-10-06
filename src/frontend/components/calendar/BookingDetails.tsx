@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { BookingDecision } from "@/frontend/components/requests/BookingDecision";
+import { WithdrawProposalButton } from "@/frontend/components/requests/WithdrawProposalButton";
+import { Button } from "@/frontend/components/ui/Button";
 import { Badge } from "@/frontend/components/ui/Badge";
 import { Icon } from "@/frontend/components/ui/Icon";
 import { formatDateTimeHu, toBucharestTime } from "@/shared/datetime/datetime";
@@ -11,12 +13,14 @@ import { formatPhone } from "@/shared/validation/phone";
 
 type BookingDetailsProps = {
   booking: CalendarBooking;
-  /** Döntés (jóváhagyás / elutasítás / lemondás) után */
+  /** Döntés (jóváhagyás / elutasítás / lemondás / javaslat visszavonása) után */
   onDone: (state: FormState) => void;
+  /** Az áthelyezés ablakának megnyitása */
+  onReschedule: () => void;
 };
 
 /** Egy foglalás részletei: vendég, telefon (hívható), szolgáltatás, időpont, megjegyzés – és a döntés gombjai. */
-export function BookingDetails({ booking, onDone }: BookingDetailsProps) {
+export function BookingDetails({ booking, onDone, onReschedule }: BookingDetailsProps) {
   // A megnyitás pillanatához mérve (a múltbeli foglaláson már nincs mit dönteni)
   const [openedAt] = useState(() => Date.now());
   const isFuture = new Date(booking.endsAt).getTime() > openedAt;
@@ -25,6 +29,7 @@ export function BookingDetails({ booking, onDone }: BookingDetailsProps) {
       <div className="flex flex-wrap items-center gap-2">
         {booking.status === "pending" ? <Badge tone="warning">Függőben</Badge> : <Badge tone="success">Megerősítve</Badge>}
         {booking.isGuest && <Badge>Kézi foglalás</Badge>}
+        {booking.movedFrom && <Badge>Áthelyezve (korábban: {formatDateTimeHu(booking.movedFrom)})</Badge>}
       </div>
 
       <dl className="space-y-3">
@@ -53,6 +58,22 @@ export function BookingDetails({ booking, onDone }: BookingDetailsProps) {
         </p>
       )}
 
+      {booking.proposal && (
+        <div className="space-y-3 rounded-lg border border-dotted border-brass px-4 py-3">
+          <p className="text-sm">
+            Javasolt új időpont: <span className="font-semibold text-brass">{formatDateTimeHu(booking.proposal.startsAt)}</span>
+            <br />
+            <span className="text-muted">A vendég válaszára vár ({formatDateTimeHu(booking.proposal.expiresAt)}-ig).</span>
+          </p>
+          <WithdrawProposalButton rescheduleId={booking.proposal.id} onDone={onDone} />
+        </div>
+      )}
+
+      {isFuture && booking.status === "confirmed" && (
+        <Button variant="secondary" fullWidth onClick={onReschedule}>
+          Áthelyezés másik időpontra
+        </Button>
+      )}
       {isFuture && (booking.status === "pending" || booking.status === "confirmed") && (
         <BookingDecision bookingId={booking.id} status={booking.status} onDone={onDone} />
       )}

@@ -21,6 +21,26 @@ export type CalendarBooking = {
   /** Kézi foglalás fiók nélküli vendégnek */
   isGuest: boolean;
   note: string | null;
+  /** Ha a barber áthelyezte: a korábbi kezdés */
+  movedFrom: string | null;
+  /** Függő áthelyezési javaslat (a vendég válaszára vár) */
+  proposal: { id: string; startsAt: string; expiresAt: string } | null;
+};
+
+/** Függő áthelyezési javaslat a naptárban: az új időpont foglalt, amíg a vendég nem válaszol */
+export type CalendarProposal = {
+  kind: "proposal";
+  id: string;
+  bookingId: string;
+  startsAt: string;
+  endsAt: string;
+  startLocal: string;
+  endLocal: string;
+  /** A foglalás jelenlegi kezdése */
+  currentStartsAt: string;
+  expiresAt: string;
+  serviceName: string;
+  customerName: string;
 };
 
 export type CalendarPrivateEvent = {
@@ -44,6 +64,7 @@ export type WorkingHoursSlot = { weekday: number; start: string; end: string };
 
 export type CalendarData = {
   bookings: CalendarBooking[];
+  proposals: CalendarProposal[];
   privateEvents: CalendarPrivateEvent[];
   workingHours: WorkingHoursSlot[];
 };

@@ -92,3 +92,10 @@
 .fc .fc-timegrid-event-short .fc-event-time::after {
   content: " ·";
 }
+
+/* Áthelyezési javaslat: az új időpont foglalt, amíg a vendég nem válaszol (arany, pontozott keret) */
+.fc .ct-event-proposal {
+  background: rgba(212, 169, 94, 0.12);
+  border: 2px dotted var(--color-brass);
+  opacity: 0.9;
+}

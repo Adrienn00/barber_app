@@ -180,6 +180,76 @@ export type Database = {
           },
         ]
       }
+      booking_reschedules: {
+        Row: {
+          barber_id: string
+          block_end: string
+          booking_id: string
+          created_at: string
+          customer_id: string
+          decided_at: string | null
+          ends_at: string
+          expires_at: string
+          id: string
+          needs_decision: boolean
+          note: string | null
+          starts_at: string
+          status: string
+        }
+        Insert: {
+          barber_id: string
+          block_end: string
+          booking_id: string
+          created_at?: string
+          customer_id: string
+          decided_at?: string | null
+          ends_at: string
+          expires_at: string
+          id?: string
+          needs_decision?: boolean
+          note?: string | null
+          starts_at: string
+          status?: string
+        }
+        Update: {
+          barber_id?: string
+          block_end?: string
+          booking_id?: string
+          created_at?: string
+          customer_id?: string
+          decided_at?: string | null
+          ends_at?: string
+          expires_at?: string
+          id?: string
+          needs_decision?: boolean
+          note?: string | null
+          starts_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_reschedules_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_reschedules_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_reschedules_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           barber_id: string
@@ -196,6 +266,7 @@ export type Database = {
           guest_phone: string | null
           id: string
           is_anonymized: boolean
+          moved_from: string | null
           service_id: string
           starts_at: string
           status: Database["public"]["Enums"]["booking_status"]
@@ -215,6 +286,7 @@ export type Database = {
           guest_phone?: string | null
           id?: string
           is_anonymized?: boolean
+          moved_from?: string | null
           service_id: string
           starts_at: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -234,6 +306,7 @@ export type Database = {
           guest_phone?: string | null
           id?: string
           is_anonymized?: boolean
+          moved_from?: string | null
           service_id?: string
           starts_at?: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -666,6 +739,7 @@ export type Database = {
       get_my_bookings: {
         Args: never
         Returns: {
+          awaiting_barber_decision: boolean
           barber_address: string
           barber_city: string
           barber_name: string
@@ -678,7 +752,13 @@ export type Database = {
           ends_at: string
           expires_at: string
           id: string
+          moved_from: string
           price: number
+          proposal_ends_at: string
+          proposal_expires_at: string
+          proposal_id: string
+          proposal_note: string
+          proposal_starts_at: string
           service_id: string
           service_name: string
           starts_at: string
@@ -758,6 +838,14 @@ export type Database = {
           slug: string
         }[]
       }
+      move_booking: {
+        Args: { p_booking_id: string; p_note?: string; p_starts_at: string }
+        Returns: undefined
+      }
+      propose_reschedule: {
+        Args: { p_booking_id: string; p_note?: string; p_starts_at: string }
+        Returns: string
+      }
       reapply_as_barber: { Args: never; Returns: undefined }
       reapply_shop: { Args: never; Returns: undefined }
       reject_booking: {
@@ -769,8 +857,20 @@ export type Database = {
         Args: { p_note?: string; p_service_id: string; p_starts_at: string }
         Returns: string
       }
+      resolve_reschedule: {
+        Args: { p_keep: boolean; p_note?: string; p_reschedule_id: string }
+        Returns: undefined
+      }
+      respond_reschedule: {
+        Args: { p_accept: boolean; p_reschedule_id: string }
+        Returns: undefined
+      }
       set_my_working_hours: { Args: { p_slots: Json }; Returns: undefined }
       timemultirange: { Args: never; Returns: unknown }
+      withdraw_reschedule: {
+        Args: { p_reschedule_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       barber_status: "pending" | "approved" | "rejected" | "suspended"

@@ -6,6 +6,7 @@ import type {
   CalendarBooking,
   CalendarData,
   CalendarPrivateEvent,
+  CalendarProposal,
   CustomerOption,
   ServiceOption,
 } from "@/shared/types/calendar";
@@ -21,11 +22,15 @@ type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string };
 /** A naptár egy időszakra (pl. a látható hét): foglalások + magánprogram-alkalmak + munkaidő */
 export async function getCalendar(barberId: string, from: string, to: string): Promise<CalendarData> {
   const db = await createClient();
-  const [bookings, occurrences, hours] = await Promise.all([
+  const [bookings, proposals, occurrences, hours] = await Promise.all([
     q.selectBookingsInRange(db, barberId, from, to),
+    q.selectPendingReschedules(db, barberId),
     q.selectPrivateOccurrences(db, from, to),
     q.selectWorkingHours(db, barberId),
   ]);
+
+  const pending = proposals.data ?? [];
+  const proposalOf = new Map(pending.map((r) => [r.booking_id, r]));
 
   return {
     bookings: (bookings.data ?? []).map(
@@ -43,8 +48,30 @@ export async function getCalendar(barberId: string, from: string, to: string): P
         customerPhone: b.customer?.phone ?? b.guest_phone ?? null,
         isGuest: !b.customer && Boolean(b.guest_name),
         note: b.customer_note,
+        movedFrom: b.moved_from,
+        proposal: proposalOf.has(b.id)
+          ? { id: proposalOf.get(b.id)!.id, startsAt: proposalOf.get(b.id)!.starts_at, expiresAt: proposalOf.get(b.id)!.expires_at }
+          : null,
       }),
     ),
+    // Csak a látható időszakba eső javaslatok
+    proposals: pending
+      .filter((r) => r.starts_at < to && r.ends_at > from)
+      .map(
+        (r): CalendarProposal => ({
+          kind: "proposal",
+          id: r.id,
+          bookingId: r.booking_id,
+          startsAt: r.starts_at,
+          endsAt: r.ends_at,
+          startLocal: toBucharestLocal(r.starts_at),
+          endLocal: toBucharestLocal(r.ends_at),
+          currentStartsAt: r.booking?.starts_at ?? "",
+          expiresAt: r.expires_at,
+          serviceName: r.booking?.service?.name ?? "",
+          customerName: r.customer?.full_name ?? "Vendég",
+        }),
+      ),
     privateEvents: (occurrences.data ?? []).map(
       (o): CalendarPrivateEvent => ({
         kind: "private",

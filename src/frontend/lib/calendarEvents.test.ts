@@ -18,6 +18,40 @@ const data: CalendarData = {
       customerPhone: "+40745123456",
       isGuest: false,
       note: null,
+      movedFrom: null,
+      proposal: null,
+    },
+    {
+      kind: "booking",
+      id: "b2",
+      status: "confirmed",
+      startsAt: "2026-10-05T08:00:00Z",
+      endsAt: "2026-10-05T08:30:00Z",
+      startLocal: "2026-10-05T11:00:00",
+      endLocal: "2026-10-05T11:30:00",
+      serviceName: "Szakáll",
+      price: 40,
+      customerName: "Fekete Béla",
+      customerPhone: null,
+      isGuest: false,
+      note: null,
+      movedFrom: null,
+      proposal: { id: "r1", startsAt: "2026-10-06T08:00:00Z", expiresAt: "2026-10-05T07:00:00Z" },
+    },
+  ],
+  proposals: [
+    {
+      kind: "proposal",
+      id: "r1",
+      bookingId: "b2",
+      startsAt: "2026-10-06T08:00:00Z",
+      endsAt: "2026-10-06T08:30:00Z",
+      startLocal: "2026-10-06T11:00:00",
+      endLocal: "2026-10-06T11:30:00",
+      currentStartsAt: "2026-10-05T08:00:00Z",
+      expiresAt: "2026-10-05T07:00:00Z",
+      serviceName: "Szakáll",
+      customerName: "Fekete Béla",
     },
   ],
   privateEvents: [
@@ -55,9 +89,10 @@ const data: CalendarData = {
 
 describe("toEventInputs", () => {
   const events = toEventInputs(data);
+  const byId = (id: string) => events.find((e) => e.id === id)!;
 
   it("helyi (lebegő) időt ad a naptárnak, színosztállyal", () => {
-    expect(events[0]).toMatchObject({
+    expect(byId("booking:b1")).toMatchObject({
       title: "Tóth Anna · Hajvágás",
       start: "2026-10-05T10:00:00",
       classNames: ["ct-event", "ct-event-pending"],
@@ -66,12 +101,22 @@ describe("toEventInputs", () => {
   });
 
   it("egy rövid szünet is külön, húzható eseményként jelenik meg", () => {
-    expect(events[1]).toMatchObject({ title: "Szünet", end: "2026-10-06T12:15:00", editable: true });
-    expect(events[1].classNames).toContain("ct-event-private");
+    expect(byId("private:e1:2026-10-06")).toMatchObject({ title: "Szünet", end: "2026-10-06T12:15:00", editable: true });
+    expect(byId("private:e1:2026-10-06").classNames).toContain("ct-event-private");
   });
 
   it("heti sorozat alkalma nem húzható (a szerkesztőben módosítható)", () => {
-    expect(events[2]).toMatchObject({ id: "private:e2:2026-10-07", editable: false });
+    expect(byId("private:e2:2026-10-07")).toMatchObject({ editable: false });
+  });
+
+  it("megerősített foglalás húzható (áthelyezés), de nem nyújtható; a javaslat külön, mozdíthatatlan esemény", () => {
+    expect(byId("booking:b2")).toMatchObject({ editable: true, durationEditable: false });
+    expect(byId("proposal:r1")).toMatchObject({
+      title: "Javaslat: Fekete Béla · Szakáll",
+      start: "2026-10-06T11:00:00",
+      classNames: ["ct-event", "ct-event-proposal"],
+      editable: false,
+    });
   });
 });
 

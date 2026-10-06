@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { createClient } from "./supabase-browser";
 
 /**
- * Élő frissítés: ha egy foglalás megváltozik (új kérés, jóváhagyás, lemondás, lejárat), meghívja a callbacket.
+ * Élő frissítés: ha egy foglalás vagy áthelyezési javaslat megváltozik (új kérés, jóváhagyás, lemondás,
+ * lejárat, javaslat, válasz), meghívja a callbacket. A két táblában ugyanazok a szűrhető oszlopok vannak.
  * A szűrő pl. `barber_id=eq.<id>` vagy `customer_id=eq.<id>`; az RLS miatt úgyis csak a saját sorok jönnek.
  */
 export function useBookingChanges(filter: string, onChange: () => void) {
@@ -25,13 +26,15 @@ export function useBookingChanges(filter: string, onChange: () => void) {
       if (closed || !data.session) return;
       await supabase.realtime.setAuth(data.session.access_token);
       if (closed) return;
+      const notify = () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => callbackRef.current(), 300);
+      };
       channel = supabase
         // Egyedi név: ugyanarra a szűrőre több komponens is figyelhet (fejléc + naptár)
         .channel(`bookings:${filter}:${crypto.randomUUID()}`)
-        .on("postgres_changes", { event: "*", schema: "public", table: "bookings", filter }, () => {
-          clearTimeout(timer);
-          timer = setTimeout(() => callbackRef.current(), 300);
-        })
+        .on("postgres_changes", { event: "*", schema: "public", table: "bookings", filter }, notify)
+        .on("postgres_changes", { event: "*", schema: "public", table: "booking_reschedules", filter }, notify)
         .subscribe();
     });
 

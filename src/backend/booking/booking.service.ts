@@ -39,6 +39,12 @@ export type MyBooking = {
   note: string | null;
   decisionNote: string | null;
   cancelledBy: "customer" | "barber" | null;
+  /** Ha a barber áthelyezte: a korábbi kezdés */
+  movedFrom: string | null;
+  /** A barber függő áthelyezési javaslata (a vendég válaszára vár) */
+  proposal: { id: string; startsAt: string; endsAt: string; expiresAt: string; note: string | null } | null;
+  /** A javaslatra nemet mondott / nem válaszolt; a barber még dönt a régi időpontról */
+  awaitingBarberDecision: boolean;
   serviceId: string;
   serviceName: string;
   price: number;
@@ -78,6 +84,17 @@ export async function getMyBookings(): Promise<MyBookingGroups> {
       note: b.customer_note,
       decisionNote: b.decision_note,
       cancelledBy: b.cancelled_by,
+      movedFrom: b.moved_from,
+      proposal: b.proposal_id
+        ? {
+            id: b.proposal_id,
+            startsAt: b.proposal_starts_at!,
+            endsAt: b.proposal_ends_at!,
+            expiresAt: b.proposal_expires_at!,
+            note: b.proposal_note,
+          }
+        : null,
+      awaitingBarberDecision: b.awaiting_barber_decision,
       serviceId: b.service_id,
       serviceName: b.service_name,
       price: Number(b.price),

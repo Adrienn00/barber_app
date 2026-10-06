@@ -38,7 +38,7 @@ export async function loadCalendarAction(from: string, to: string): Promise<Cale
   const end = new Date(to);
   const days = (end.getTime() - start.getTime()) / 86_400_000;
   if (Number.isNaN(days) || days <= 0 || days > MAX_RANGE_DAYS) {
-    return { bookings: [], privateEvents: [], workingHours: [] };
+    return { bookings: [], proposals: [], privateEvents: [], workingHours: [] };
   }
   return getCalendar(barberId, start.toISOString(), end.toISOString());
 }

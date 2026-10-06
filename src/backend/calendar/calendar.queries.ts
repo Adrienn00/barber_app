@@ -15,7 +15,7 @@ export function selectBookingsInRange(db: DbClient, barberId: string, from: stri
   return db
     .from("bookings")
     .select(
-      `id, status, starts_at, ends_at, guest_name, guest_phone, customer_note,
+      `id, status, starts_at, ends_at, guest_name, guest_phone, customer_note, moved_from,
        service:services(name, price),
        customer:profiles!bookings_customer_id_fkey(full_name, phone)`,
     )
@@ -24,6 +24,20 @@ export function selectBookingsInRange(db: DbClient, barberId: string, from: stri
     .lt("starts_at", to)
     .gt("ends_at", from)
     .order("starts_at");
+}
+
+/** A barber függő (még érvényes) áthelyezési javaslatai – a foglaláshoz és a naptárhoz */
+export function selectPendingReschedules(db: DbClient, barberId: string) {
+  return db
+    .from("booking_reschedules")
+    .select(
+      `id, booking_id, starts_at, ends_at, expires_at,
+       booking:bookings(starts_at, service:services(name)),
+       customer:profiles(full_name)`,
+    )
+    .eq("barber_id", barberId)
+    .eq("status", "pending")
+    .gt("expires_at", new Date().toISOString());
 }
 
 /** Magánprogram-alkalmak (heti ismétlődés kibontva, kihagyások nélkül) – az adatbázis számolja */

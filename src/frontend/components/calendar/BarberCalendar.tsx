@@ -21,6 +21,9 @@ import { floatingToLocal, floatingToUtcIso, toBucharestLocal } from "@/shared/da
 import type { CalendarData, CustomerOption, ServiceOption } from "@/shared/types/calendar";
 import type { FormState } from "@/shared/types/form";
 import type { PrivateEventInput } from "@/shared/validation/calendar";
+import { ProposalDetails } from "@/frontend/components/requests/ProposalDetails";
+import { RescheduleForm } from "@/frontend/components/requests/RescheduleForm";
+import type { CalendarBooking } from "@/shared/types/calendar";
 import { BookingDetails } from "./BookingDetails";
 import { CalendarLegend } from "./CalendarLegend";
 import { NewEntryPanel } from "./NewEntryPanel";
@@ -41,11 +44,12 @@ type DialogState =
   | { type: "new"; slot: Slot }
   | { type: "details"; item: CalendarItem }
   | { type: "edit"; initial: PrivateEventInput & { id: string } }
+  | { type: "reschedule"; booking: CalendarBooking; date: string; time: string }
   | null;
 
 type Notice = Pick<FormState, "success" | "warning" | "error">;
 
-const EMPTY: CalendarData = { bookings: [], privateEvents: [], workingHours: [] };
+const EMPTY: CalendarData = { bookings: [], proposals: [], privateEvents: [], workingHours: [] };
 
 // A naptár csak a böngészőben jelenik meg, és a képernyőmérethez igazítja a nézetet
 const MOBILE_QUERY = "(max-width: 767px)";
@@ -123,11 +127,22 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
   async function handleEventChange(arg: EventChangeArg) {
     const item = arg.event.extendedProps.item as CalendarItem;
     const { start, end } = arg.event;
+    // Foglalás áthúzása: visszaugrik, és megnyílik az áthelyezés ablaka az új hellyel kitöltve
+    if (item.kind === "booking" && start) {
+      arg.revert();
+      const local = floatingToLocal(start);
+      return openReschedule(item, local.slice(0, 10), local.slice(11, 16));
+    }
     if (item.kind !== "private" || !start) return arg.revert();
     const fallbackEnd = new Date(start.getTime() + (arg.event.allDay ? 86_400_000 : 30 * 60_000));
     const result = await movePrivateEventAction(item.eventId, floatingToUtcIso(start), floatingToUtcIso(end ?? fallbackEnd));
     if (result.error) arg.revert();
     handleDone(result);
+  }
+
+  function openReschedule(booking: CalendarBooking, date?: string, time?: string) {
+    const current = toBucharestLocal(booking.startsAt);
+    setDialog({ type: "reschedule", booking, date: date ?? current.slice(0, 10), time: time ?? current.slice(11, 16) });
   }
 
   async function openEditor(eventId: string) {
@@ -229,16 +244,41 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
             ? "Új bejegyzés"
             : dialog?.type === "edit"
               ? "Program szerkesztése"
-              : dialog?.type === "details" && dialog.item.kind === "private"
-                ? dialog.item.title
-                : "Foglalás"
+              : dialog?.type === "reschedule"
+                ? "Áthelyezés"
+                : dialog?.type === "details" && dialog.item.kind === "private"
+                  ? dialog.item.title
+                  : dialog?.type === "details" && dialog.item.kind === "proposal"
+                    ? "Áthelyezési javaslat"
+                    : "Foglalás"
         }
       >
         {dialog?.type === "new" && (
           <NewEntryPanel slot={dialog.slot} services={services} customers={customers} onSaved={handleDone} />
         )}
         {dialog?.type === "edit" && <PrivateEventForm initial={dialog.initial} onSaved={handleDone} />}
-        {dialog?.type === "details" && dialog.item.kind === "booking" && <BookingDetails booking={dialog.item} onDone={handleDone} />}
+        {dialog?.type === "details" && dialog.item.kind === "booking" && (
+          <BookingDetails
+            booking={dialog.item}
+            onDone={handleDone}
+            onReschedule={() => openReschedule(dialog.item as CalendarBooking)}
+          />
+        )}
+        {dialog?.type === "details" && dialog.item.kind === "proposal" && (
+          <ProposalDetails proposal={dialog.item} onDone={handleDone} />
+        )}
+        {dialog?.type === "reschedule" && (
+          <RescheduleForm
+            bookingId={dialog.booking.id}
+            currentStartsAt={dialog.booking.startsAt}
+            customerName={dialog.booking.customerName}
+            isGuest={dialog.booking.isGuest}
+            initialDate={dialog.date}
+            initialTime={dialog.time}
+            onDone={handleDone}
+            onCancel={() => setDialog(null)}
+          />
+        )}
         {dialog?.type === "details" && dialog.item.kind === "private" && (
           <PrivateEventDetails
             event={dialog.item}

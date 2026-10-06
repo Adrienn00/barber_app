@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type PrivateEventInput, validateManualBooking, validatePrivateEvent } from "./calendar";
+import { type PrivateEventInput, validateManualBooking, validatePrivateEvent, validateReschedule } from "./calendar";
 
 const base: PrivateEventInput = {
   title: "Orvos",
@@ -76,5 +76,18 @@ describe("validateManualBooking", () => {
     const r = validateManualBooking({ ...input, serviceId: "", time: "25:00", guestName: "", guestPhone: "12" });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(Object.keys(r.fieldErrors).sort()).toEqual(["guestName", "guestPhone", "serviceId", "time"]);
+  });
+});
+
+describe("validateReschedule", () => {
+  it("helyi időből UTC-t számol (nyári idő: +3 óra)", () => {
+    const r = validateReschedule({ date: "2026-07-14", time: "16:30", mode: "propose", note: "  Jó így?  " });
+    expect(r).toEqual({ ok: true, data: { startsAt: "2026-07-14T13:30:00.000Z", mode: "propose", note: "Jó így?" } });
+  });
+
+  it("hiányzó nap / idő / mód, túl hosszú üzenet", () => {
+    const r = validateReschedule({ date: "", time: "25:00", mode: "x", note: "a".repeat(501) });
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(Object.keys(r.fieldErrors).sort()).toEqual(["date", "mode", "note", "time"]);
   });
 });

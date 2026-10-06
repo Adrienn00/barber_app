@@ -16,14 +16,14 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | `(barber)/layout.tsx` | – | jóváhagyott barber | védi a barber oldalakat |
 | `(barber)/naptar/page.tsx` | `/naptar` | jóváhagyott barber | naptár: foglalások, programok, gyors szünet, kézi foglalás |
 | `(barber)/beallitasok/page.tsx` | `/beallitasok` | jóváhagyott barber | beállítások: szolgáltatások, munkaidő, foglalási szabályok |
-| `(barber)/keresek/page.tsx` | `/keresek` | jóváhagyott barber | függő kérések: jóváhagyás / elutasítás, élőben frissül |
+| `(barber)/keresek/page.tsx` | `/keresek` | jóváhagyott barber | függő kérések: jóváhagyás / elutasítás; áthelyezés utáni döntések; a vendég válaszára váró javaslatok; élőben frissül |
 | `(barber)/egysegem/page.tsx` | `/egysegem` | jóváhagyott barber | egység: létrehozás; vezetőként csapat, meghívók, áttekintés; tagként kilépés |
 | `meghivas/[token]/page.tsx` | `/meghivas/…` | bejelentkezett | meghívó egy egységbe: elfogadás / elutasítás |
 | `barberek/page.tsx` | `/barberek` | mindenki | kereshető lista: egységek és önálló barberek |
 | `b/[slug]/page.tsx` | `/b/…` | mindenki | barber nyilvános oldala (árlista, nyitvatartás) |
 | `b/[slug]/foglalas/page.tsx` | `/b/…/foglalas` | mindenki (küldéshez belépés) | foglalás: szolgáltatás → időpont → megerősítés |
 | `u/[slug]/page.tsx` | `/u/…` | mindenki | egység oldala a csapattal |
-| `foglalasaim/page.tsx` | `/foglalasaim` | bejelentkezett | a vendég foglalásai: lemondás, másik időpont kérése; élőben frissül |
+| `foglalasaim/page.tsx` | `/foglalasaim` | bejelentkezett | a vendég foglalásai: lemondás, másik időpont kérése, válasz az áthelyezési javaslatra; élőben frissül |
 | `platform/page.tsx` | `/platform` | admin | barberek és egységek jóváhagyása, alapszámok |
 | `allapot/page.tsx` | `/allapot` | mindenki | technikai állapot |
 | `aszf/`, `adatvedelem/` | `/aszf`, `/adatvedelem` | mindenki | jogi oldalak (szöveg a 8. fázisban) |
