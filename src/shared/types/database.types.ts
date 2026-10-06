@@ -652,6 +652,27 @@ export type Database = {
           starts_at: string
         }[]
       }
+      get_my_bookings: {
+        Args: never
+        Returns: {
+          barber_address: string
+          barber_city: string
+          barber_name: string
+          barber_phone: string
+          barber_slug: string
+          cancel_limit_hours: number
+          cancelled_by: Database["public"]["Enums"]["cancelled_by"]
+          customer_note: string
+          decision_note: string
+          ends_at: string
+          expires_at: string
+          id: string
+          price: number
+          service_name: string
+          starts_at: string
+          status: Database["public"]["Enums"]["booking_status"]
+        }[]
+      }
       get_my_private_event_occurrences: {
         Args: { p_from: string; p_to: string }
         Returns: {
@@ -711,6 +732,20 @@ export type Database = {
         }[]
       }
       leave_shop: { Args: never; Returns: undefined }
+      list_directory: {
+        Args: { p_search?: string }
+        Returns: {
+          address: string
+          avatar_path: string
+          bio: string
+          city: string
+          kind: string
+          member_count: number
+          min_price: number
+          name: string
+          slug: string
+        }[]
+      }
       reapply_as_barber: { Args: never; Returns: undefined }
       reapply_shop: { Args: never; Returns: undefined }
       remove_shop_member: { Args: { p_barber_id: string }; Returns: undefined }

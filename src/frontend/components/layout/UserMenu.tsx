@@ -31,6 +31,7 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
       : []),
     ...(user.isAdmin ? [{ href: ROUTES.platform, label: "Platform admin" }] : []),
     ...(!user.isApprovedBarber ? [{ href: ROUTES.becomeBarber, label: "Barber vagyok" }] : []),
+    { href: ROUTES.myBookings, label: "Foglalásaim" },
     { href: ROUTES.profile, label: "Profilom" },
   ];
 

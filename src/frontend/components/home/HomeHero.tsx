@@ -1,4 +1,4 @@
-import { Button, LinkButton } from "@/frontend/components/ui/Button";
+import { LinkButton } from "@/frontend/components/ui/Button";
 import { Eyebrow } from "@/frontend/components/ui/Eyebrow";
 import { Icon } from "@/frontend/components/ui/Icon";
 import { ROUTES } from "@/shared/config/routes";
@@ -32,10 +32,9 @@ export function HomeHero() {
           Válaszd ki a barbered, a szolgáltatást és egy szabad időpontot – egyszerűen, gyorsan, akár telefonról is.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
-          {/* A barberlista a 4. fázisban készül el */}
-          <Button disabled>
-            <Icon name="calendar" /> Időpontot foglalok – hamarosan
-          </Button>
+          <LinkButton href={ROUTES.barbers}>
+            <Icon name="calendar" /> Időpontot foglalok
+          </LinkButton>
           <LinkButton href={ROUTES.becomeBarber} variant="secondary">
             Barber vagyok, csatlakozom
           </LinkButton>

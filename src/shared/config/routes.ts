@@ -21,6 +21,8 @@ export const ROUTES = {
   invite: "/meghivas",
   /** Egység nyilvános oldala: /u/[slug] */
   shopPage: "/u",
+  /** Barber nyilvános oldala: /b/[slug], foglalás: /b/[slug]/foglalas */
+  barberPage: "/b",
   privacy: "/adatvedelem",
   terms: "/aszf",
 } as const;
@@ -62,3 +64,11 @@ export function afterLoginPath(next?: string | null): string {
 export function loginPath(next?: string): string {
   return next ? `${ROUTES.login}?next=${encodeURIComponent(next)}` : ROUTES.login;
 }
+
+/** Barber nyilvános oldala */
+export const barberPath = (slug: string) => `${ROUTES.barberPage}/${slug}`;
+/** Foglalás egy barbernél (opcionálisan előre kiválasztott szolgáltatással) */
+export const bookingPath = (slug: string, serviceId?: string) =>
+  `${ROUTES.barberPage}/${slug}/foglalas${serviceId ? `?szolgaltatas=${serviceId}` : ""}`;
+/** Egység nyilvános oldala */
+export const shopPath = (slug: string) => `${ROUTES.shopPage}/${slug}`;
