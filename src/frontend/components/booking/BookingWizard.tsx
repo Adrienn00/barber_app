@@ -27,6 +27,8 @@ type BookingWizardProps = {
   initialStartsAt?: string;
   /** Ide tér vissza belépés / profil kitöltése után */
   backTo: string;
+  /** Be van-e lépve a vendég (ha nem, a küldés előtt belépteti, majd ide visszahozza) */
+  isLoggedIn: boolean;
 };
 
 const STEPS = ["Szolgáltatás", "Időpont", "Megerősítés"];
@@ -35,7 +37,7 @@ const STEPS = ["Szolgáltatás", "Időpont", "Megerősítés"];
  * Foglalás lépésekben: szolgáltatás → nap és szabad időpont → megerősítés (megjegyzéssel).
  * A szabad időpontokat az adatbázis számolja; elküldéskor újra ellenőrzi, hogy még szabad-e.
  */
-export function BookingWizard({ barber, services, days, initialServiceId, initialStartsAt, backTo }: BookingWizardProps) {
+export function BookingWizard({ barber, services, days, initialServiceId, initialStartsAt, backTo, isLoggedIn }: BookingWizardProps) {
   const [service, setService] = useState<PublicService | null>(
     services.find((s) => s.id === initialServiceId) ?? (services.length === 1 ? services[0] : null),
   );
@@ -155,13 +157,20 @@ export function BookingWizard({ barber, services, days, initialServiceId, initia
             defaultValue={state.values?.note}
             error={state.fieldErrors?.note}
           />
-          <p className="text-sm text-muted">A foglalás a barber jóváhagyásával válik véglegessé – erről értesítünk.</p>
+          {isLoggedIn ? (
+            <p className="text-sm text-muted">A foglalás a barber jóváhagyásával válik véglegessé – erről értesítünk.</p>
+          ) : (
+            <Alert tone="info">
+              A kérés elküldéséhez be kell lépned (vagy regisztrálnod – egy perc). Utána ide térsz vissza, a választásod
+              megmarad.
+            </Alert>
+          )}
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button variant="secondary" onClick={() => setStep(1)}>
               Vissza
             </Button>
-            <SubmitButton pendingText="Küldés…" forcePending={redirecting}>
-              Foglalási kérés küldése
+            <SubmitButton pendingText={isLoggedIn ? "Küldés…" : "Átirányítás…"} forcePending={redirecting}>
+              {isLoggedIn ? "Foglalási kérés küldése" : "Belépés és foglalás"}
             </SubmitButton>
           </div>
         </form>

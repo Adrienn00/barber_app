@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getCurrentUser } from "@/backend/auth/auth.service";
 import { getPublicBarber } from "@/backend/directory/directory.service";
 import { BookingWizard } from "@/frontend/components/booking/BookingWizard";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
@@ -19,7 +20,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
   const query = await searchParams;
   const serviceParam = query.szolgaltatas;
   const startsParam = query.idopont;
-  const barber = await getPublicBarber(slug);
+  const [barber, user] = await Promise.all([getPublicBarber(slug), getCurrentUser()]);
   if (!barber) notFound();
 
   const openWeekdays = barber.openingHours.filter((d) => d.ranges.length > 0).map((d) => d.weekday);
@@ -35,6 +36,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
           initialServiceId={typeof serviceParam === "string" ? serviceParam : undefined}
           initialStartsAt={typeof startsParam === "string" ? startsParam : undefined}
           backTo={bookingPath(barber.slug)}
+          isLoggedIn={Boolean(user)}
         />
       ) : (
         <Alert tone="info">{barber.name} jelenleg nem fogad online foglalást.</Alert>
