@@ -59,8 +59,9 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     Admin fiók itt nem törölhető.
 23. **Elfelejtett jelszó** e-mailes linkkel; az e-mailes linkek (megerősítés, visszaállítás) bármelyik böngészőben
     működnek (`/auth/confirm`), nem csak abban, ahol kérték. A levelek magyarok (`supabase/templates/`).
-24. **E-mail értesítés** (Resend, saját domainről): minden értesítés e-mailben is (a próba értesítés kivételével),
-    egyszer. Csak `EMAIL_ENABLED=true` és igazolt domain mellett.
+24. **E-mail értesítés**: minden értesítés e-mailben is (a próba értesítés kivételével), egyszer. **Domain nélkül a Brevo
+    küldi** (napi 300 ingyen, a Brevóban igazolt feladó címről) – az auth-levelek (megerősítés, elfelejtett jelszó) is a
+    Brevo SMTP-n mennek. Saját domainnel később Brevo vagy Resend. Az app a `vercel.app` címen indul (2026-10-06).
 25. **Jogi szövegek**: tervezet a tényleges működés alapján; az üzemeltető adatai a `src/shared/config/legal.ts`-ben,
     amíg hiányoznak, „Tervezet” figyelmeztetés látszik. Élesítés előtt jogásszal átnézetni javasolt.
 26. A `npm run db:reset` előtt megerősítés kell („igen”), mert a helyi adatokat törli.

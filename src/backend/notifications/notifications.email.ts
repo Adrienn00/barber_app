@@ -1,18 +1,32 @@
 import "server-only";
 
 // =============================================================================
-// E-mail csatorna (Resend). Csak akkor küld, ha be van kapcsolva:
-//   EMAIL_ENABLED=true, RESEND_API_KEY, EMAIL_FROM (pl. "ChairTime <ertesites@chairtime.ro>"), APP_URL
-// A Resend csak igazolt saját domainről enged küldeni – ezért kapcsoljuk be az élesítéskor (8. fázis).
+// E-mail csatorna. Csak akkor küld, ha be van kapcsolva:
+//   EMAIL_ENABLED=true, EMAIL_FROM (pl. "ChairTime <chairtime.ertesites@gmail.com>"), APP_URL, és a szolgáltató:
+//   - EMAIL_PROVIDER=brevo  + BREVO_API_KEY  – domain nélkül is (a Brevóban igazolt feladó címről), napi 300 ingyen
+//   - EMAIL_PROVIDER=resend + RESEND_API_KEY – csak igazolt saját domainről
 // =============================================================================
 
 export type EmailMessage = { to: string; title: string; body: string; url: string };
 
+type Provider = "brevo" | "resend";
+
+function provider(): Provider {
+  return process.env.EMAIL_PROVIDER === "resend" ? "resend" : "brevo";
+}
+
+function apiKey(): string | undefined {
+  return provider() === "brevo" ? process.env.BREVO_API_KEY : process.env.RESEND_API_KEY;
+}
+
 export function isEmailEnabled(): boolean {
-  return (
-    process.env.EMAIL_ENABLED === "true" &&
-    Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM && process.env.APP_URL)
-  );
+  return process.env.EMAIL_ENABLED === "true" && Boolean(apiKey() && process.env.EMAIL_FROM && process.env.APP_URL);
+}
+
+/** "ChairTime <cim@pelda.hu>" → { name: "ChairTime", email: "cim@pelda.hu" } */
+export function parseSender(from: string): { name?: string; email: string } {
+  const match = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  return match ? { name: match[1] || undefined, email: match[2] } : { email: from.trim() };
 }
 
 function escapeHtml(text: string): string {
@@ -42,12 +56,26 @@ export function renderEmail(message: Omit<EmailMessage, "to">, appUrl: string): 
 export async function sendEmail(message: EmailMessage): Promise<boolean> {
   if (!isEmailEnabled()) return false;
   const { html, text } = renderEmail(message, process.env.APP_URL!);
+  const from = process.env.EMAIL_FROM!;
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: process.env.EMAIL_FROM, to: [message.to], subject: message.title, html, text }),
-    });
+    const res =
+      provider() === "brevo"
+        ? await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: { "api-key": apiKey()!, "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+              sender: parseSender(from),
+              to: [{ email: message.to }],
+              subject: message.title,
+              htmlContent: html,
+              textContent: text,
+            }),
+          })
+        : await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${apiKey()}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ from, to: [message.to], subject: message.title, html, text }),
+          });
     return res.ok;
   } catch {
     return false;

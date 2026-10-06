@@ -1,36 +1,25 @@
 # Élesítés – lépésről lépésre
 
-Ez az útmutató végigvisz azon, hogyan kerül fel a ChairTime az internetre saját címmel.
-Becsült idő: 1–2 óra (a domain és az e-mail igazolása néha pár órát vár).
+Ez az útmutató végigvisz azon, hogyan kerül fel a ChairTime az internetre.
+**Saját domain nem kell hozzá**: az app ingyenes `…vercel.app` címen fut, az e-maileket a Brevo küldi.
+Később saját domainre váltani csak beállítás (lásd a végén).
 
-> **Biztonsági szabály:** titkos kulcsot (Supabase secret key, Resend API key, VAPID private key,
-> jelszavak) **soha ne másolj chatbe**, e-mailbe vagy a kódba. Csak a Vercel beállításaiba és a
+> **Biztonsági szabály:** titkos kulcsot (Supabase secret key, Brevo API kulcs, SMTP kulcs, VAPID private key,
+> jelszavak) **soha ne másolj chatbe**, e-mailbe vagy a kódba. Csak a Vercel / Supabase / Brevo beállításaiba és a
 > gépeden lévő `.env.production.local` fájlba kerülnek (ez a fájl nem kerül fel a GitHubra).
 
 ## Mire lesz szükség
 
 | Mi | Mire | Költség |
 | --- | --- | --- |
-| Domain (pl. `chairtime.ro`) | az app címe, és innen mennek az e-mailek | kb. 10–15 €/év |
 | Supabase (már megvan) | adatbázis, belépés, képek | ingyenes csomag |
-| Vercel (GitHub-fiókkal) | az app futtatása | ingyenes (Hobby) |
-| Resend | e-mail értesítések, jelszó-visszaállító levelek | ingyenes (napi 100 levél) |
+| Vercel (GitHub-fiókkal) | az app futtatása, `…vercel.app` cím | ingyenes (Hobby) |
+| Brevo (már ismered) | e-mailek: értesítés, regisztráció megerősítése, elfelejtett jelszó | ingyenes, napi 300 levél |
+| Egy e-mail-cím feladónak | pl. egy külön Gmail-fiók: `chairtime.ertesites@gmail.com` | ingyenes |
 
 ---
 
-## 0. Döntsd el
-
-- **A domaint** (pl. `chairtime.ro` vagy `chairtime.app`). Előbb nézd meg, szabad-e.
-- **Az üzemeltető adatait** a jogi oldalakhoz: név (magánszemély / PFA / cég), cím, kapcsolattartó e-mail.
-  Ezeket a `src/shared/config/legal.ts` fájlba írjuk be (szólj, és beírom).
-
-## 1. Domain vásárlása
-
-1. `.ro` domaint romániai regisztrátornál vehetsz (pl. ROMARG, Hostico), `.com`/`.app` domaint pl. a Namecheapnél.
-2. Vásárlás után keresd meg a **DNS-beállításokat** (DNS records / Zone editor) – ide kell majd bejegyzéseket írni
-   a Vercelhez és a Resendhez.
-
-## 2. Az éles adatbázis (Supabase)
+## 1. Az éles adatbázis (Supabase)
 
 A projekt már létezik a Supabase-fiókodban. Nézd meg a régióját (Project Settings → General): az EU-s
 (pl. Frankfurt) a jó. Ha nem EU-s, szólj.
@@ -46,65 +35,66 @@ npx supabase db push
 - A `link` bekéri az adatbázis jelszavát – ezt a terminálba írd, ne a chatbe.
 - A `db push` feltölti az összes táblát, szabályt és időzítőt. (A teszt-fiókok – Peti, Anna stb. – NEM kerülnek fel.)
 
-Ezután a Supabase Dashboardon:
+## 2. Az app feltöltése (Vercel) – első kör
 
-**Authentication → URL Configuration**
-- Site URL: `https://<domain>`
-- Redirect URLs: `https://<domain>/**`
+1. vercel.com → *Sign up with GitHub* → **Add New → Project** → válaszd a GitHub-repót → *Import*.
+2. A projekt neve legyen pl. `chairtime` – ebből lesz a cím: `chairtime.vercel.app`
+   (ha foglalt, a Vercel mást ajánl; jegyezd fel a végleges címet).
+3. Egyelőre **ne** állíts be semmit, csak *Deploy* – ez még hibás lesz (nincsenek kulcsok), de megkapod a címet.
 
-**Authentication → Sign In / Providers → Email**
-- *Confirm email*: **bekapcsolva** (élesben kötelező)
+## 3. E-mail (Brevo)
 
-**Authentication → Email Templates**
-- *Confirm signup*: tárgy: `Erősítsd meg a regisztrációd – ChairTime`, tartalom: a `supabase/templates/confirmation.html` fájl teljes szövege
-- *Reset password*: tárgy: `Új jelszó beállítása – ChairTime`, tartalom: a `supabase/templates/recovery.html` fájl teljes szövege
-
-## 3. E-mail küldés (Resend)
-
-1. Regisztrálj a resend.com oldalon.
-2. **Domains → Add domain** → add meg a domaint → a Resend kiír néhány DNS-bejegyzést (TXT, MX).
-   Ezeket írd be a domain DNS-beállításaiba. Pár perc–pár óra múlva „Verified” lesz.
-3. **API Keys → Create API key** (Sending access) – a kulcsot csak egyszer mutatja, rögtön tedd be a
-   `.env.production.local` fájlba (lásd 4. lépés).
-4. Supabase Dashboard → **Authentication → Emails → SMTP Settings** → *Enable custom SMTP*:
-   - Host: `smtp.resend.com`, Port: `465`, Username: `resend`, Password: a Resend API kulcs
-   - Sender email: `ertesites@<domain>`, Sender name: `ChairTime`
+1. Brevo → **Senders, Domains & Dedicated IPs → Senders → Add a sender**: név `ChairTime`, cím a feladó
+   e-mail (pl. `chairtime.ertesites@gmail.com`) → igazold a kapott levéllel.
+2. **SMTP & API → API keys → Generate a new API key** – a kulcsot csak egyszer mutatja.
+3. **SMTP & API → SMTP**: itt látod az SMTP-belépést (Login) és létrehozhatsz **SMTP key**-t – ez a Supabase-hez kell.
 
 ## 4. Éles kulcsok
 
-A projekt mappájában:
+A projekt mappájában (a 2. lépésben kapott címmel):
 
 ```
-npm run prod:secrets -- <domain>
+npm run prod:secrets -- chairtime.vercel.app
 ```
 
-Ez létrehozza a `.env.production.local` fájlt új, csak az éles oldalhoz tartozó kulcsokkal.
-Nyisd meg, és töltsd ki benne:
+Ez létrehozza a `.env.production.local` fájlt új, csak az éles oldalhoz tartozó kulcsokkal. Nyisd meg, és töltsd ki:
 - a három Supabase-értéket (Dashboard → Project Settings → API Keys: URL, publishable key, secret key),
-- a Resend API kulcsot.
+- a Brevo API kulcsot,
+- a feladó címet (`EMAIL_FROM=ChairTime <chairtime.ertesites@gmail.com>`).
 
-## 5. Az app feltöltése (Vercel)
+## 5. Vercel – kulcsok és újra feltöltés
 
-1. vercel.com → *Sign up with GitHub* → **Add New → Project** → válaszd a GitHub-repót → *Import*.
-2. **Environment Variables**: másold be a `.env.production.local` **összes** sorát (a Vercel egyben is
-   beilleszthetőnek fogadja: kattints a mezőbe és illeszd be a teljes szöveget).
-3. **Deploy**. Pár perc múlva kapsz egy `…vercel.app` címet – már működik.
-4. **Settings → Domains → Add** → a domain. A Vercel kiírja, milyen DNS-bejegyzés kell (A vagy CNAME) –
-   írd be a domain DNS-beállításaiba.
+1. Vercel → a projekt → **Settings → Environment Variables** → másold be a `.env.production.local` **összes**
+   sorát (egyben is beilleszthető: kattints az első mezőbe és illeszd be a teljes szöveget) → *Save*.
+2. **Deployments** → a legutóbbi → ⋯ → **Redeploy**. Pár perc múlva megnyílik a `https://chairtime.vercel.app`.
 
-## 6. Az adatbázis összekötése a push-küldővel
+## 6. Supabase belépési beállítások
 
-Amikor a domain már működik (megnyílik a böngészőben):
+**Authentication → URL Configuration**
+- Site URL: `https://chairtime.vercel.app`
+- Redirect URLs: `https://chairtime.vercel.app/**`
+
+**Authentication → Emails → SMTP Settings** → *Enable custom SMTP*:
+- Host: `smtp-relay.brevo.com`, Port: `587`
+- Username: a Brevo SMTP Login, Password: a Brevo **SMTP key**
+- Sender email: a feladó cím (ugyanaz, mint a Brevóban), Sender name: `ChairTime`
+
+**Authentication → Sign In / Providers → Email**
+- *Confirm email*: **bekapcsolva**
+
+**Authentication → Email Templates**
+- *Confirm signup*: tárgy `Erősítsd meg a regisztrációd – ChairTime`, tartalom: a `supabase/templates/confirmation.html` teljes szövege
+- *Reset password*: tárgy `Új jelszó beállítása – ChairTime`, tartalom: a `supabase/templates/recovery.html` teljes szövege
+
+## 7. Az adatbázis összekötése a push- és e-mail-küldővel
 
 ```
 node scripts/db-config.mjs --env .env.production.local
 ```
 
-Ettől küld az éles adatbázis push-értesítést és e-mailt.
+## 8. Admin fiók
 
-## 7. Admin fiók
-
-1. Regisztrálj az éles oldalon a saját e-mail-címeddel.
+1. Regisztrálj az éles oldalon a saját e-mail-címeddel (megerősítő levelet kapsz).
 2. Supabase Dashboard → **SQL Editor** → futtasd (a saját e-mail-címeddel):
 
 ```sql
@@ -114,19 +104,23 @@ update public.profiles set is_admin = true
 
 3. Lépj ki és be: megjelenik a „Platform admin” menüpont.
 
-## 8. Próba telefonon (ellenőrzőlista)
+## 9. Próba telefonon (ellenőrzőlista)
 
-- [ ] Megnyílik a `https://<domain>`, a lakat ikon látszik
-- [ ] Regisztráció → megerősítő levél megérkezik (magyarul) → a link beléptet
+- [ ] Megnyílik a `https://chairtime.vercel.app`
+- [ ] Regisztráció → megerősítő levél megérkezik (nézd a spam mappát is) → a link beléptet
 - [ ] Elfelejtett jelszó → levél → új jelszó beállítható
 - [ ] Barberként jelentkezés → adminként jóváhagyás → a barber értesítést kap → beállító varázsló
 - [ ] Telepítés: Android/Chrome „Alkalmazás telepítése”, iPhone/Safari „Főképernyőhöz adás”
 - [ ] Értesítések bekapcsolása → „Próba értesítés” megérkezik a telefonra
 - [ ] Foglalás → a barber push-t és e-mailt kap → jóváhagyás → a vendég is
 - [ ] Profilkép feltöltése telefonról
-- [ ] Jogi oldalak: `/aszf`, `/adatvedelem` – nincs „Tervezet” figyelmeztetés
+- [ ] Jogi oldalak: `/aszf`, `/adatvedelem` (valódi felhasználók előtt: üzemeltető adatai kitöltve)
 
-## Később (nem kötelező)
+## Később: saját domain
 
-- **Google-belépés:** Google Cloud Console-ban OAuth-kliens, majd Supabase → Authentication → Providers → Google.
-- **Natív app** (Google Play / App Store): 9. fázis, ha bevált.
+1. Domain vásárlása (pl. `chairtime.ro`), Vercel → Settings → Domains → hozzáadás, DNS-bejegyzés a regisztrátornál.
+2. A Vercel környezeti változóiban és a Supabase URL Configurationben a cím cseréje (`APP_URL`, `NOTIFY_DISPATCH_URL`,
+   Site URL), majd `node scripts/db-config.mjs --env .env.production.local` az új címmel.
+3. E-mail: a Brevóban a domain igazolása, és a feladó lehet `ertesites@chairtime.ro` (vagy Resend:
+   `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`).
+4. Google-belépés (nem kötelező): Google Cloud Console OAuth-kliens, majd Supabase → Authentication → Providers → Google.

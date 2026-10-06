@@ -1,15 +1,15 @@
 // Élesítéshez: új (az éles oldalhoz tartozó) titkos kulcsok generálása a .env.production.local fájlba.
 // Ez a fájl SOHA nem kerül gitbe. Innen másolod be az értékeket a Vercelbe (Settings → Environment Variables).
 // A kulcsokat ne küldd el senkinek, chatbe se másold.
-//   npm run prod:secrets -- chairtime.ro
+//   npm run prod:secrets -- chairtime.vercel.app      (vagy később a saját domain, pl. chairtime.ro)
 import { randomBytes } from "node:crypto";
 import { existsSync, writeFileSync } from "node:fs";
 import webpush from "web-push";
 
 const FILE = ".env.production.local";
-const domain = (process.argv[2] ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
-if (!domain) {
-  console.error("Add meg a domaint, pl.: npm run prod:secrets -- chairtime.ro");
+const host = (process.argv[2] ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
+if (!host) {
+  console.error("Add meg az app címét, pl.: npm run prod:secrets -- chairtime.vercel.app");
   process.exit(1);
 }
 if (existsSync(FILE)) {
@@ -27,17 +27,19 @@ const lines = [
   "",
   `NEXT_PUBLIC_VAPID_PUBLIC_KEY=${vapid.publicKey}`,
   `VAPID_PRIVATE_KEY=${vapid.privateKey}`,
-  `VAPID_SUBJECT=mailto:ertesites@${domain}`,
+  `VAPID_SUBJECT=https://${host}`,
   `NOTIFY_DISPATCH_SECRET=${randomBytes(32).toString("hex")}`,
-  `NOTIFY_DISPATCH_URL=https://${domain}/api/notifications/dispatch`,
+  `NOTIFY_DISPATCH_URL=https://${host}/api/notifications/dispatch`,
   "",
-  "# E-mail (Resend) – a domain igazolása után",
+  "# E-mail – Brevo (domain nélkül is): Brevo → SMTP & API → API keys",
   "EMAIL_ENABLED=true",
-  "RESEND_API_KEY=",
-  `EMAIL_FROM=ChairTime <ertesites@${domain}>`,
-  `APP_URL=https://${domain}`,
+  "EMAIL_PROVIDER=brevo",
+  "BREVO_API_KEY=",
+  "# A Brevóban igazolt feladó cím (Senders) – pl. ChairTime <chairtime.ertesites@gmail.com>",
+  "EMAIL_FROM=ChairTime <IDE-A-FELADO-CIM>",
+  `APP_URL=https://${host}`,
   "",
 ];
 writeFileSync(FILE, lines.join("\n"));
-console.log(`Kész: ${FILE} (új push-kulcsok és titkos kulcs a ${domain} domainhez).`);
-console.log("Töltsd ki benne a Supabase- és a Resend-kulcsokat, majd másold be az összeset a Vercelbe.");
+console.log(`Kész: ${FILE} (új push-kulcsok és titkos kulcs a ${host} címhez).`);
+console.log("Töltsd ki benne a Supabase-kulcsokat, a Brevo API kulcsot és a feladó címet, majd másold be az összeset a Vercelbe.");
