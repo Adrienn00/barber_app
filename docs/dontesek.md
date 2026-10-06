@@ -51,3 +51,16 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 21. **Az app webappként (PWA) indul**, a weboldalról telepíthető a kezdőképernyőre. Áruházi (natív) változat csak az
     élesítés után, ha bevált: **9. fázis** – először Android (Google Play, a webapp becsomagolásával), igény esetén iPhone
     (App Store; évi díj, Apple-ellenőrzés, natív push). Ugyanabból a kódból készül, a mostani munka megmarad.
+
+## Élesítés – 2026-10-06
+
+22. **Fióktörlés** a Profilom oldalon („TÖRLÉS” beírásával): a jövőbeli foglalások lemondódnak (a másik fél
+    értesítést kap), a múltbeliek anonimizálódnak, a fiók és minden saját adat (barberprofil, képek, naptár) törlődik.
+    Admin fiók itt nem törölhető.
+23. **Elfelejtett jelszó** e-mailes linkkel; az e-mailes linkek (megerősítés, visszaállítás) bármelyik böngészőben
+    működnek (`/auth/confirm`), nem csak abban, ahol kérték. A levelek magyarok (`supabase/templates/`).
+24. **E-mail értesítés** (Resend, saját domainről): minden értesítés e-mailben is (a próba értesítés kivételével),
+    egyszer. Csak `EMAIL_ENABLED=true` és igazolt domain mellett.
+25. **Jogi szövegek**: tervezet a tényleges működés alapján; az üzemeltető adatai a `src/shared/config/legal.ts`-ben,
+    amíg hiányoznak, „Tervezet” figyelmeztetés látszik. Élesítés előtt jogásszal átnézetni javasolt.
+26. A `npm run db:reset` előtt megerősítés kell („igen”), mert a helyi adatokat törli.

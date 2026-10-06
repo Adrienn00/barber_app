@@ -8,10 +8,15 @@ afterAll(async () => {
   if (shopId) await service.from("shops").delete().eq("id", shopId); // a tag shop_id-ja null lesz
 });
 
+// Csak a tesztadatokat nézzük – a fejlesztő saját, kézzel felvett barberei ne zavarják a teszteket
+const KNOWN = new Set(["kovacs-peter", "nagy-laci", "szabo-zoli", "teszt-egyseg"]);
+
 async function directory(search?: string) {
   const { data, error } = await anonClient().rpc("list_directory", { p_search: search });
   if (error) throw error;
-  return (data as { kind: string; slug: string; name: string }[]).map((r) => `${r.kind}:${r.slug}`);
+  return (data as { kind: string; slug: string; name: string }[])
+    .filter((r) => KNOWN.has(r.slug))
+    .map((r) => `${r.kind}:${r.slug}`);
 }
 
 describe("Barberlista (list_directory)", () => {

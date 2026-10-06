@@ -31,6 +31,23 @@ export function validateLogin(input: { email: string; password: string }) {
   return result(errors, input);
 }
 
+// --- Elfelejtett jelszó --------------------------------------------------------
+export function validateEmailOnly(input: { email: string }) {
+  const errors: Record<string, string> = {};
+  if (!EMAIL_RE.test(input.email)) errors.email = "Adj meg egy érvényes e-mail-címet.";
+  return result(errors, input);
+}
+
+export function validateNewPassword(input: { password: string; passwordAgain: string }) {
+  const errors: Record<string, string> = {};
+  if (input.password.length < MIN_PASSWORD_LENGTH) {
+    errors.password = `A jelszó legalább ${MIN_PASSWORD_LENGTH} karakter legyen.`;
+  } else if (input.password !== input.passwordAgain) {
+    errors.passwordAgain = "A két jelszó nem egyezik.";
+  }
+  return result(errors, { password: input.password });
+}
+
 // --- Regisztráció ------------------------------------------------------------
 export function validateRegistration(input: {
   fullName: string;

@@ -13,6 +13,9 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | `belepes/page.tsx` | `/belepes` | kijelentkezett | belépés |
 | `regisztracio/page.tsx` | `/regisztracio` | kijelentkezett | regisztráció |
 | `auth/callback/route.ts` | `/auth/callback` | – | Google-belépés / e-mail megerősítés visszatérése |
+| `auth/confirm/route.ts` | `/auth/confirm` | – | e-mailes linkek (regisztráció megerősítése, jelszó-visszaállítás) – bármelyik böngészőben |
+| `elfelejtett-jelszo/page.tsx` | `/elfelejtett-jelszo` | mindenki | visszaállító link kérése |
+| `uj-jelszo/page.tsx` | `/uj-jelszo` | bejelentkezett | új jelszó megadása |
 | `auth/tovabb/route.ts` | `/auth/tovabb` | – | belépés után eldönti, hova menjen (profil, naptár, platform, kért oldal) |
 | `profil/page.tsx` | `/profil` | bejelentkezett | saját adatok, kötelező telefonszám |
 | `barber-leszek/page.tsx` | `/barber-leszek` | mindenki | barberjelentkezés és állapota |
@@ -30,6 +33,6 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | `foglalasaim/page.tsx` | `/foglalasaim` | bejelentkezett | a vendég foglalásai: lemondás, másik időpont kérése, válasz az áthelyezési javaslatra; élőben frissül |
 | `platform/page.tsx` | `/platform` | admin | barberek és egységek jóváhagyása, alapszámok |
 | `allapot/page.tsx` | `/allapot` | mindenki | technikai állapot |
-| `aszf/`, `adatvedelem/` | `/aszf`, `/adatvedelem` | mindenki | jogi oldalak (szöveg a 8. fázisban) |
+| `aszf/`, `adatvedelem/` | `/aszf`, `/adatvedelem` | mindenki | jogi oldalak (tervezet; az üzemeltető adatai: `shared/config/legal.ts`) |
 
 Egy mappa = egy URL-szakasz. A zárójeles mappa, pl. `(barber)`, nem jelenik meg az URL-ben – csak csoportosít.

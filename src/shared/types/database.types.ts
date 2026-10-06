@@ -343,6 +343,7 @@ export type Database = {
           body: string | null
           created_at: string
           data: Json
+          email_sent_at: string | null
           id: string
           push_attempts: number
           push_sent_at: string | null
@@ -355,6 +356,7 @@ export type Database = {
           body?: string | null
           created_at?: string
           data?: Json
+          email_sent_at?: string | null
           id?: string
           push_attempts?: number
           push_sent_at?: string | null
@@ -367,6 +369,7 @@ export type Database = {
           body?: string | null
           created_at?: string
           data?: Json
+          email_sent_at?: string | null
           id?: string
           push_attempts?: number
           push_sent_at?: string | null
@@ -727,6 +730,7 @@ export type Database = {
           body: string | null
           created_at: string
           data: Json
+          email_sent_at: string | null
           id: string
           push_attempts: number
           push_sent_at: string | null
@@ -872,6 +876,7 @@ export type Database = {
         Args: { p_booking_id: string; p_note?: string; p_starts_at: string }
         Returns: undefined
       }
+      prepare_account_deletion: { Args: never; Returns: undefined }
       propose_reschedule: {
         Args: { p_booking_id: string; p_note?: string; p_starts_at: string }
         Returns: string

@@ -179,6 +179,23 @@ export async function signUp(input: {
   return { ok: true, needsEmailConfirmation: !data.session };
 }
 
+/**
+ * Jelszó-visszaállító levél küldése. Akkor is „sikeres”, ha nincs ilyen fiók – így nem derül ki
+ * idegennek, ki regisztrált (csak a túl sűrű kérést jelezzük).
+ */
+export async function requestPasswordReset(email: string): Promise<AuthResult> {
+  const { error } = await q.sendPasswordReset(await createClient(), email, await callbackUrl(ROUTES.newPassword));
+  if (error && error.status === 429) return { ok: false, error: authErrorMessage(error) };
+  return { ok: true };
+}
+
+/** Új jelszó beállítása (a visszaállító linkkel belépett felhasználónak) */
+export async function setNewPassword(password: string): Promise<AuthResult> {
+  const { error } = await q.updatePassword(await createClient(), password);
+  if (error) return { ok: false, error: authErrorMessage(error) };
+  return { ok: true };
+}
+
 /** Google-belépés indítása: a visszaadott címre kell irányítani a böngészőt. */
 export async function startGoogleSignIn(nextPath: string | null): Promise<{ url: string } | { error: string }> {
   const db = await createClient();
@@ -190,6 +207,13 @@ export async function startGoogleSignIn(nextPath: string | null): Promise<{ url:
 /** Google / e-mail megerősítés visszatérése: a kapott kódot munkamenetre cseréli. */
 export async function completeAuthCallback(code: string): Promise<boolean> {
   const { data, error } = await q.exchangeCodeForSession(await createClient(), code);
+  return !error && Boolean(data.user);
+}
+
+/** Az e-mailben kapott link (regisztráció megerősítése / jelszó-visszaállítás) beléptet */
+export async function confirmEmailToken(tokenHash: string, type: string): Promise<boolean> {
+  if (type !== "email" && type !== "recovery") return false;
+  const { data, error } = await q.verifyEmailToken(await createClient(), tokenHash, type);
   return !error && Boolean(data.user);
 }
 

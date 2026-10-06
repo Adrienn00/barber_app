@@ -62,3 +62,12 @@ export function deleteSubscriptionsById(admin: DbClient, ids: string[]) {
 export function insertNotification(admin: DbClient, row: NotificationInsert) {
   return admin.from("notifications").insert(row);
 }
+
+/** A címzett e-mail-címe (a bejelentkezési fiókból) */
+export function getUserById(admin: DbClient, userId: string) {
+  return admin.auth.admin.getUserById(userId);
+}
+
+export function markEmailSent(admin: DbClient, ids: string[]) {
+  return admin.from("notifications").update({ email_sent_at: new Date().toISOString() }).in("id", ids);
+}

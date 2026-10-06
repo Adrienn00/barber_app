@@ -5,8 +5,9 @@
 | `components/ui/` | Általános építőkockák, bárhol használhatók: `Button`/`LinkButton`, `SubmitButton`, `TextField`, `TextArea`, `Checkbox`, `Alert`, `Badge`, `Card`, `Divider`, `ConfirmActionButton` (kétlépéses „Biztosan?” gomb), `Dialog` (felugró ablak), `Select` (legördülő lista), `Eyebrow` (kis arany felirat), `Icon` (ikonok), `StatusRow`, `Avatar` (profilkép vagy kezdőbetűk), `StepIndicator` (lépésjelző) |
 | `components/layout/` | Oldalkeretek: `AppHeader` (felső sáv), `Logo`, `UserMenu` (lenyíló menü; kijelentkezéskor az eszköz push-feliratkozását is törli), `NotificationBell` (harang számjelzővel), `PageContainer` (tartalom oszlop), `PageHeader` (cím) |
 | `components/home/` | Kezdőlap: `HomeHero` (nyitó rész), `FeatureRow` (ikonos információs sor) |
-| `components/auth/` | Belépés/regisztráció: `LoginForm`, `RegisterForm`, `GoogleSignInButton`, `TermsCheckbox` |
-| `components/profile/` | `ProfileForm` (név, telefon) |
+| `components/auth/` | Belépés/regisztráció: `LoginForm`, `RegisterForm`, `GoogleSignInButton`, `TermsCheckbox`, `ForgotPasswordForm`, `NewPasswordForm` |
+| `components/profile/` | `ProfileForm` (név, telefon), `DeleteAccount` (fiók törlése „TÖRLÉS” beírásával) |
+| `components/legal/` | Jogi oldalak: `TermsContent`, `PrivacyContent`, `LegalSection`, `DraftNotice` (amíg az üzemeltető adatai hiányoznak) |
 | `components/barber/` | Barberjelentkezés: `BarberApplicationForm`, `ApplicationStatusCard`, `BarberStatusBadge`, `BecomeBarberIntro`; új barbernek `SetupChecklist` („Kezdő lépések”), `ShareLinkButton` (foglalási link másolása); profil: `AvatarUpload`, `ListingToggle`; beállító varázsló: `SetupWizardNav`, `SetupDone` |
 | `components/customers/` | A barber vendégei: `CustomerList` (kereséssel), `CustomerRow` (megbízható kapcsoló) |
 | `components/calendar/` | Barber naptár: `BarberCalendar` (fő komponens, FullCalendar), `QuickBreakBar` („Szünet most” gombok), `NewEntryPanel`, `PrivateEventForm`, `ManualBookingForm`, `BookingDetails`, `PrivateEventDetails`, `CalendarLegend` |

@@ -17,7 +17,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/belepes">)
   return (
     <PageContainer centered>
       <PageHeader title="Belépés" subtitle="Örülünk, hogy újra itt vagy!" />
-      {params.hiba && <Alert tone="error">A belépés nem sikerült. Próbáld újra.</Alert>}
+      {params.hiba === "link" ? (
+        <Alert tone="error">
+          Ez a link már lejárt vagy felhasználták. Jelszó-visszaállításnál kérj újat az „Elfelejtetted a jelszavad?”
+          linkkel.
+        </Alert>
+      ) : (
+        params.hiba && <Alert tone="error">A belépés nem sikerült. Próbáld újra.</Alert>
+      )}
       <GoogleSignInButton next={next} enabled={googleEnabled} />
       <Divider label="vagy e-maillel" />
       <LoginForm next={next} />

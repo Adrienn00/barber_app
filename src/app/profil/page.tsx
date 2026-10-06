@@ -1,12 +1,13 @@
 import { requireUser } from "@/backend/auth/auth.service";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
+import { DeleteAccount } from "@/frontend/components/profile/DeleteAccount";
 import { ProfileForm } from "@/frontend/components/profile/ProfileForm";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { ROUTES, safeNextPath } from "@/shared/config/routes";
 import { formatPhone } from "@/shared/validation/phone";
 
-// /profil – saját adatok; az első foglalás / barberjelentkezés előtt kötelező kitölteni
+// /profil – saját adatok; az első foglalás / barberjelentkezés előtt kötelező kitölteni. Alul: fiók törlése.
 export default async function ProfilePage({ searchParams }: PageProps<"/profil">) {
   const user = await requireUser(ROUTES.profile);
   const params = await searchParams;
@@ -25,6 +26,7 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profil">
         needsTerms={!user.termsAccepted}
         next={next}
       />
+      <DeleteAccount isBarber={Boolean(user.barber)} isAdmin={user.isAdmin} />
     </PageContainer>
   );
 }

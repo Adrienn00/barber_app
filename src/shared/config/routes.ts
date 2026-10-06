@@ -4,7 +4,13 @@ export const ROUTES = {
   status: "/allapot",
   login: "/belepes",
   register: "/regisztracio",
+  /** Elfelejtett jelszó: link kérése e-mailben */
+  forgotPassword: "/elfelejtett-jelszo",
+  /** A visszaállító link ide hoz (belépve): új jelszó megadása */
+  newPassword: "/uj-jelszo",
   authCallback: "/auth/callback",
+  /** Az e-mailes linkek (megerősítés, jelszó-visszaállítás) ide hoznak */
+  authConfirm: "/auth/confirm",
   /** Belépés után ide megyünk: új kérésben (már élő bejelentkezéssel) dönti el, hova tovább */
   afterLogin: "/auth/tovabb",
   profile: "/profil",
@@ -34,6 +40,7 @@ export const ROUTES = {
 /** Ezekhez bejelentkezés kell (a proxy átirányít a belépésre). A szerepkört az oldal ellenőrzi. */
 export const PROTECTED_PREFIXES = [
   ROUTES.profile,
+  ROUTES.newPassword,
   ROUTES.myBookings,
   ROUTES.notifications,
   ROUTES.barberCalendar,

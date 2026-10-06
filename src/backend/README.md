@@ -8,8 +8,8 @@ Itt beszélünk az adatbázissal, és itt lehetnek titkos kulcsok.
 ```
 backend/
   core/        közös alap: adatbázis-kapcsolat, bejelentkezés-frissítés, hibaüzenetek
-  auth/        belépés, regisztráció, kilépés, „ki van bejelentkezve”, oldalvédelem
-  profile/     saját profil (név, telefon)
+  auth/        belépés, regisztráció, kilépés, „ki van bejelentkezve”, oldalvédelem – elfelejtett jelszó, e-mailes linkek (/auth/confirm)
+  profile/     saját profil (név, telefon); fiók törlése
   barbers/     barberjelentkezés, barberprofil (jóváhagyás után is), profilkép (Storage), megjelenés a listában
   customers/   a barber vendégei: látogatások, megbízható vendég jelölése
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika

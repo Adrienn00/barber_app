@@ -1,11 +1,16 @@
 // Az adatbázis beállítása: hová és milyen titkos kulccsal szóljon a push-küldőnek.
 // Minden db:reset után kell (a reset törli). A kulcsokat a .env.local-ból olvassa, nem írja ki.
 //   npm run db:config
+// Élesben (egyszer, az éles kulcsokkal egy külön, gitbe nem kerülő fájlból):
+//   node scripts/db-config.mjs --env .env.production.local
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
+const envIndex = process.argv.indexOf("--env");
+const ENV_FILE = envIndex > 0 ? process.argv[envIndex + 1] : ".env.local";
+
 const env = Object.fromEntries(
-  readFileSync(".env.local", "utf8")
+  readFileSync(ENV_FILE, "utf8")
     .split(/\r?\n/)
     .filter((line) => /^[A-Z_]+=/.test(line))
     .map((line) => [line.slice(0, line.indexOf("=")), line.slice(line.indexOf("=") + 1).trim()]),
@@ -15,7 +20,7 @@ const missing = ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SECRET_KEY", "NOTIFY_DISP
   (name) => !env[name],
 );
 if (missing.length) {
-  console.error(`Hiányzik a .env.local-ból: ${missing.join(", ")} – futtasd: npm run notifications:setup`);
+  console.error(`Hiányzik a(z) ${ENV_FILE} fájlból: ${missing.join(", ")} – futtasd: npm run notifications:setup`);
   process.exit(1);
 }
 

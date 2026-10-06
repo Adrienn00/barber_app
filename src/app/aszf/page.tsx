@@ -1,13 +1,18 @@
+import type { Metadata } from "next";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
-import { Alert } from "@/frontend/components/ui/Alert";
+import { DraftNotice } from "@/frontend/components/legal/DraftNotice";
+import { TermsContent } from "@/frontend/components/legal/TermsContent";
 
-// /aszf – felhasználási feltételek (a végleges szöveg az élesítés előtt, a 8. fázisban kerül ide)
+export const metadata: Metadata = { title: "Felhasználási feltételek" };
+
+// /aszf – felhasználási feltételek (az üzemeltető adatai: src/shared/config/legal.ts)
 export default function TermsPage() {
   return (
-    <PageContainer>
+    <PageContainer width="wide">
       <PageHeader title="Felhasználási feltételek" />
-      <Alert tone="info">A végleges szöveg az élesítés előtt kerül ide.</Alert>
+      <DraftNotice />
+      <TermsContent />
     </PageContainer>
   );
 }

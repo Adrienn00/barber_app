@@ -13,6 +13,9 @@ function expectDenied(result: { error: { code?: string } | null }) {
 }
 
 const ids = (rows: { id: string }[] | null) => (rows ?? []).map((r) => r.id).sort();
+// Csak a teszt-barberek (a fejlesztő saját, kézzel felvett barberei ne zavarják a teszteket)
+const SEED_BARBERS = new Set<string>(Object.values(ID.barbers));
+const seedIds = (rows: { id: string }[] | null) => ids(rows).filter((id) => SEED_BARBERS.has(id));
 
 describe("Látogató (nincs bejelentkezve)", () => {
   let db: SupabaseClient;
@@ -22,7 +25,7 @@ describe("Látogató (nincs bejelentkezve)", () => {
 
   it("csak a jóváhagyott barbereket látja", async () => {
     const { data } = await db.from("barbers").select("id");
-    expect(ids(data)).toEqual([ID.barbers.peti, ID.barbers.laci].sort());
+    expect(seedIds(data)).toEqual([ID.barbers.peti, ID.barbers.laci].sort());
   });
 
   it("csak jóváhagyott barber aktív szolgáltatásait látja", async () => {
@@ -222,7 +225,7 @@ describe("Platform admin", () => {
 
   it("minden barbert lát, a függőt is", async () => {
     const { data } = await db.from("barbers").select("id");
-    expect(ids(data)).toEqual([ID.barbers.peti, ID.barbers.laci, ID.barbers.zoli].sort());
+    expect(seedIds(data)).toEqual([ID.barbers.peti, ID.barbers.laci, ID.barbers.zoli].sort());
   });
 
   it("nem lát magánprogramot, foglalást, vendégprofilt", async () => {

@@ -46,8 +46,22 @@ export function signInWithGoogle(db: DbClient, redirectTo: string) {
   return db.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
 }
 
+/** E-mailes link (megerősítés, jelszó-visszaállítás) ellenőrzése – bármelyik böngészőben működik */
+export function verifyEmailToken(db: DbClient, tokenHash: string, type: "email" | "recovery") {
+  return db.auth.verifyOtp({ token_hash: tokenHash, type });
+}
+
 export function exchangeCodeForSession(db: DbClient, code: string) {
   return db.auth.exchangeCodeForSession(code);
+}
+
+/** Jelszó-visszaállító levél (a link a megadott címre hozza vissza, belépve) */
+export function sendPasswordReset(db: DbClient, email: string, redirectTo: string) {
+  return db.auth.resetPasswordForEmail(email, { redirectTo });
+}
+
+export function updatePassword(db: DbClient, password: string) {
+  return db.auth.updateUser({ password });
 }
 
 export function signOut(db: DbClient) {

@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { signInAction } from "@/backend/auth/auth.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextField } from "@/frontend/components/ui/TextField";
 import { useFullPageRedirect } from "@/frontend/lib/useFullPageRedirect";
+import { ROUTES } from "@/shared/config/routes";
 import type { FormState } from "@/shared/types/form";
 
 /** Belépés e-maillel és jelszóval. */
@@ -33,6 +35,11 @@ export function LoginForm({ next }: { next?: string }) {
         autoComplete="current-password"
         error={state.fieldErrors?.password}
       />
+      <p className="-mt-2 text-right text-sm">
+        <Link href={ROUTES.forgotPassword} className="text-muted underline hover:text-brass">
+          Elfelejtetted a jelszavad?
+        </Link>
+      </p>
       <SubmitButton pendingText="Belépés…" forcePending={redirecting}>Belépés</SubmitButton>
     </form>
   );

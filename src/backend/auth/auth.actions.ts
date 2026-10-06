@@ -2,6 +2,9 @@
 
 import { redirect } from "next/navigation";
 import {
+  getCurrentUser,
+  requestPasswordReset,
+  setNewPassword,
   signInWithPassword,
   signOut,
   signUp,
@@ -10,7 +13,7 @@ import {
 import { removePushSubscription } from "@/backend/notifications/notifications.service";
 import { ROUTES, afterLoginPath, safeNextPath } from "@/shared/config/routes";
 import { type FormState, field } from "@/shared/types/form";
-import { validateLogin, validateRegistration } from "@/shared/validation/forms";
+import { validateEmailOnly, validateLogin, validateNewPassword, validateRegistration } from "@/shared/validation/forms";
 
 /** Belépés e-maillel és jelszóval */
 export async function signInAction(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -67,4 +70,29 @@ export async function signOutAction(formData: FormData): Promise<void> {
   if (pushEndpoint) await removePushSubscription(pushEndpoint);
   await signOut();
   redirect(ROUTES.home);
+}
+
+/** Elfelejtett jelszó: visszaállító link küldése e-mailben */
+export async function requestPasswordResetAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const values = { email: field(formData, "email").toLowerCase() };
+  const checked = validateEmailOnly(values);
+  if (!checked.ok) return { fieldErrors: checked.fieldErrors, values };
+  const result = await requestPasswordReset(checked.data.email);
+  if (!result.ok) return { error: result.error, values };
+  return {
+    success: "Ha van fiók ezzel a címmel, elküldtük rá a jelszó-visszaállító linket. Nézd meg a leveleidet (a spam mappát is).",
+  };
+}
+
+/** Új jelszó beállítása (a levélben kapott linkkel már be van lépve) */
+export async function setNewPasswordAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  if (!(await getCurrentUser())) redirect(ROUTES.forgotPassword);
+  const checked = validateNewPassword({
+    password: String(formData.get("password") ?? ""),
+    passwordAgain: String(formData.get("passwordAgain") ?? ""),
+  });
+  if (!checked.ok) return { fieldErrors: checked.fieldErrors };
+  const result = await setNewPassword(checked.data.password);
+  if (!result.ok) return { error: result.error };
+  return { success: "Az új jelszavad elmentve.", redirectTo: ROUTES.afterLogin };
 }

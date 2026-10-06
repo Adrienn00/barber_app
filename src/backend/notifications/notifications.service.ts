@@ -2,11 +2,12 @@ import "server-only";
 import { createAdminClient } from "@/backend/core/admin-client";
 import { createClient } from "@/backend/core/server-client";
 import * as q from "./notifications.queries";
+import { isEmailEnabled, sendEmail } from "./notifications.email";
 import { type PushTarget, isPushConfigured, sendPush } from "./notifications.push";
 
 // =============================================================================
 // Értesítések: appon belüli lista, olvasottság, push-feliratkozás, és a push-küldő (dispatch).
-// Az e-mail csatorna (notifications.email.ts) a 8. fázisig ki van kapcsolva.
+// Az e-mail csatorna (notifications.email.ts) csak bekapcsolva küld (élesben, saját domainnel).
 // =============================================================================
 
 export type AppNotification = {
@@ -67,15 +68,15 @@ function safeUrl(url: string | undefined): string {
   return url && url.startsWith("/") && !url.startsWith("//") ? url : "/ertesitesek";
 }
 
-export type DispatchResult = { claimed: number; sent: number; removed: number; retry: number };
+export type DispatchResult = { claimed: number; sent: number; removed: number; retry: number; emailed: number };
 
 /**
  * A kiküldendő értesítések elküldése push-on minden eszközre, ahol a címzett feliratkozott.
  * Az adatbázis hívja (új értesítéskor és percenként), titkos kulccsal védett végponton át.
  */
 export async function dispatchPendingNotifications(): Promise<DispatchResult> {
-  const result: DispatchResult = { claimed: 0, sent: 0, removed: 0, retry: 0 };
-  if (!isPushConfigured()) return result;
+  const result: DispatchResult = { claimed: 0, sent: 0, removed: 0, retry: 0, emailed: 0 };
+  if (!isPushConfigured() && !isEmailEnabled()) return result;
 
   const admin = createAdminClient();
   const { data: notes } = await q.claimPushNotifications(admin, 100);
@@ -90,7 +91,7 @@ export async function dispatchPendingNotifications(): Promise<DispatchResult> {
   const retry: string[] = [];
   await Promise.all(
     notes.map(async (n) => {
-      const targets = byUser.get(n.user_id) ?? [];
+      const targets = isPushConfigured() ? (byUser.get(n.user_id) ?? []) : [];
       const message = {
         title: n.title,
         body: n.body ?? "",
@@ -111,5 +112,36 @@ export async function dispatchPendingNotifications(): Promise<DispatchResult> {
   if (retry.length) await q.releasePushNotifications(admin, retry);
   result.removed = gone.size;
   result.retry = retry.length;
+  result.emailed = await emailNotifications(admin, notes);
   return result;
+}
+
+type ClaimedNotification = { id: string; user_id: string; type: string; title: string; body: string | null; data: unknown; email_sent_at: string | null };
+
+/** E-mail csatorna: minden (még ki nem küldött) értesítés levélben is, a próba értesítés kivételével */
+async function emailNotifications(admin: ReturnType<typeof createAdminClient>, notes: ClaimedNotification[]): Promise<number> {
+  if (!isEmailEnabled()) return 0;
+  const pending = notes.filter((n) => !n.email_sent_at && n.type !== "test");
+  const emails = new Map<string, string | null>();
+  for (const userId of new Set(pending.map((n) => n.user_id))) {
+    const { data } = await q.getUserById(admin, userId);
+    emails.set(userId, data.user?.email ?? null);
+  }
+
+  const sent: string[] = [];
+  await Promise.all(
+    pending.map(async (n) => {
+      const to = emails.get(n.user_id);
+      if (!to) return;
+      const ok = await sendEmail({
+        to,
+        title: n.title,
+        body: n.body ?? "",
+        url: safeUrl((n.data as { url?: string } | null)?.url),
+      });
+      if (ok) sent.push(n.id);
+    }),
+  );
+  if (sent.length) await q.markEmailSent(admin, sent);
+  return sent.length;
 }
