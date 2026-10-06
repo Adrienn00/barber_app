@@ -17,3 +17,8 @@ export function requestBooking(db: DbClient, serviceId: string, startsAt: string
 export function selectMyBookings(db: DbClient) {
   return db.rpc("get_my_bookings");
 }
+
+/** Alternatív időpontok egy elutasított / lejárt / lemondott foglalás helyett */
+export function selectAlternativeSlots(db: DbClient, bookingId: string) {
+  return db.rpc("get_alternative_slots", { p_booking_id: bookingId });
+}

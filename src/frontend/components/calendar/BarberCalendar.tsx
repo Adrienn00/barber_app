@@ -15,6 +15,7 @@ import {
 import { Alert } from "@/frontend/components/ui/Alert";
 import { Button } from "@/frontend/components/ui/Button";
 import { Dialog } from "@/frontend/components/ui/Dialog";
+import { useBookingChanges } from "@/frontend/lib/useBookingChanges";
 import { type CalendarItem, toBusinessHours, toEventInputs } from "@/frontend/lib/calendarEvents";
 import { floatingToLocal, floatingToUtcIso, toBucharestLocal } from "@/shared/datetime/datetime";
 import type { CalendarData, CustomerOption, ServiceOption } from "@/shared/types/calendar";
@@ -28,6 +29,8 @@ import { PrivateEventForm } from "./PrivateEventForm";
 import { QuickBreakBar } from "./QuickBreakBar";
 
 type BarberCalendarProps = {
+  /** Élő frissítéshez: a barber foglalásai */
+  barberId: string;
   services: ServiceOption[];
   customers: CustomerOption[];
 };
@@ -58,7 +61,7 @@ function subscribeToMobile(onChange: () => void) {
  * A barber naptára (Google Naptár-szerű): nap / hét / hónap nézet, színkódolt foglalások és
  * magánprogramok, gyors szünet, kijelöléssel új program vagy kézi foglalás, húzással áthelyezés.
  */
-export function BarberCalendar({ services, customers }: BarberCalendarProps) {
+export function BarberCalendar({ barberId, services, customers }: BarberCalendarProps) {
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const isMobile = useSyncExternalStore(subscribeToMobile, isMobileScreen, () => false);
   const [data, setData] = useState<CalendarData>(EMPTY);
@@ -76,6 +79,9 @@ export function BarberCalendar({ services, customers }: BarberCalendarProps) {
       setLoading(false);
     }
   }, []);
+
+  // Új kérés vagy vendég általi lemondás esetén azonnal frissül
+  useBookingChanges(`barber_id=eq.${barberId}`, () => void reload());
 
   const events = useMemo(() => toEventInputs(data), [data]);
   const businessHours = useMemo(() => toBusinessHours(data.workingHours), [data.workingHours]);
@@ -232,7 +238,7 @@ export function BarberCalendar({ services, customers }: BarberCalendarProps) {
           <NewEntryPanel slot={dialog.slot} services={services} customers={customers} onSaved={handleDone} />
         )}
         {dialog?.type === "edit" && <PrivateEventForm initial={dialog.initial} onSaved={handleDone} />}
-        {dialog?.type === "details" && dialog.item.kind === "booking" && <BookingDetails booking={dialog.item} />}
+        {dialog?.type === "details" && dialog.item.kind === "booking" && <BookingDetails booking={dialog.item} onDone={handleDone} />}
         {dialog?.type === "details" && dialog.item.kind === "private" && (
           <PrivateEventDetails
             event={dialog.item}

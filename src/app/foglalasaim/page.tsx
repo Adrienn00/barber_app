@@ -4,6 +4,7 @@ import { getMyBookings } from "@/backend/booking/booking.service";
 import { MyBookingCard } from "@/frontend/components/booking/MyBookingCard";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
+import { LiveRefresh } from "@/frontend/components/requests/LiveRefresh";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { LinkButton } from "@/frontend/components/ui/Button";
 import { ROUTES } from "@/shared/config/routes";
@@ -12,12 +13,14 @@ export const metadata: Metadata = { title: "Foglalásaim" };
 
 // /foglalasaim – a vendég foglalásai: közelgő (függő + megerősített), múltbeli, lezárt
 export default async function MyBookingsPage() {
-  await requireUser(ROUTES.myBookings);
+  const user = await requireUser(ROUTES.myBookings);
   const { upcoming, past, closed } = await getMyBookings();
 
   return (
     <PageContainer width="wide">
       <PageHeader eyebrow="Vendég" title="Foglalásaim" />
+      {/* A barber döntése azonnal megjelenik */}
+      <LiveRefresh filter={`customer_id=eq.${user.id}`} />
 
       <section className="space-y-3">
         <h2 className="text-2xl font-bold">Közelgő</h2>

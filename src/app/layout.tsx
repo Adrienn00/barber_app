@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { getCurrentUser } from "@/backend/auth/auth.service";
+import { countPendingRequests } from "@/backend/requests/requests.service";
 import { AppHeader } from "@/frontend/components/layout/AppHeader";
 import { sansFont, displayFont } from "@/frontend/styles/fonts";
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/shared/config/app";
@@ -17,16 +18,20 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const user = await getCurrentUser();
+  // A barber menüjében a függő kérések száma
+  const pendingCount = user?.isApprovedBarber && user.barber ? await countPendingRequests(user.barber.id) : 0;
 
   return (
     <html lang="hu" className={`${sansFont.variable} ${displayFont.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <AppHeader
+          barberId={user?.isApprovedBarber ? (user.barber?.id ?? null) : null}
           user={
             user && {
               name: user.fullName ?? user.email,
               isAdmin: user.isAdmin,
               isApprovedBarber: user.isApprovedBarber,
+              pendingCount,
             }
           }
         />

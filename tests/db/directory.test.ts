@@ -61,7 +61,11 @@ describe("Foglalásaim (get_my_bookings)", () => {
     const { data, error } = await anna.rpc("get_my_bookings");
     expect(error).toBeNull();
     expect(data!.length).toBe(3); // seed: Petinél 2, Lacinál 1
-    expect(data![0]).toMatchObject({ service_name: expect.any(String), barber_name: expect.any(String) });
+    expect(data![0]).toMatchObject({
+      service_id: expect.any(String), // az újrafoglaláshoz
+      service_name: expect.any(String),
+      barber_name: expect.any(String),
+    });
 
     const bela = await userClient("bela@vendeg.test");
     const belas = (await bela.rpc("get_my_bookings")).data!;

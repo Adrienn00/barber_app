@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { MyBooking } from "@/backend/booking/booking.service";
 import { Badge, type BadgeTone } from "@/frontend/components/ui/Badge";
 import { Icon } from "@/frontend/components/ui/Icon";
+import { AlternativeSlots } from "./AlternativeSlots";
+import { CancelMyBooking } from "./CancelMyBooking";
 import { barberPath } from "@/shared/config/routes";
 import { formatDateTimeHu, toBucharestTime } from "@/shared/datetime/datetime";
 import type { BookingStatus } from "@/shared/types/domain";
@@ -14,7 +16,10 @@ const STATUS: Record<BookingStatus, { label: string; tone: BadgeTone }> = {
   cancelled: { label: "Lemondva", tone: "neutral" },
 };
 
-/** Egy foglalás a „Foglalásaim” oldalon: barber, szolgáltatás, időpont, állapot, cím. */
+/**
+ * Egy foglalás a „Foglalásaim” oldalon: barber, szolgáltatás, időpont, állapot, cím –
+ * lemondás gombbal, meghiúsult foglalásnál másik időpontok ajánlásával.
+ */
 export function MyBookingCard({ booking }: { booking: MyBooking }) {
   const status = STATUS[booking.status];
   return (
@@ -47,6 +52,15 @@ export function MyBookingCard({ booking }: { booking: MyBooking }) {
       )}
       {booking.status === "pending" && booking.expiresAt && (
         <p className="text-sm text-muted">Ha {formatDateTimeHu(booking.expiresAt)}-ig nem dönt a barber, a kérés lejár.</p>
+      )}
+      {booking.canCancel && <CancelMyBooking bookingId={booking.id} isPending={booking.status === "pending"} />}
+      {booking.cancelDeadlinePassed && (
+        <p className="text-sm text-muted">
+          A lemondási határidő ({booking.cancelLimitHours} órával előtte) lejárt – ha mégsem tudsz jönni, hívd fel a barbert.
+        </p>
+      )}
+      {booking.offerAlternatives && (
+        <AlternativeSlots bookingId={booking.id} serviceId={booking.serviceId} />
       )}
     </article>
   );

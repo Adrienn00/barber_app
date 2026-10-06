@@ -16,7 +16,8 @@ backend/
   pricelist/   a barber árlistája: szolgáltatások saját időtartammal és árral
   schedule/    munkaidő (heti sávok) és foglalási szabályok
   directory/   nyilvános oldalak: barberlista (keresés), barber oldala, egység oldala
-  booking/     vendég foglalás: szabad időpontok, foglalási kérés, „Foglalásaim”
+  booking/     vendég foglalás: szabad időpontok, foglalási kérés, „Foglalásaim”, alternatív időpontok
+  requests/    döntések: függő kérések listája és száma, jóváhagyás, elutasítás, lemondás (barber és vendég)
   shops/       egységek (üzletek): létrehozás, meghívók, csatlakozás/kilépés, a vezető áttekintése
   health/      rendszerállapot-ellenőrzés
 ```

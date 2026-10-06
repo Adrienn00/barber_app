@@ -679,6 +679,7 @@ export type Database = {
           expires_at: string
           id: string
           price: number
+          service_id: string
           service_name: string
           starts_at: string
           status: Database["public"]["Enums"]["booking_status"]

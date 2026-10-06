@@ -86,7 +86,9 @@ describe("Elutasítás és alternatív időpontok", () => {
     const { data } = await anna.rpc("get_alternative_slots", { p_booking_id: rejectedId });
     const times = (data as { starts_at: string }[]).map((s) => new Date(s.starts_at).toISOString());
     expect(times).toHaveLength(3);
-    expect(times[0]).toBe(at(nextMonday, "14:00")); // a felszabadult időponttól kezdve
+    // Az elutasított időpont után kezdve – magát az elutasítottat nem ajánlja újra
+    expect(times).not.toContain(at(nextMonday, "14:00"));
+    expect(times[0] > at(nextMonday, "14:00")).toBe(true);
     expect((await bela.rpc("get_alternative_slots", { p_booking_id: rejectedId })).data).toEqual([]);
   });
 });

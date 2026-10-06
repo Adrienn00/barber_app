@@ -26,7 +26,7 @@ export default async function CalendarPage() {
         {setup.isReady && <ShareLinkButton path={publicPath} />}
       </div>
       <SetupChecklist status={setup} publicPath={publicPath} />
-      <BarberCalendar services={services} customers={customers} />
+      <BarberCalendar barberId={barberId} services={services} customers={customers} />
     </main>
   );
 }

@@ -12,12 +12,13 @@
 | `components/pricelist/` | Árlista szerkesztése: `PriceListEditor` (lista + ablak), `ServiceForm` (név, saját időtartam, ár), `ServiceRow` (egy sor gombokkal) |
 | `components/schedule/` | `WorkingHoursEditor` (heti munkaidő sávokkal, hétfő másolása), `BookingRulesForm` (foglalási szabályok) |
 | `components/directory/` | Nyilvános oldalak: `DirectoryCard`, `DirectorySearch`, `ProfileHero` (barber/egység nyitó rész), `ServicePriceList`, `OpeningHours`, `TeamMemberCard` |
-| `components/booking/` | Foglalás: `BookingWizard` (3 lépés), `StepIndicator`, `ServicePicker`, `DayPicker`, `SlotGrid`, `MyBookingCard` |
+| `components/booking/` | Foglalás: `BookingWizard` (3 lépés), `StepIndicator`, `ServicePicker`, `DayPicker`, `SlotGrid`, `MyBookingCard`, `CancelMyBooking`, `AlternativeSlots` (2–3 másik időpont, egy kattintásos újrafoglalás) |
+| `components/requests/` | Döntések: `RequestCard` (függő kérés), `BookingDecision` (jóváhagyás / elutasítás / lemondás gombok – a naptárban is), `LiveRefresh` (élő frissítés) |
 | `components/admin/` | Platform admin: `StatsGrid`, `BarberAdminCard`, `ShopAdminCard`, `BarberDetails`, `StatusActions` (jóváhagyás/elutasítás/felfüggesztés gombok) |
 | `components/shops/` | Egységek: `ShopForm`, `ShopStatusCard`, `MembersList`, `InviteForm` (link másolással), `PendingInvitesList`, `ShopCalendarOverview` (a vezető áttekintése), `MembershipCard` (tagként kilépés), `InviteAnswer` (meghívó elfogadása) |
 | `components/system/` | `SystemStatusCard` (az `/allapot` oldalhoz) |
 | `styles/` | `globals.css` (**az összes szín egy helyen**), `calendar.css` (a naptár kinézete, színkódok), `fonts.ts` (Oswald címekhez, Inter szöveghez) |
-| `lib/` | Böngészőben futó segédkód: `calendarEvents.ts` (naptáradat → naptár-események, tesztelve), `useOnActionResult.ts`, `useFullPageRedirect.ts`, `useSubmitWithoutReset.ts` (beküldés alaphelyzetbe állítás nélkül – élő mezős űrlapokhoz), `supabase-browser.ts` |
+| `lib/` | Böngészőben futó segédkód: `calendarEvents.ts` (naptáradat → naptár-események, tesztelve), `useOnActionResult.ts`, `useFullPageRedirect.ts`, `useSubmitWithoutReset.ts` (beküldés alaphelyzetbe állítás nélkül – élő mezős űrlapokhoz), `useBookingChanges.ts` (Realtime: foglalásváltozás figyelése), `supabase-browser.ts` |
 
 **Szabályok**
 - Egy fájl = egy komponens, a fájl neve = a komponens neve (`Card.tsx` → `Card`).

@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/backend/auth/auth.service";
 import { ROUTES, loginPath, safeNextPath } from "@/shared/config/routes";
 import type { Slot } from "@/shared/types/directory";
 import { type FormState, field } from "@/shared/types/form";
-import { getSlots, requestBooking } from "./booking.service";
+import { getAlternativeSlots, getSlots, requestBooking } from "./booking.service";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -33,4 +33,11 @@ export async function requestBookingAction(_prev: FormState, formData: FormData)
 
   revalidatePath(ROUTES.myBookings);
   return { success: "Kérésed elküldtük, a barber hamarosan visszaigazolja." };
+}
+
+/** Alternatív időpontok egy meghiúsult foglaláshoz (a „Foglalásaim” kártyán) */
+export async function loadAlternativesAction(bookingId: string): Promise<Slot[]> {
+  const user = await getCurrentUser();
+  if (!user) return [];
+  return getAlternativeSlots(bookingId);
 }

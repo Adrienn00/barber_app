@@ -14,6 +14,11 @@ export function formatDateHu(date: Date | string): string {
   return formatInTimeZone(date, TIMEZONE, "yyyy. MMMM d., EEEE", { locale: hu });
 }
 
+/** Rövid nap, pl. „okt. 3., szo.” (időpontgombokhoz) */
+export function formatDayHu(date: Date | string): string {
+  return formatInTimeZone(date, TIMEZONE, "MMM d., EEEEEE", { locale: hu });
+}
+
 /** Bukaresti helyi idő („2026-10-03T14:00”) → UTC Date. */
 export function bucharestToUtc(localDateTime: string): Date {
   return fromZonedTime(localDateTime, TIMEZONE);

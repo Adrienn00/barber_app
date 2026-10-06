@@ -39,6 +39,7 @@ export type MyBooking = {
   note: string | null;
   decisionNote: string | null;
   cancelledBy: "customer" | "barber" | null;
+  serviceId: string;
   serviceName: string;
   price: number;
   barberName: string;
@@ -46,6 +47,12 @@ export type MyBooking = {
   address: string;
   phone: string;
   cancelLimitHours: number;
+  /** A vendég még lemondhatja-e (függő: kezdésig; megerősített: a lemondási határidőig) */
+  canCancel: boolean;
+  /** Megerősített, jövőbeli, de a lemondási határidő már lejárt */
+  cancelDeadlinePassed: boolean;
+  /** Másik időpontot ajánlunk-e (elutasított, lejárt, vagy a barber mondta le – egy héten belül) */
+  offerAlternatives: boolean;
 };
 
 export type MyBookingGroups = { upcoming: MyBooking[]; past: MyBooking[]; closed: MyBooking[] };
@@ -57,23 +64,33 @@ export type MyBookingGroups = { upcoming: MyBooking[]; past: MyBooking[]; closed
 export async function getMyBookings(): Promise<MyBookingGroups> {
   const { data } = await q.selectMyBookings(await createClient());
   const now = Date.now();
-  const all: MyBooking[] = (data ?? []).map((b) => ({
-    id: b.id,
-    status: b.status,
-    startsAt: b.starts_at,
-    endsAt: b.ends_at,
-    expiresAt: b.expires_at,
-    note: b.customer_note,
-    decisionNote: b.decision_note,
-    cancelledBy: b.cancelled_by,
-    serviceName: b.service_name,
-    price: Number(b.price),
-    barberName: b.barber_name,
-    barberSlug: b.barber_slug,
-    address: `${b.barber_city}, ${b.barber_address}`,
-    phone: formatPhone(b.barber_phone),
-    cancelLimitHours: b.cancel_limit_hours,
-  }));
+  const all: MyBooking[] = (data ?? []).map((b) => {
+    const start = new Date(b.starts_at).getTime();
+    const beforeDeadline = start - b.cancel_limit_hours * 3600_000 > now;
+    const failed =
+      b.status === "rejected" || b.status === "expired" || (b.status === "cancelled" && b.cancelled_by === "barber");
+    return {
+      id: b.id,
+      status: b.status,
+      startsAt: b.starts_at,
+      endsAt: b.ends_at,
+      expiresAt: b.expires_at,
+      note: b.customer_note,
+      decisionNote: b.decision_note,
+      cancelledBy: b.cancelled_by,
+      serviceId: b.service_id,
+      serviceName: b.service_name,
+      price: Number(b.price),
+      barberName: b.barber_name,
+      barberSlug: b.barber_slug,
+      address: `${b.barber_city}, ${b.barber_address}`,
+      phone: formatPhone(b.barber_phone),
+      cancelLimitHours: b.cancel_limit_hours,
+      canCancel: start > now && (b.status === "pending" || (b.status === "confirmed" && beforeDeadline)),
+      cancelDeadlinePassed: b.status === "confirmed" && start > now && !beforeDeadline,
+      offerAlternatives: failed && start > now - 7 * 86_400_000,
+    };
+  });
 
   const active = (b: MyBooking) => b.status === "pending" || b.status === "confirmed";
   return {
@@ -82,4 +99,10 @@ export async function getMyBookings(): Promise<MyBookingGroups> {
     past: all.filter((b) => b.status === "confirmed" && new Date(b.endsAt).getTime() <= now),
     closed: all.filter((b) => !active(b)),
   };
+}
+
+/** Legfeljebb 3 másik szabad időpont egy meghiúsult foglalás helyett (ugyanaz a barber és szolgáltatás) */
+export async function getAlternativeSlots(bookingId: string): Promise<Slot[]> {
+  const { data } = await q.selectAlternativeSlots(await createClient(), bookingId);
+  return (data ?? []).map((s) => ({ startsAt: s.starts_at, time: toBucharestTime(s.starts_at) }));
 }
