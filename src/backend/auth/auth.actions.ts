@@ -7,6 +7,7 @@ import {
   signUp,
   startGoogleSignIn,
 } from "@/backend/auth/auth.service";
+import { removePushSubscription } from "@/backend/notifications/notifications.service";
 import { ROUTES, afterLoginPath, safeNextPath } from "@/shared/config/routes";
 import { type FormState, field } from "@/shared/types/form";
 import { validateLogin, validateRegistration } from "@/shared/validation/forms";
@@ -60,8 +61,10 @@ export async function signInWithGoogleAction(_prev: FormState, formData: FormDat
   redirect(result.url);
 }
 
-/** Kijelentkezés */
-export async function signOutAction(): Promise<void> {
+/** Kijelentkezés – ennek az eszköznek a push-feliratkozása is törlődik (a következő felhasználó ne kapja) */
+export async function signOutAction(formData: FormData): Promise<void> {
+  const pushEndpoint = field(formData, "pushEndpoint");
+  if (pushEndpoint) await removePushSubscription(pushEndpoint);
   await signOut();
   redirect(ROUTES.home);
 }

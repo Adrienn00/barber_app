@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signOutAction } from "@/backend/auth/auth.actions";
+import { getPushSubscription } from "@/frontend/lib/push";
 import { ROUTES } from "@/shared/config/routes";
 
 export type UserMenuUser = {
@@ -22,6 +23,14 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
   useEffect(() => {
     if (menuRef.current) menuRef.current.open = false;
   }, [pathname]);
+
+  // Ennek az eszköznek a push-feliratkozása: kijelentkezéskor töröljük
+  const [pushEndpoint, setPushEndpoint] = useState("");
+  useEffect(() => {
+    void getPushSubscription()
+      .then((s) => setPushEndpoint(s?.endpoint ?? ""))
+      .catch(() => {});
+  }, []);
 
   const links = [
     ...(user.isApprovedBarber
@@ -48,7 +57,7 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
         <span className="flex size-6 items-center justify-center rounded-full bg-brass text-xs font-bold text-background">
           {user.name.charAt(0).toUpperCase()}
         </span>
-        <span className="max-w-32 truncate">{user.name}</span>
+        <span className="hidden max-w-32 truncate sm:inline">{user.name}</span>
         {user.pendingCount > 0 && (
           <span
             aria-label={`${user.pendingCount} függő kérés`}
@@ -69,6 +78,7 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
           </Link>
         ))}
         <form action={signOutAction} className="border-t border-line">
+          <input type="hidden" name="pushEndpoint" value={pushEndpoint} />
           <button type="submit" className="w-full px-4 py-3 text-left text-muted hover:bg-line hover:text-foreground">
             Kijelentkezés
           </button>

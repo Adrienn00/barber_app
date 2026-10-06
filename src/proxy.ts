@@ -7,7 +7,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Statikus fájlok és képek kihagyása
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // Statikus fájlok, képek, a service worker, a manifest és a push-küldő (az adatbázis hívja) kihagyása
+    "/((?!_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|api/notifications|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

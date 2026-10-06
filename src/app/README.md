@@ -5,7 +5,10 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 
 | Fájl | URL | Ki láthatja | Mi ez |
 | --- | --- | --- | --- |
-| `layout.tsx` | minden oldal | – | közös keret: fejléc, betűtípus, színek |
+| `layout.tsx` | minden oldal | – | közös keret: fejléc (harang, menü), betűtípus, színek, service worker |
+| `manifest.ts` | `/manifest.webmanifest` | – | telepíthető app (PWA): név, színek, ikonok (`public/icons/`, `scripts/gen-icons.mjs`) |
+| `ertesitesek/page.tsx` | `/ertesitesek` | bejelentkezett | értesítések listája; push be-/kikapcsolása ezen az eszközön |
+| `api/notifications/dispatch/route.ts` | `/api/notifications/dispatch` | csak az adatbázis (titkos kulccsal) | push-küldő |
 | `page.tsx` | `/` | mindenki | kezdőlap: „Barbert keresel?” / „Barber vagy?” |
 | `belepes/page.tsx` | `/belepes` | kijelentkezett | belépés |
 | `regisztracio/page.tsx` | `/regisztracio` | kijelentkezett | regisztráció |

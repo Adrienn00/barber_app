@@ -32,3 +32,16 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     - **közvetlenül** („már megbeszéltük telefonon”): egy „Biztos?” lépés után azonnal átkerül, a vendég nem kap kérdést,
       csak a foglalásainál látja: „Áthelyezve (korábban: …)”. Fiók nélküli (kézi) vendégnél csak ez a mód van.
     - Az áthelyezés – a kézi foglaláshoz hasonlóan – munkaidőn kívülre is lehet, de más foglalással nem ütközhet.
+
+## Értesítések – 2026-10-06
+
+18. **Az értesítéseket az adatbázis hozza létre** (triggerek és percenkénti időzítő), így minden eseményről szólnak –
+    az időzítő által kiváltottakról (lejárat, emlékeztető) is. **A push-t a Next.js szerver küldi**
+    (`/api/notifications/dispatch`), nem Supabase Edge Function: az adatbázis pg_net-tel szól neki titkos kulccsal, és percenként
+    újrapróbálja. Így helyben is működik külön szolgáltatás nélkül, élesben pedig a Vercelen fut (a spec 9. fejezetében írt
+    Edge Function helyett). Az e-mail csatorna előkészítve, kikapcsolva (8. fázis).
+19. **Értesítést kapnak a spec 9. táblázatán felül:** az áthelyezés minden lépése (javaslat, elfogadás, elutasítás, lejárat,
+    közvetlen áthelyezés), a megbízható vendég azonnal megerősített foglalása (a barber is), és az egység-jelentkezések.
+    A barber kézi foglalásáról senki nem kap értesítést. Az aznapra szóló (aznap megerősített) foglalás nem kap emlékeztetőt.
+20. **Kijelentkezéskor** az adott eszköz push-feliratkozása törlődik (a közös telefonon a következő felhasználó ne kapja
+    az előző értesítéseit); ha ugyanazon az eszközön más lép be és bekapcsolja, a feliratkozás az övé lesz.

@@ -16,6 +16,8 @@ Fázisonként haladunk (spec 12. fejezet); minden fázis végén megállás, ös
 - Next 16: a middleware neve `proxy` (`src/proxy.ts`).
 - Sémaváltozás csak `supabase/migrations`-ben. A biztonság az RLS-ben van, a proxy csak kényelmi réteg.
 - Parancsok: `npm run dev | lint | typecheck | test | build`; adatbázis: `npm run db:start | db:reset | test:db | db:types`.
+  Push-értesítés helyben: egyszer `npm run notifications:setup` (kulcsok a .env.local-ba); a `db:reset` utána magától
+  lefuttatja a `db:config`-ot (hová szóljon az adatbázis). Értesítést csak az adatbázis hoz létre (triggerek, `private.notify`).
 - Sémaváltozás után: `db:reset`, `db:types`, `test:db`. Új táblánál: `revoke all ... from anon, authenticated`, majd explicit
   (oszlopszintű) GRANT + RLS policy (lásd `20260924120100_rls.sql`, `20260926120000_shops.sql`). Minden új jogosultsághoz teszt kell
   (`tests/db/`), ami azt is ellenőrzi, amit NEM szabad (pl. státusz önjóváhagyása).

@@ -3,12 +3,16 @@
 import { useEffect, useRef } from "react";
 import { createClient } from "./supabase-browser";
 
+export type RealtimeTable = "bookings" | "booking_reschedules" | "notifications";
+const BOOKING_TABLES: readonly RealtimeTable[] = ["bookings", "booking_reschedules"];
+
 /**
  * Élő frissítés: ha egy foglalás vagy áthelyezési javaslat megváltozik (új kérés, jóváhagyás, lemondás,
  * lejárat, javaslat, válasz), meghívja a callbacket. A két táblában ugyanazok a szűrhető oszlopok vannak.
  * A szűrő pl. `barber_id=eq.<id>` vagy `customer_id=eq.<id>`; az RLS miatt úgyis csak a saját sorok jönnek.
+ * A figyelt táblák cserélhetők (pl. ["notifications"] és `user_id=eq.<id>` a harang számjelzőjéhez).
  */
-export function useBookingChanges(filter: string, onChange: () => void) {
+export function useBookingChanges(filter: string, onChange: () => void, tables: readonly RealtimeTable[] = BOOKING_TABLES) {
   const callbackRef = useRef(onChange);
   useEffect(() => {
     callbackRef.current = onChange;
@@ -30,12 +34,12 @@ export function useBookingChanges(filter: string, onChange: () => void) {
         clearTimeout(timer);
         timer = setTimeout(() => callbackRef.current(), 300);
       };
-      channel = supabase
-        // Egyedi név: ugyanarra a szűrőre több komponens is figyelhet (fejléc + naptár)
-        .channel(`bookings:${filter}:${crypto.randomUUID()}`)
-        .on("postgres_changes", { event: "*", schema: "public", table: "bookings", filter }, notify)
-        .on("postgres_changes", { event: "*", schema: "public", table: "booking_reschedules", filter }, notify)
-        .subscribe();
+      // Egyedi név: ugyanarra a szűrőre több komponens is figyelhet (fejléc + naptár)
+      const created = supabase.channel(`${tables.join("+")}:${filter}:${crypto.randomUUID()}`);
+      for (const table of tables) {
+        created.on("postgres_changes", { event: "*", schema: "public", table, filter }, notify);
+      }
+      channel = created.subscribe();
     });
 
     return () => {
@@ -43,5 +47,7 @@ export function useBookingChanges(filter: string, onChange: () => void) {
       clearTimeout(timer);
       if (channel) void supabase.removeChannel(channel);
     };
-  }, [filter]);
+    // A táblák listája a hívó helyén állandó (szövegként hasonlítjuk)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, tables.join(",")]);
 }

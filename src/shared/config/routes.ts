@@ -11,6 +11,8 @@ export const ROUTES = {
   becomeBarber: "/barber-leszek",
   barbers: "/barberek",
   myBookings: "/foglalasaim",
+  /** Appon belüli értesítések és a push be-/kikapcsolása */
+  notifications: "/ertesitesek",
   barberCalendar: "/naptar",
   barberRequests: "/keresek",
   barberSettings: "/beallitasok",
@@ -31,6 +33,7 @@ export const ROUTES = {
 export const PROTECTED_PREFIXES = [
   ROUTES.profile,
   ROUTES.myBookings,
+  ROUTES.notifications,
   ROUTES.barberCalendar,
   ROUTES.barberRequests,
   ROUTES.barberSettings,

@@ -267,6 +267,7 @@ export type Database = {
           id: string
           is_anonymized: boolean
           moved_from: string | null
+          reminder_sent_at: string | null
           service_id: string
           starts_at: string
           status: Database["public"]["Enums"]["booking_status"]
@@ -287,6 +288,7 @@ export type Database = {
           id?: string
           is_anonymized?: boolean
           moved_from?: string | null
+          reminder_sent_at?: string | null
           service_id: string
           starts_at: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -307,6 +309,7 @@ export type Database = {
           id?: string
           is_anonymized?: boolean
           moved_from?: string | null
+          reminder_sent_at?: string | null
           service_id?: string
           starts_at?: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -341,6 +344,8 @@ export type Database = {
           created_at: string
           data: Json
           id: string
+          push_attempts: number
+          push_sent_at: string | null
           read_at: string | null
           title: string
           type: string
@@ -351,6 +356,8 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          push_attempts?: number
+          push_sent_at?: string | null
           read_at?: string | null
           title: string
           type: string
@@ -361,6 +368,8 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          push_attempts?: number
+          push_sent_at?: string | null
           read_at?: string | null
           title?: string
           type?: string
@@ -712,6 +721,27 @@ export type Database = {
         Args: { p_booking_id: string; p_note?: string }
         Returns: undefined
       }
+      claim_push_notifications: {
+        Args: { p_limit?: number }
+        Returns: {
+          body: string | null
+          created_at: string
+          data: Json
+          id: string
+          push_attempts: number
+          push_sent_at: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "notifications"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       create_manual_booking: {
         Args: {
           p_customer_id?: string
@@ -863,6 +893,15 @@ export type Database = {
       }
       respond_reschedule: {
         Args: { p_accept: boolean; p_reschedule_id: string }
+        Returns: undefined
+      }
+      save_push_subscription: {
+        Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
+      send_due_reminders: { Args: never; Returns: number }
+      set_app_config: {
+        Args: { p_key: string; p_value: string }
         Returns: undefined
       }
       set_my_working_hours: { Args: { p_slots: Json }; Returns: undefined }

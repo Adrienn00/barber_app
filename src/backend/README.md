@@ -17,6 +17,8 @@ backend/
   schedule/    munkaidő (heti sávok) és foglalási szabályok
   directory/   nyilvános oldalak: barberlista (keresés), barber oldala, egység oldala
   booking/     vendég foglalás: szabad időpontok, foglalási kérés, „Foglalásaim”, alternatív időpontok
+  notifications/ értesítések: lista, olvasottság, push-feliratkozás; a push-küldő (notifications.push.ts),
+               e-mail csatorna előkészítve, kikapcsolva (notifications.email.ts)
   requests/    döntések: függő kérések listája és száma, jóváhagyás, elutasítás, lemondás (barber és vendég),
                áthelyezés (javaslat / közvetlen), a vendég válasza, a barber döntése elutasított javaslat után
   shops/       egységek (üzletek): létrehozás, meghívók, csatlakozás/kilépés, a vezető áttekintése
@@ -39,5 +41,6 @@ backend/
 | `session.ts` | Minden kérés előtt: bejelentkezés frissítése, védett oldalak átirányítása (a `src/proxy.ts` hívja) |
 | `errors.ts` | Supabase-hibák magyar üzenetre fordítása |
 | `origin.ts` | Az app címe (linkek összerakásához, pl. meghívó link) |
+| `admin-client.ts` | Teljes jogú kapcsolat (titkos kulccsal) – csak háttérfeladatra, pl. a push-küldőnek |
 
 **Hol van maga az adatbázis?** A projekt gyökerében, a `supabase/` mappában: táblák és jogosultságok (`migrations/`), tesztadatok (`seed.sql`).
