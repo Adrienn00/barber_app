@@ -4,17 +4,20 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireApprovedBarber, requireUser } from "@/backend/auth/auth.service";
 import { appOrigin } from "@/backend/core/origin";
-import { ROUTES } from "@/shared/config/routes";
+import { ROUTES, shopPath } from "@/shared/config/routes";
 import { type FormState, field } from "@/shared/types/form";
 import { validateInviteEmail, validateShop } from "@/shared/validation/forms";
 import {
   type ShopCalendarEntry,
   acceptInvite,
   declineInvite,
+  getShop,
   getShopCalendar,
   inviteBarber,
   leaveShop,
   removeMember,
+  removeShopAvatar,
+  replaceShopAvatar,
   revokeInvite,
   saveShop,
 } from "./shops.service";
@@ -131,4 +134,31 @@ export async function loadShopCalendarAction(from: string, to: string): Promise<
   const days = (end.getTime() - start.getTime()) / 86_400_000;
   if (Number.isNaN(days) || days <= 0 || days > MAX_RANGE_DAYS) return [];
   return getShopCalendar(start.toISOString(), end.toISOString());
+}
+
+/** Az egység logójának feltöltése / cseréje (csak a vezető) */
+export async function uploadShopAvatarAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireApprovedBarber(ROUTES.myShop);
+  if (!user.ownedShop) return { error: "Csak az egység vezetője cserélheti a logót." };
+  const file = formData.get("avatar");
+  if (!(file instanceof File) || file.size === 0) return { error: "Válassz ki egy képet." };
+  const shop = await getShop(user.ownedShop.id);
+  const result = await replaceShopAvatar(user.ownedShop.id, shop?.avatarPath ?? null, file);
+  if (!result.ok) return { error: result.error };
+  revalidatePath(ROUTES.myShop);
+  revalidatePath(shopPath(user.ownedShop.slug));
+  revalidatePath(ROUTES.barbers);
+  return { success: "Logó mentve." };
+}
+
+export async function removeShopAvatarAction(): Promise<FormState> {
+  const user = await requireApprovedBarber(ROUTES.myShop);
+  if (!user.ownedShop) return { error: "Csak az egység vezetője törölheti a logót." };
+  const shop = await getShop(user.ownedShop.id);
+  const result = await removeShopAvatar(user.ownedShop.id, shop?.avatarPath ?? null);
+  if (!result.ok) return { error: result.error };
+  revalidatePath(ROUTES.myShop);
+  revalidatePath(shopPath(user.ownedShop.slug));
+  revalidatePath(ROUTES.barbers);
+  return { success: "Logó törölve." };
 }

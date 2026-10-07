@@ -29,12 +29,3 @@ export function updateBarber(db: DbClient, barberId: string, fields: BarberUpdat
 export function reapplyAsBarber(db: DbClient) {
   return db.rpc("reapply_as_barber");
 }
-
-/** Profilkép feltöltése a barber saját mappájába (a Storage-szabály csak oda engedi) */
-export function uploadAvatarFile(db: DbClient, path: string, bytes: Buffer) {
-  return db.storage.from("avatars").upload(path, bytes, { contentType: "image/webp", cacheControl: "31536000" });
-}
-
-export function removeAvatarFiles(db: DbClient, paths: string[]) {
-  return db.storage.from("avatars").remove(paths);
-}

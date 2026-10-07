@@ -13,7 +13,7 @@ type ShopUpdate = Database["public"]["Tables"]["shops"]["Update"];
 export function selectShop(db: DbClient, shopId: string) {
   return db
     .from("shops")
-    .select("id, slug, name, city, address, phone, bio, instagram, status, reject_reason, is_listed")
+    .select("id, slug, name, city, address, phone, bio, instagram, status, reject_reason, is_listed, avatar_path")
     .eq("id", shopId)
     .maybeSingle();
 }

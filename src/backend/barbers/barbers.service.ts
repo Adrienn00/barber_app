@@ -1,7 +1,6 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
-import sharp from "sharp";
 import type { BarberSummary } from "@/backend/auth/auth.service";
+import { newAvatarPath, processAvatarFile, removeAvatarFiles, uploadAvatarFile } from "@/backend/core/avatar";
 import { dbErrorMessage } from "@/backend/core/errors";
 import { createClient } from "@/backend/core/server-client";
 import type { BarberStatus } from "@/shared/types/domain";
@@ -104,39 +103,22 @@ export async function setMyListing(barberId: string, listed: boolean): Promise<R
   return error ? { ok: false, error: dbErrorMessage(error) } : { ok: true };
 }
 
-const AVATAR_MAX_BYTES = 3 * 1024 * 1024;
-const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
-/**
- * Profilkép cseréje: négyzetesre vágva, 512 px, webp. Az újrakódolás a telefonos fotók
- * rejtett adatait (pl. GPS-helyet) is eltávolítja. A régi kép törlődik.
- */
+/** Profilkép cseréje (négyzetes, 512 px, webp – lásd core/avatar.ts). A régi kép törlődik. */
 export async function replaceMyAvatar(barberId: string, oldPath: string | null, file: File): Promise<Result> {
-  if (!AVATAR_TYPES.includes(file.type)) return { ok: false, error: "JPG, PNG vagy WebP képet tölts fel." };
-  if (file.size > AVATAR_MAX_BYTES) return { ok: false, error: "A kép legfeljebb 3 MB lehet." };
-
-  let bytes: Buffer;
-  try {
-    bytes = await sharp(Buffer.from(await file.arrayBuffer()))
-      .rotate()
-      .resize(512, 512, { fit: "cover" })
-      .webp({ quality: 82 })
-      .toBuffer();
-  } catch {
-    return { ok: false, error: "Ezt a képet nem sikerült beolvasni. Próbálj egy másikat." };
-  }
+  const processed = await processAvatarFile(file);
+  if (!processed.ok) return processed;
 
   const db = await createClient();
-  const path = `barbers/${barberId}/${randomUUID()}.webp`;
-  const { error: uploadError } = await q.uploadAvatarFile(db, path, bytes);
+  const path = newAvatarPath(`barbers/${barberId}`);
+  const { error: uploadError } = await uploadAvatarFile(db, path, processed.bytes);
   if (uploadError) return { ok: false, error: "Nem sikerült feltölteni a képet." };
 
   const { error } = await q.updateBarber(db, barberId, { avatar_path: path });
   if (error) {
-    await q.removeAvatarFiles(db, [path]);
+    await removeAvatarFiles(db, [path]);
     return { ok: false, error: dbErrorMessage(error) };
   }
-  if (oldPath) await q.removeAvatarFiles(db, [oldPath]);
+  if (oldPath) await removeAvatarFiles(db, [oldPath]);
   return { ok: true };
 }
 
@@ -144,6 +126,6 @@ export async function removeMyAvatar(barberId: string, path: string | null): Pro
   const db = await createClient();
   const { error } = await q.updateBarber(db, barberId, { avatar_path: null });
   if (error) return { ok: false, error: dbErrorMessage(error) };
-  if (path) await q.removeAvatarFiles(db, [path]);
+  if (path) await removeAvatarFiles(db, [path]);
   return { ok: true };
 }

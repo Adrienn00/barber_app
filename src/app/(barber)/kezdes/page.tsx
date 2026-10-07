@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { requireApprovedBarber } from "@/backend/auth/auth.service";
-import { saveBarberProfileAction } from "@/backend/barbers/barbers.actions";
+import { removeAvatarAction, saveBarberProfileAction, uploadAvatarAction } from "@/backend/barbers/barbers.actions";
 import { getMyBarberApplication } from "@/backend/barbers/barbers.service";
 import { listMyServicesForEdit } from "@/backend/pricelist/pricelist.service";
 import { getMyBookingRules, getMyWorkingWeek, getSetupStatus } from "@/backend/schedule/schedule.service";
@@ -59,7 +59,12 @@ export default async function SetupWizardPage({ searchParams }: PageProps<"/kezd
 
       {step === 0 && profile && (
         <Card>
-          <AvatarUpload url={profile.avatarUrl} name={profile.displayName} />
+          <AvatarUpload
+            url={profile.avatarUrl}
+            name={profile.displayName}
+            uploadAction={uploadAvatarAction}
+            removeAction={removeAvatarAction}
+          />
           <BarberApplicationForm
             initial={profile}
             submitLabel="Mentés"

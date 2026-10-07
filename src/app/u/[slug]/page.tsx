@@ -11,7 +11,16 @@ export async function generateMetadata({ params }: PageProps<"/u/[slug]">): Prom
   const shop = await getPublicShop((await params).slug);
   if (!shop) return { title: "Nem található" };
   const description = shop.bio ?? `${shop.name}, ${shop.city} – foglalj időpontot a csapathoz.`;
-  return { title: shop.name, description, openGraph: { title: shop.name, description, siteName: APP_NAME } };
+  return {
+    title: shop.name,
+    description,
+    openGraph: {
+      title: shop.name,
+      description,
+      siteName: APP_NAME,
+      images: [{ url: shop.avatarUrl ?? "/icons/icon-512.png", width: 512, height: 512, alt: shop.name }],
+    },
+  };
 }
 
 // /u/[slug] – egység nyilvános oldala: bemutatkozás és a csapat („Kik várnak a székben”)

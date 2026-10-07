@@ -42,6 +42,7 @@ backend/
 | `session.ts` | Minden kérés előtt: bejelentkezés frissítése, védett oldalak átirányítása (a `src/proxy.ts` hívja) |
 | `errors.ts` | Supabase-hibák magyar üzenetre fordítása |
 | `origin.ts` | Az app címe (linkek összerakásához, pl. meghívó link) |
+| `avatar.ts` | Profilkép / egységlogó: valódi típus ellenőrzése (első bájtok), 512 px-es webp, feltöltés, törlés |
 | `admin-client.ts` | Teljes jogú kapcsolat (titkos kulccsal) – csak háttérfeladatra, pl. a push-küldőnek |
 
 **Hol van maga az adatbázis?** A projekt gyökerében, a `supabase/` mappában: táblák és jogosultságok (`migrations/`), tesztadatok (`seed.sql`).

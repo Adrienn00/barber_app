@@ -1,5 +1,7 @@
 import { requireApprovedBarber } from "@/backend/auth/auth.service";
+import { removeShopAvatarAction, uploadShopAvatarAction } from "@/backend/shops/shops.actions";
 import { getShop, listMembers, listPendingInvites } from "@/backend/shops/shops.service";
+import { AvatarUpload } from "@/frontend/components/barber/AvatarUpload";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { InviteForm } from "@/frontend/components/shops/InviteForm";
@@ -68,6 +70,14 @@ export default async function MyShopPage() {
       {shop && canEdit && (
         <section className="space-y-4">
           <h2 className="text-2xl font-bold">Az egység adatai</h2>
+          <AvatarUpload
+            url={shop.avatarUrl}
+            name={shop.name}
+            uploadAction={uploadShopAvatarAction}
+            removeAction={removeShopAvatarAction}
+            label="Logó"
+            hint="Az egység logója vagy egy fotó az üzletről. A barberlistában és az egység oldalán látszik."
+          />
           <ShopForm
             initial={shop}
             submitLabel={owned.status === "rejected" ? "Javítás és újraküldés" : "Adatok mentése"}

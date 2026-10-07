@@ -65,3 +65,11 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 25. **Jogi szövegek**: tervezet a tényleges működés alapján; az üzemeltető adatai a `src/shared/config/legal.ts`-ben,
     amíg hiányoznak, „Tervezet” figyelmeztetés látszik. Élesítés előtt jogásszal átnézetni javasolt.
 26. A `npm run db:reset` előtt megerősítés kell („igen”), mert a helyi adatokat törli.
+
+## Élesítés előtti átnézés – 2026-10-07
+
+27. **Az egység logója** feltölthető az Egységem oldalon (csak a vezető); a listában, az egység oldalán és a megosztott
+    link előnézetében látszik. A barber- és egységoldal linkelőnézetében a profilkép/logó jelenik meg.
+28. **Biztonsági szigorítás:** a látogató nem látja a barberek/egységek belső azonosítóját és az admin indoklását;
+    jóváhagyáskor (visszaállításkor) a régi indoklás törlődik. A feltöltött képnél a szerver a fájl tartalmából
+    ellenőrzi a típust (JPG/PNG/WebP), nem a böngésző állításából.

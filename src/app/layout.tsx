@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   title: { default: `${APP_NAME} – ${APP_TAGLINE}`, template: `%s | ${APP_NAME}` },
   description: APP_DESCRIPTION,
   applicationName: APP_NAME,
+  // A linkelőnézet képeinek teljes címe (élesben APP_URL; nélküle a Vercel a saját címét használja)
+  ...(process.env.APP_URL ? { metadataBase: new URL(process.env.APP_URL) } : {}),
   // Telepített appként (iPhone kezdőképernyő) is a saját nevével, sötét állapotsorral
   appleWebApp: { capable: true, title: APP_NAME, statusBarStyle: "black-translucent" },
   icons: { apple: "/icons/apple-touch-icon.png" },

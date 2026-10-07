@@ -1,5 +1,5 @@
 import { requireApprovedBarber } from "@/backend/auth/auth.service";
-import { saveBarberProfileAction } from "@/backend/barbers/barbers.actions";
+import { removeAvatarAction, saveBarberProfileAction, uploadAvatarAction } from "@/backend/barbers/barbers.actions";
 import { getMyBarberApplication } from "@/backend/barbers/barbers.service";
 import { listMyCustomers } from "@/backend/customers/customers.service";
 import { listMyServicesForEdit } from "@/backend/pricelist/pricelist.service";
@@ -58,7 +58,12 @@ export default async function SettingsPage() {
         <div id="profil" className="scroll-mt-24">
           <Card>
             <h2 className="text-2xl font-bold">Profil</h2>
-            <AvatarUpload url={profile.avatarUrl} name={profile.displayName} />
+            <AvatarUpload
+              url={profile.avatarUrl}
+              name={profile.displayName}
+              uploadAction={uploadAvatarAction}
+              removeAction={removeAvatarAction}
+            />
             <BarberApplicationForm
               initial={profile}
               submitLabel="Profil mentése"

@@ -1,6 +1,8 @@
 import "server-only";
+import { newAvatarPath, processAvatarFile, removeAvatarFiles, uploadAvatarFile } from "@/backend/core/avatar";
 import { dbErrorMessage } from "@/backend/core/errors";
 import { createClient } from "@/backend/core/server-client";
+import { avatarUrl } from "@/shared/config/storage";
 import { toBucharestLocal } from "@/shared/datetime/datetime";
 import type { BarberStatus } from "@/shared/types/domain";
 import type { ShopInput } from "@/shared/validation/forms";
@@ -19,6 +21,9 @@ export type ShopDetails = ShopInput & {
   status: BarberStatus;
   rejectReason: string | null;
   isListed: boolean;
+  /** Az egység logója */
+  avatarUrl: string | null;
+  avatarPath: string | null;
 };
 
 export type ShopMember = { barberId: string; displayName: string; slug: string; isOwner: boolean };
@@ -73,7 +78,36 @@ export async function getShop(shopId: string): Promise<ShopDetails | null> {
     status: data.status,
     rejectReason: data.reject_reason,
     isListed: data.is_listed,
+    avatarUrl: avatarUrl(data.avatar_path),
+    avatarPath: data.avatar_path,
   };
+}
+
+/** Az egység logójának cseréje (csak a vezető – a Storage-szabály és az RLS is ellenőrzi). A régi törlődik. */
+export async function replaceShopAvatar(shopId: string, oldPath: string | null, file: File): Promise<Result> {
+  const processed = await processAvatarFile(file);
+  if (!processed.ok) return processed;
+
+  const db = await createClient();
+  const path = newAvatarPath(`shops/${shopId}`);
+  const { error: uploadError } = await uploadAvatarFile(db, path, processed.bytes);
+  if (uploadError) return { ok: false, error: "Nem sikerült feltölteni a képet." };
+
+  const { error } = await q.updateShop(db, shopId, { avatar_path: path });
+  if (error) {
+    await removeAvatarFiles(db, [path]);
+    return { ok: false, error: ownMessage(error, "Nem sikerült menteni.") };
+  }
+  if (oldPath) await removeAvatarFiles(db, [oldPath]);
+  return { ok: true };
+}
+
+export async function removeShopAvatar(shopId: string, path: string | null): Promise<Result> {
+  const db = await createClient();
+  const { error } = await q.updateShop(db, shopId, { avatar_path: null });
+  if (error) return { ok: false, error: ownMessage(error, "Nem sikerült menteni.") };
+  if (path) await removeAvatarFiles(db, [path]);
+  return { ok: true };
 }
 
 /**

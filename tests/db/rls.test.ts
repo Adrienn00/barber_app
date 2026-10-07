@@ -239,3 +239,40 @@ describe("Platform admin", () => {
     expectDenied(await db.from("barbers").update({ status: "approved" }).eq("id", ID.barbers.zoli));
   });
 });
+
+describe("Élesítés előtti szigorítás", () => {
+  it("látogató nem látja a belső azonosítót és az admin indoklását; a nyilvános adatokat igen", async () => {
+    const anon = anonClient();
+    expect((await anon.from("barbers").select("user_id").limit(1)).error).not.toBeNull();
+    expect((await anon.from("barbers").select("reject_reason").limit(1)).error).not.toBeNull();
+    expect((await anon.from("shops").select("owner_barber_id").limit(1)).error).not.toBeNull();
+    const { data, error } = await anon.from("barbers").select("slug, display_name, city").eq("id", ID.barbers.peti);
+    expect(error).toBeNull();
+    expect(data).toHaveLength(1);
+  });
+
+  it("visszaállításkor a felfüggesztés oka törlődik (bejelentkezve sem olvasható ki)", async () => {
+    // Ideiglenes barber, hogy a párhuzamos tesztek seed-barbereit ne zavarjuk
+    const service = serviceClient();
+    const { data: u } = await service.auth.admin.createUser({
+      email: `indok-${Date.now()}@teszt.test`, password: "Jelszo123!", email_confirm: true,
+      user_metadata: { full_name: "Indok Ida", phone: "+40745000444", terms_accepted: "true" },
+    });
+    try {
+      const { data: b } = await service
+        .from("barbers")
+        .insert({
+          user_id: u.user!.id, slug: `indok-${Date.now().toString(36)}`, display_name: "Indok Barber",
+          city: "Arad", address: "Fő utca 3.", phone: "+40745000444", status: "approved",
+        })
+        .select("id")
+        .single();
+      await service.from("barbers").update({ status: "suspended", reject_reason: "Belső megjegyzés" }).eq("id", b!.id);
+      await service.from("barbers").update({ status: "approved" }).eq("id", b!.id);
+      const { data } = await service.from("barbers").select("status, reject_reason").eq("id", b!.id).single();
+      expect(data).toEqual({ status: "approved", reject_reason: null });
+    } finally {
+      await service.auth.admin.deleteUser(u.user!.id);
+    }
+  });
+});

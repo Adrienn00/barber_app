@@ -77,6 +77,27 @@ describe("Profilkép", () => {
   });
 });
 
+describe("Egység logója", () => {
+  it("csak az egység vezetője tölthet fel a mappájába; más barber nem; az avatar_path csak a sajátra mutathat", async () => {
+    const { data: shop } = await service
+      .from("shops")
+      .insert({
+        owner_barber_id: ID.barbers.peti, slug: `logo-teszt-${Date.now().toString(36)}`, name: "Logó Teszt",
+        city: "Kolozsvár", address: "Fő tér 2.", phone: "+40745000333", status: "approved",
+      })
+      .select("id")
+      .single();
+    try {
+      expect((await upload(peti, `shops/${shop!.id}/logo-${Date.now()}.png`)).error).toBeNull();
+      expect((await upload(laci, `shops/${shop!.id}/idegen-${Date.now()}.png`)).error).not.toBeNull();
+      const wrong = await service.from("shops").update({ avatar_path: `shops/masik/kep.webp` }).eq("id", shop!.id);
+      expect(wrong.error).not.toBeNull();
+    } finally {
+      await service.from("shops").delete().eq("id", shop!.id);
+    }
+  });
+});
+
 describe("Megbízható vendég", () => {
   it("a barber a saját vendégét jelölheti; más barber vendégét és más mezőt nem; a vendég nem", async () => {
     const mark = await peti

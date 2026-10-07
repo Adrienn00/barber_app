@@ -19,7 +19,14 @@ export async function generateMetadata({ params }: PageProps<"/b/[slug]">): Prom
   return {
     title: barber.name,
     description,
-    openGraph: { title: `${barber.name} – ${barber.city}`, description, siteName: APP_NAME, type: "profile" },
+    openGraph: {
+      title: `${barber.name} – ${barber.city}`,
+      description,
+      siteName: APP_NAME,
+      type: "profile",
+      // A megosztott link előnézetében a profilkép (ha nincs, az app ikonja)
+      images: [{ url: barber.avatarUrl ?? "/icons/icon-512.png", width: 512, height: 512, alt: barber.name }],
+    },
   };
 }
 
