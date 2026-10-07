@@ -126,3 +126,43 @@ export function validateBookingRules(input: Record<keyof BookingRules, string>):
   }
   return Object.keys(errors).length ? { ok: false, fieldErrors: errors } : { ok: true, data };
 }
+
+// -----------------------------------------------------------------------------
+// Rövid összefoglalók az összecsukott beállításokhoz
+// -----------------------------------------------------------------------------
+
+/** Pl. „H–P 09:00–17:00 · Szo 09:00–14:00” (az egymást követő, azonos idejű napok összevonva) */
+export function summarizeWeek(days: DayHours[]): string {
+  const byWeekday = new Map(days.map((d) => [d.weekday, d]));
+  const groups: { first: string; last: string; key: string }[] = [];
+  let previous: (typeof groups)[number] | null = null;
+  for (const { weekday, short } of WEEK_DAYS) {
+    const day = byWeekday.get(weekday);
+    const key = day?.open && day.ranges.length ? day.ranges.map((r) => `${r.start}–${r.end}`).join(", ") : null;
+    if (!key) {
+      previous = null;
+      continue;
+    }
+    if (previous && previous.key === key) {
+      previous.last = short;
+    } else {
+      previous = { first: short, last: short, key };
+      groups.push(previous);
+    }
+  }
+  if (!groups.length) return "Még nincs megadva";
+  return groups.map((g) => `${g.first === g.last ? g.first : `${g.first}–${g.last}`} ${g.key}`).join(" · ");
+}
+
+function ruleLabel<K extends keyof BookingRules>(key: K, value: number): string {
+  return RULE_OPTIONS[key].find((o) => o.value === value)?.label ?? String(value);
+}
+
+/** Pl. „Jóváhagyás: 2 órán belül · Lemondás: 24 órával előtte · Szünet: 5 perc” */
+export function summarizeRules(rules: BookingRules): string {
+  return [
+    `Jóváhagyás: ${ruleLabel("approvalTimeoutMin", rules.approvalTimeoutMin)}`,
+    `Lemondás: ${ruleLabel("cancelLimitHours", rules.cancelLimitHours)}`,
+    `Szünet: ${ruleLabel("bufferMin", rules.bufferMin)}`,
+  ].join(" · ");
+}

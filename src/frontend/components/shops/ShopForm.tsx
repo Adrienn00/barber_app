@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useCollapseOnSave } from "@/frontend/lib/useCollapseOnSave";
 import { saveShopAction } from "@/backend/shops/shops.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
@@ -19,6 +20,7 @@ type ShopFormProps = {
 /** Az egység adatai: név, egyedi link, város, cím, telefon, bemutatkozás, Instagram. */
 export function ShopForm({ initial, submitLabel }: ShopFormProps) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveShopAction, {});
+  useCollapseOnSave(state);
   // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
   const onSubmit = useSubmitWithoutReset(action);
   const values = { ...initial, ...state.values };

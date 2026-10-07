@@ -10,7 +10,7 @@ import { ServiceForm } from "./ServiceForm";
 import { ServiceRow, type ServiceRowData } from "./ServiceRow";
 
 /** A barber árlistája: szolgáltatások saját időtartammal és árral, szerkesztés felugró ablakban. */
-export function PriceListEditor({ services }: { services: ServiceRowData[] }) {
+export function PriceListEditor({ services, embedded = false }: { services: ServiceRowData[]; embedded?: boolean }) {
   const router = useRouter();
   const [editing, setEditing] = useState<ServiceRowData | "new" | null>(null);
   const [notice, setNotice] = useState<FormState | null>(null);
@@ -25,7 +25,7 @@ export function PriceListEditor({ services }: { services: ServiceRowData[] }) {
     <section className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold">Szolgáltatásaim</h2>
+          {!embedded && <h2 className="text-2xl font-bold">Szolgáltatásaim</h2>}
           <p className="text-muted">Te döntöd el, mennyi idő nálad egy-egy szolgáltatás, és mennyibe kerül.</p>
         </div>
         <Button onClick={() => setEditing("new")}>+ Új szolgáltatás</Button>

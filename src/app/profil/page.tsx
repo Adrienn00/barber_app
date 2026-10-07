@@ -4,6 +4,7 @@ import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { DeleteAccount } from "@/frontend/components/profile/DeleteAccount";
 import { ProfileForm } from "@/frontend/components/profile/ProfileForm";
 import { Alert } from "@/frontend/components/ui/Alert";
+import { CollapsibleSection } from "@/frontend/components/ui/CollapsibleSection";
 import { ROUTES, safeNextPath } from "@/shared/config/routes";
 import { formatPhone } from "@/shared/validation/phone";
 
@@ -19,13 +20,20 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profil">
       {!user.isProfileComplete && (
         <Alert tone="info">Mielőtt továbblépsz, add meg a neved és a telefonszámod.</Alert>
       )}
-      <ProfileForm
-        email={user.email}
-        fullName={user.fullName ?? ""}
-        phone={user.phone ? formatPhone(user.phone) : ""}
-        needsTerms={!user.termsAccepted}
-        next={next}
-      />
+      <CollapsibleSection
+        id="adataim"
+        title="Adataim"
+        summary={[user.fullName, user.phone ? formatPhone(user.phone) : null, user.email].filter(Boolean).join(" · ")}
+        defaultOpen={!user.isProfileComplete}
+      >
+        <ProfileForm
+          email={user.email}
+          fullName={user.fullName ?? ""}
+          phone={user.phone ? formatPhone(user.phone) : ""}
+          needsTerms={!user.termsAccepted}
+          next={next}
+        />
+      </CollapsibleSection>
       <DeleteAccount isBarber={Boolean(user.barber)} isAdmin={user.isAdmin} />
     </PageContainer>
   );

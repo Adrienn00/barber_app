@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { type ReactNode, useActionState, useState } from "react";
+import { useCollapseOnSave } from "@/frontend/lib/useCollapseOnSave";
 import { saveWorkingHoursAction } from "@/backend/schedule/schedule.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { Card } from "@/frontend/components/ui/Card";
@@ -14,8 +15,15 @@ const DEFAULT_RANGE = { start: "09:00", end: "17:00" };
  * Heti munkaidő: minden nap nyitva/zárva, egy vagy több sávval (pl. ebédszünet: 9–13 és 14–18).
  * A vendégek csak ezekre az időkre foglalhatnak (a kézi foglalás ettől független).
  */
-export function WorkingHoursEditor({ initial }: { initial: DayHours[] }) {
+type WorkingHoursEditorProps = {
+  initial: DayHours[];
+  /** Összecsukható részben: saját keret és cím nélkül */
+  embedded?: boolean;
+};
+
+export function WorkingHoursEditor({ initial, embedded = false }: WorkingHoursEditorProps) {
   const [state, action] = useActionState<FormState, FormData>(saveWorkingHoursAction, {});
+  useCollapseOnSave(state);
   const [week, setWeek] = useState<DayHours[]>(initial);
 
   function updateDay(weekday: number, change: (day: DayHours) => DayHours) {
@@ -32,11 +40,12 @@ export function WorkingHoursEditor({ initial }: { initial: DayHours[] }) {
     );
   }
 
+  const Frame = embedded ? EmbeddedFrame : Card;
   return (
-    <Card>
+    <Frame>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold">Munkaidő</h2>
+          {!embedded && <h2 className="text-2xl font-bold">Munkaidő</h2>}
           <p className="text-muted">Ezekre az időkre foglalhatnak a vendégek. Ebédszünethez adj hozzá egy második sávot.</p>
         </div>
         <button type="button" onClick={copyMondayToWeekdays} className="text-sm font-semibold text-brass underline">
@@ -140,8 +149,12 @@ export function WorkingHoursEditor({ initial }: { initial: DayHours[] }) {
           <SubmitButton pendingText="Mentés…">Munkaidő mentése</SubmitButton>
         </form>
       </div>
-    </Card>
+    </Frame>
   );
+}
+
+function EmbeddedFrame({ children }: { children: ReactNode }) {
+  return <div className="space-y-3">{children}</div>;
 }
 
 function TimeInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {

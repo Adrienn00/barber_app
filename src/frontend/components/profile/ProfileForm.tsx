@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useCollapseOnSave } from "@/frontend/lib/useCollapseOnSave";
 import { updateProfileAction } from "@/backend/profile/profile.actions";
 import { TermsCheckbox } from "@/frontend/components/auth/TermsCheckbox";
 import { Alert } from "@/frontend/components/ui/Alert";
@@ -20,6 +21,7 @@ type ProfileFormProps = {
 /** Profil szerkesztése / első kiegészítése: név és kötelező telefonszám. */
 export function ProfileForm({ email, fullName, phone, needsTerms, next }: ProfileFormProps) {
   const [state, action] = useActionState<FormState, FormData>(updateProfileAction, {});
+  useCollapseOnSave(state);
 
   return (
     <form action={action} className="space-y-4" noValidate>

@@ -2,6 +2,7 @@ import { requireApprovedBarber } from "@/backend/auth/auth.service";
 import { removeShopAvatarAction, uploadShopAvatarAction } from "@/backend/shops/shops.actions";
 import { getShop, listMembers, listPendingInvites } from "@/backend/shops/shops.service";
 import { AvatarUpload } from "@/frontend/components/barber/AvatarUpload";
+import { CollapsibleSection } from "@/frontend/components/ui/CollapsibleSection";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { InviteForm } from "@/frontend/components/shops/InviteForm";
@@ -68,8 +69,12 @@ export default async function MyShopPage() {
       )}
 
       {shop && canEdit && (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-bold">Az egység adatai</h2>
+        <CollapsibleSection
+          id="egyseg-adatai"
+          title="Az egység adatai"
+          summary={`${shop.name} · ${shop.city} · /u/${shop.slug}`}
+          defaultOpen={owned.status === "rejected"}
+        >
           <AvatarUpload
             url={shop.avatarUrl}
             name={shop.name}
@@ -82,7 +87,7 @@ export default async function MyShopPage() {
             initial={shop}
             submitLabel={owned.status === "rejected" ? "Javítás és újraküldés" : "Adatok mentése"}
           />
-        </section>
+        </CollapsibleSection>
       )}
     </PageContainer>
   );

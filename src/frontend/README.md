@@ -2,7 +2,7 @@
 
 | Mappa | Mi van benne |
 | --- | --- |
-| `components/ui/` | Általános építőkockák, bárhol használhatók: `Button`/`LinkButton`, `SubmitButton`, `TextField`, `TextArea`, `Checkbox`, `Alert`, `Badge`, `Card`, `Divider`, `ConfirmActionButton` (kétlépéses „Biztosan?” gomb), `Dialog` (felugró ablak), `Select` (legördülő lista), `Eyebrow` (kis arany felirat), `Icon` (ikonok), `StatusRow`, `Avatar` (profilkép vagy kezdőbetűk), `StepIndicator` (lépésjelző, kitöltődő vonallal), `Reveal` (görgetésre beúszó tartalom) |
+| `components/ui/` | Általános építőkockák, bárhol használhatók: `Button`/`LinkButton`, `SubmitButton`, `TextField`, `TextArea`, `Checkbox`, `Alert`, `Badge`, `Card`, `Divider`, `ConfirmActionButton` (kétlépéses „Biztosan?” gomb), `Dialog` (felugró ablak), `Select` (legördülő lista), `Eyebrow` (kis arany felirat), `Icon` (ikonok), `StatusRow`, `Avatar` (profilkép vagy kezdőbetűk), `StepIndicator` (lépésjelző, kitöltődő vonallal), `Reveal` (görgetésre beúszó tartalom), `CollapsibleSection` (összecsukható rész összefoglalóval; mentés után visszacsukódik) |
 | `components/layout/` | Oldalkeretek: `AppHeader` (felső sáv), `Logo`, `UserMenu` (lenyíló menü; kijelentkezéskor az eszköz push-feliratkozását is törli), `NotificationBell` (harang számjelzővel), `PageContainer` (tartalom oszlop), `PageHeader` (cím) |
 | `components/home/` | Kezdőlap: `HomeHero` (nyitó rész), `FeatureRow` (ikonos információs sor) |
 | `components/auth/` | Belépés/regisztráció: `LoginForm`, `RegisterForm`, `GoogleSignInButton`, `TermsCheckbox`, `ForgotPasswordForm`, `NewPasswordForm` |
@@ -21,7 +21,7 @@
 | `components/system/` | `SystemStatusCard` (az `/allapot` oldalhoz), `ServiceWorkerRegistrar` (a service worker betöltése) |
 | `components/notifications/` | Értesítések: `NotificationItem`, `PushSettings` (be-/kikapcsolás ezen az eszközön, próba, iPhone-útmutató), `MarkAllRead` |
 | `styles/` | `globals.css` (**az összes szín egy helyen**), `calendar.css` (a naptár kinézete, színkódok), `fonts.ts` (Oswald címekhez, Inter szöveghez), `motion.css` (animációk, „ct-” osztályok; animáció-kikapcsolásnál nem futnak) |
-| `lib/` | Böngészőben futó segédkód: `calendarEvents.ts` (naptáradat → naptár-események, tesztelve), `useOnActionResult.ts`, `useFullPageRedirect.ts`, `useSubmitWithoutReset.ts` (beküldés alaphelyzetbe állítás nélkül – élő mezős űrlapokhoz), `useBookingChanges.ts` (Realtime: foglalások, javaslatok, értesítések figyelése), `push.ts` (push-támogatás, feliratkozás, iPhone-felismerés), `resizeImage.ts` (kép kicsinyítése feltöltés előtt), `supabase-browser.ts` |
+| `lib/` | Böngészőben futó segédkód: `calendarEvents.ts` (naptáradat → naptár-események, tesztelve), `useOnActionResult.ts`, `useFullPageRedirect.ts`, `useSubmitWithoutReset.ts` (beküldés alaphelyzetbe állítás nélkül – élő mezős űrlapokhoz), `useBookingChanges.ts` (Realtime: foglalások, javaslatok, értesítések figyelése), `push.ts` (push-támogatás, feliratkozás, iPhone-felismerés), `resizeImage.ts` (kép kicsinyítése feltöltés előtt), `useCollapseOnSave.ts` (sikeres mentés után összecsukja a részt), `supabase-browser.ts` |
 
 **Szabályok**
 - Egy fájl = egy komponens, a fájl neve = a komponens neve (`Card.tsx` → `Card`).

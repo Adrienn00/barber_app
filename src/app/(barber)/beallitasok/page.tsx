@@ -13,8 +13,9 @@ import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { PriceListEditor } from "@/frontend/components/pricelist/PriceListEditor";
 import { BookingRulesForm } from "@/frontend/components/schedule/BookingRulesForm";
 import { WorkingHoursEditor } from "@/frontend/components/schedule/WorkingHoursEditor";
-import { Card } from "@/frontend/components/ui/Card";
+import { CollapsibleSection } from "@/frontend/components/ui/CollapsibleSection";
 import { ROUTES } from "@/shared/config/routes";
+import { summarizeRules, summarizeWeek } from "@/shared/validation/schedule";
 
 const SECTIONS = [
   { id: "profil", label: "Profil" },
@@ -24,6 +25,17 @@ const SECTIONS = [
   { id: "vendegek", label: "Vendégeim" },
 ];
 
+/** Pl. „3 aktív szolgáltatás · 40–70 lej” */
+function servicesSummary(services: { price: number; isActive: boolean }[]): string {
+  const active = services.filter((s) => s.isActive);
+  if (!active.length) return "Még nincs aktív szolgáltatásod";
+  const prices = active.map((s) => s.price);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  return `${active.length} aktív szolgáltatás · ${min === max ? min : `${min}–${max}`} lej`;
+}
+
+// Minden rész összecsukható: összecsukva egy rövid összefoglaló látszik, mentés után magától visszacsukódik.
 // /beallitasok – a barber beállításai: profil (kép, adatok, listában megjelenés), szolgáltatások,
 // munkaidő, foglalási szabályok, vendégek (megbízható jelölés).
 export default async function SettingsPage() {
@@ -55,46 +67,62 @@ export default async function SettingsPage() {
       </nav>
 
       {profile && (
-        <div id="profil" className="scroll-mt-24">
-          <Card>
-            <h2 className="text-2xl font-bold">Profil</h2>
-            <AvatarUpload
-              url={profile.avatarUrl}
-              name={profile.displayName}
-              uploadAction={uploadAvatarAction}
-              removeAction={removeAvatarAction}
-            />
-            <BarberApplicationForm
-              initial={profile}
-              submitLabel="Profil mentése"
-              action={saveBarberProfileAction}
-              slugHint="Ezt a linket osztod meg a vendégeiddel. Ha megváltoztatod, a régi link megszűnik."
-            />
-            <ListingToggle listed={profile.isListed} />
-          </Card>
-        </div>
+        <CollapsibleSection
+          id="profil"
+          title="Profil"
+          summary={`${profile.displayName} · ${profile.city} · /b/${profile.slug}${profile.isListed ? "" : " · nem látszik a listában"}`}
+        >
+          <AvatarUpload
+            url={profile.avatarUrl}
+            name={profile.displayName}
+            uploadAction={uploadAvatarAction}
+            removeAction={removeAvatarAction}
+          />
+          <BarberApplicationForm
+            initial={profile}
+            submitLabel="Profil mentése"
+            action={saveBarberProfileAction}
+            slugHint="Ezt a linket osztod meg a vendégeiddel. Ha megváltoztatod, a régi link megszűnik."
+          />
+          <ListingToggle listed={profile.isListed} />
+        </CollapsibleSection>
       )}
-      <div id="szolgaltatasok" className="scroll-mt-24">
-        <PriceListEditor services={services} />
-      </div>
-      <div id="munkaido" className="scroll-mt-24">
-        <WorkingHoursEditor initial={week} />
-      </div>
+      <CollapsibleSection
+        id="szolgaltatasok"
+        title="Szolgáltatásaim"
+        summary={servicesSummary(services)}
+        defaultOpen={!services.some((s) => s.isActive)}
+      >
+        <PriceListEditor services={services} embedded />
+      </CollapsibleSection>
+      <CollapsibleSection
+        id="munkaido"
+        title="Munkaidő"
+        summary={summarizeWeek(week)}
+        defaultOpen={!week.some((d) => d.open)}
+      >
+        <WorkingHoursEditor initial={week} embedded />
+      </CollapsibleSection>
       {rules && (
-        <div id="szabalyok" className="scroll-mt-24">
-          <BookingRulesForm initial={rules} />
-        </div>
+        <CollapsibleSection id="szabalyok" title="Foglalási szabályok" summary={summarizeRules(rules)}>
+          <BookingRulesForm initial={rules} embedded />
+        </CollapsibleSection>
       )}
-      <div id="vendegek" className="scroll-mt-24">
-        <Card>
-          <h2 className="text-2xl font-bold">Vendégeim</h2>
-          <p className="text-muted">
-            A <strong className="text-foreground">megbízható</strong> vendég kérését nem kell jóváhagynod: azonnal
-            megerősítésre kerül. Jelöld így a törzsvendégeidet.
-          </p>
-          <CustomerList customers={customers} />
-        </Card>
-      </div>
+      <CollapsibleSection
+        id="vendegek"
+        title="Vendégeim"
+        summary={
+          customers.length
+            ? `${customers.length} vendég · ${customers.filter((c) => c.isTrusted).length} megbízható`
+            : "Még nincs vendéged"
+        }
+      >
+        <p className="text-muted">
+          A <strong className="text-foreground">megbízható</strong> vendég kérését nem kell jóváhagynod: azonnal
+          megerősítésre kerül. Jelöld így a törzsvendégeidet.
+        </p>
+        <CustomerList customers={customers} />
+      </CollapsibleSection>
     </PageContainer>
   );
 }

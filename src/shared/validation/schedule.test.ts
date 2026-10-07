@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type DayHours, validateBookingRules, validateWorkingHours } from "./schedule";
+import { type DayHours, summarizeRules, summarizeWeek, validateBookingRules, validateWorkingHours } from "./schedule";
 
 const monday = (ranges: { start: string; end: string }[], open = true): DayHours => ({ weekday: 1, open, ranges });
 
@@ -43,5 +43,38 @@ describe("validateBookingRules", () => {
 
   it("listán kívüli értéket elutasít", () => {
     expect(validateBookingRules({ ...ok, bufferMin: "7" })).toMatchObject({ ok: false, fieldErrors: { bufferMin: expect.any(String) } });
+  });
+});
+
+describe("összefoglalók", () => {
+  const day = (weekday: number, ...ranges: [string, string][]) => ({
+    weekday,
+    open: ranges.length > 0,
+    ranges: ranges.map(([start, end]) => ({ start, end })),
+  });
+
+  it("az egymást követő, azonos idejű napokat összevonja", () => {
+    const week = [
+      day(1, ["09:00", "17:00"]),
+      day(2, ["09:00", "17:00"]),
+      day(3, ["09:00", "17:00"]),
+      day(4, ["09:00", "17:00"]),
+      day(5, ["09:00", "17:00"]),
+      day(6, ["09:00", "14:00"]),
+      day(0),
+    ];
+    expect(summarizeWeek(week)).toBe("H–P 09:00–17:00 · Szo 09:00–14:00");
+  });
+
+  it("ebédszünet és szünnap a hét közepén", () => {
+    const week = [day(1, ["09:00", "13:00"], ["14:00", "18:00"]), day(2), day(3, ["10:00", "19:00"]), day(4, ["10:00", "19:00"])];
+    expect(summarizeWeek(week)).toBe("H 09:00–13:00, 14:00–18:00 · Sze–Cs 10:00–19:00");
+    expect(summarizeWeek([day(1), day(2)])).toBe("Még nincs megadva");
+  });
+
+  it("szabályok röviden", () => {
+    expect(
+      summarizeRules({ minNoticeMin: 120, maxDaysAhead: 30, approvalTimeoutMin: 120, cancelLimitHours: 24, bufferMin: 5, slotStepMin: 15 }),
+    ).toBe("Jóváhagyás: 2 órán belül · Lemondás: 24 órával előtte · Szünet: 5 perc");
   });
 });

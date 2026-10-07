@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useCollapseOnSave } from "@/frontend/lib/useCollapseOnSave";
 import { saveBarberApplicationAction } from "@/backend/barbers/barbers.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
@@ -29,6 +30,7 @@ export function BarberApplicationForm({
   slugHint = "Ezt a linket oszthatod meg a vendégeiddel. Kisbetű, szám, kötőjel.",
 }: BarberApplicationFormProps) {
   const [state, action, pending] = useActionState<FormState, FormData>(submit, {});
+  useCollapseOnSave(state);
   // Beküldés automatikus alaphelyzetbe állítás nélkül (élő mezők vannak az űrlapon)
   const onSubmit = useSubmitWithoutReset(action);
   const values = state.values ?? initial;

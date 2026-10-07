@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useCollapseOnSave } from "@/frontend/lib/useCollapseOnSave";
 import { saveBookingRulesAction } from "@/backend/schedule/schedule.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { Card } from "@/frontend/components/ui/Card";
@@ -19,12 +20,13 @@ const FIELDS: { key: keyof BookingRules; label: string; hint: string }[] = [
 ];
 
 /** Foglalási szabályok: előre foglalás, jóváhagyási idő, lemondás, szünet két vendég között, lépésköz. */
-export function BookingRulesForm({ initial }: { initial: BookingRules }) {
+export function BookingRulesForm({ initial, embedded = false }: { initial: BookingRules; embedded?: boolean }) {
   const [state, action] = useActionState<FormState, FormData>(saveBookingRulesAction, {});
+  useCollapseOnSave(state);
 
-  return (
-    <Card>
-      <h2 className="text-2xl font-bold">Foglalási szabályok</h2>
+  const content = (
+    <>
+      {!embedded && <h2 className="text-2xl font-bold">Foglalási szabályok</h2>}
       <form action={action} className="space-y-4">
         {state.error && <Alert tone="error">{state.error}</Alert>}
         {state.success && <Alert tone="success">{state.success}</Alert>}
@@ -43,6 +45,7 @@ export function BookingRulesForm({ initial }: { initial: BookingRules }) {
         </div>
         <SubmitButton pendingText="Mentés…">Szabályok mentése</SubmitButton>
       </form>
-    </Card>
+    </>
   );
+  return embedded ? content : <Card>{content}</Card>;
 }
