@@ -6,6 +6,7 @@ import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { RequestCard } from "@/frontend/components/requests/RequestCard";
 import { RescheduleCard } from "@/frontend/components/requests/RescheduleCard";
 import { Alert } from "@/frontend/components/ui/Alert";
+import { Reveal } from "@/frontend/components/ui/Reveal";
 import { ROUTES } from "@/shared/config/routes";
 
 export const metadata: Metadata = { title: "Függő kérések" };
@@ -27,8 +28,10 @@ export default async function RequestsPage() {
         <section className="space-y-3">
           <h2 className="text-2xl font-bold">Döntésre vár</h2>
           <p className="text-muted">A vendég nem fogadta el az új időpontot, vagy nem válaszolt időben. A régi időpont addig él.</p>
-          {decisions.map((r) => (
-            <RescheduleCard key={r.id} item={r} />
+          {decisions.map((r, i) => (
+            <Reveal key={r.id} index={i}>
+              <RescheduleCard item={r} />
+            </Reveal>
           ))}
         </section>
       )}
@@ -38,15 +41,21 @@ export default async function RequestsPage() {
         {requests.length === 0 ? (
           <Alert tone="info">Nincs jóváhagyásra váró kérés. Ha új érkezik, itt azonnal megjelenik.</Alert>
         ) : (
-          requests.map((r) => <RequestCard key={r.id} request={r} />)
+          requests.map((r, i) => (
+            <Reveal key={r.id} index={i}>
+              <RequestCard request={r} />
+            </Reveal>
+          ))
         )}
       </section>
 
       {waiting.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-2xl font-bold">Áthelyezés – a vendég válaszára vár</h2>
-          {waiting.map((r) => (
-            <RescheduleCard key={r.id} item={r} />
+          {waiting.map((r, i) => (
+            <Reveal key={r.id} index={i}>
+              <RescheduleCard item={r} />
+            </Reveal>
           ))}
         </section>
       )}

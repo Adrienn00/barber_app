@@ -5,6 +5,7 @@ import { ProfileHero } from "@/frontend/components/directory/ProfileHero";
 import { TeamMemberCard } from "@/frontend/components/directory/TeamMemberCard";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { Eyebrow } from "@/frontend/components/ui/Eyebrow";
+import { Reveal } from "@/frontend/components/ui/Reveal";
 import { APP_NAME } from "@/shared/config/app";
 
 export async function generateMetadata({ params }: PageProps<"/u/[slug]">): Promise<Metadata> {
@@ -49,8 +50,10 @@ export default async function ShopPage({ params }: PageProps<"/u/[slug]">) {
           <Alert tone="info">Az egység jelenleg nem fogad online foglalást.</Alert>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {shop.members.map((m) => (
-              <TeamMemberCard key={m.id} barber={m} />
+            {shop.members.map((m, i) => (
+              <Reveal key={m.id} index={i} className="flex">
+                <TeamMemberCard barber={m} />
+              </Reveal>
             ))}
           </div>
         )}

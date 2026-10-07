@@ -6,6 +6,7 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | Fájl | URL | Ki láthatja | Mi ez |
 | --- | --- | --- | --- |
 | `layout.tsx` | minden oldal | – | közös keret: fejléc (harang, menü), betűtípus, színek, service worker |
+| `template.tsx` | minden oldal | – | oldalváltáskor finom beúszás (a layouttal ellentétben minden navigációnál újra létrejön) |
 | `manifest.ts` | `/manifest.webmanifest` | – | telepíthető app (PWA): név, színek, ikonok (`public/icons/`, `scripts/gen-icons.mjs`) |
 | `ertesitesek/page.tsx` | `/ertesitesek` | bejelentkezett | értesítések listája; push be-/kikapcsolása ezen az eszközön |
 | `api/notifications/dispatch/route.ts` | `/api/notifications/dispatch` | csak az adatbázis (titkos kulccsal) | push-küldő |

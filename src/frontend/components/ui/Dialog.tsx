@@ -31,7 +31,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
         // Kattintás a sötét háttérre (magára a dialog elemre, nem a tartalmára) → bezárás
         if (e.target === e.currentTarget) onClose();
       }}
-      className="m-0 mt-auto max-h-[90dvh] w-full max-w-none rounded-t-2xl border border-line bg-surface p-0 text-foreground backdrop:bg-black/60 sm:m-auto sm:max-w-lg sm:rounded-2xl"
+      className="ct-dialog m-0 mt-auto max-h-[90dvh] w-full max-w-none rounded-t-2xl border border-line bg-surface p-0 text-foreground backdrop:bg-black/60 backdrop:backdrop-blur-sm sm:m-auto sm:max-w-lg sm:rounded-2xl"
     >
       {open && (
         <div className="space-y-5 p-6">

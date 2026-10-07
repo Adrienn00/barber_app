@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./calendar.css";
+@import "./motion.css";
 
 /*
  * ChairTime színvilág: sötét, meleg barnásfekete alap, réz-arany kiemelés, krémfehér szöveg.

@@ -8,7 +8,7 @@ export function NotificationItem({ notification }: { notification: AppNotificati
   return (
     <Link
       href={notification.url}
-      className={`block rounded-xl border p-4 transition hover:border-brass ${
+      className={`ct-lift block rounded-xl border p-4 ${
         unread ? "border-brass/60 bg-brass/10" : "border-line bg-surface"
       }`}
     >

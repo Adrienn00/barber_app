@@ -5,6 +5,7 @@ import { DirectorySearch } from "@/frontend/components/directory/DirectorySearch
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { Alert } from "@/frontend/components/ui/Alert";
+import { Reveal } from "@/frontend/components/ui/Reveal";
 
 export const metadata: Metadata = { title: "Barberek" };
 
@@ -24,8 +25,10 @@ export default async function DirectoryPage({ searchParams }: PageProps<"/barber
         </Alert>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {entries.map((e) => (
-            <DirectoryCard key={`${e.kind}-${e.slug}`} entry={e} />
+          {entries.map((e, i) => (
+            <Reveal key={`${e.kind}-${e.slug}`} index={i} className="flex">
+              <DirectoryCard entry={e} />
+            </Reveal>
           ))}
         </div>
       )}

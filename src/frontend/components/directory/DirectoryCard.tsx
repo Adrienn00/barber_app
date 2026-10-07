@@ -11,7 +11,7 @@ export function DirectoryCard({ entry }: { entry: DirectoryEntry }) {
   return (
     <Link
       href={href}
-      className="group flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 transition hover:border-brass"
+      className="ct-lift group flex w-full flex-col gap-3 rounded-xl border border-line bg-surface p-5"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">

@@ -23,8 +23,10 @@ export function SlotGrid({ slots, selected, loading, onSelect }: SlotGridProps) 
             type="button"
             aria-pressed={isSelected}
             onClick={() => onSelect(s)}
-            className={`min-h-12 rounded-lg border font-semibold transition ${
-              isSelected ? "border-brass bg-brass text-background" : "border-line bg-surface hover:border-brass"
+            className={`min-h-12 rounded-lg border font-semibold transition duration-200 hover:-translate-y-0.5 ${
+              isSelected
+                ? "ct-pop border-brass bg-brass text-background shadow-[0_8px_20px_-10px_rgb(212_169_94/0.8)]"
+                : "border-line bg-surface hover:border-brass"
             }`}
           >
             {s.time}

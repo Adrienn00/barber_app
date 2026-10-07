@@ -7,6 +7,7 @@ import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { LiveRefresh } from "@/frontend/components/requests/LiveRefresh";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { LinkButton } from "@/frontend/components/ui/Button";
+import { Reveal } from "@/frontend/components/ui/Reveal";
 import { ROUTES } from "@/shared/config/routes";
 
 export const metadata: Metadata = { title: "Foglalásaim" };
@@ -30,15 +31,21 @@ export default async function MyBookingsPage() {
             <LinkButton href={ROUTES.barbers}>Időpontot foglalok</LinkButton>
           </div>
         ) : (
-          upcoming.map((b) => <MyBookingCard key={b.id} booking={b} />)
+          upcoming.map((b, i) => (
+            <Reveal key={b.id} index={i}>
+              <MyBookingCard booking={b} />
+            </Reveal>
+          ))
         )}
       </section>
 
       {past.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-2xl font-bold">Korábbiak</h2>
-          {past.map((b) => (
-            <MyBookingCard key={b.id} booking={b} />
+          {past.map((b, i) => (
+            <Reveal key={b.id} index={i}>
+              <MyBookingCard booking={b} />
+            </Reveal>
           ))}
         </section>
       )}
@@ -46,8 +53,10 @@ export default async function MyBookingsPage() {
       {closed.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-2xl font-bold">Elutasított, lejárt, lemondott</h2>
-          {closed.map((b) => (
-            <MyBookingCard key={b.id} booking={b} />
+          {closed.map((b, i) => (
+            <Reveal key={b.id} index={i}>
+              <MyBookingCard booking={b} />
+            </Reveal>
           ))}
         </section>
       )}

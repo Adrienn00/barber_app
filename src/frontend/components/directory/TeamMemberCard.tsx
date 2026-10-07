@@ -8,7 +8,7 @@ import type { PublicBarber } from "@/shared/types/directory";
 export function TeamMemberCard({ barber }: { barber: PublicBarber }) {
   const minPrice = barber.services.length ? Math.min(...barber.services.map((s) => s.price)) : null;
   return (
-    <article className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5">
+    <article className="ct-lift flex w-full flex-col gap-3 rounded-xl border border-line bg-surface p-5">
       <div className="flex items-center gap-4">
         <Avatar url={barber.avatarUrl} name={barber.name} size={56} />
         <div>

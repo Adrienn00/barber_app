@@ -1,0 +1,296 @@
+/*
+ * Mozgás és fények – minden animáció itt van, „ct-” előtaggal.
+ * Visszafogott, prémium hatás: beúszás, arany csillanás, finom emelkedés.
+ * Aki a készülékén kikapcsolta az animációkat (prefers-reduced-motion), annál nem futnak (a fájl alján).
+ */
+
+/* --- Kulcskockák ------------------------------------------------------------ */
+@keyframes ct-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ct-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ct-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ct-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes ct-shine {
+  from {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  to {
+    transform: translateX(350%) skewX(-20deg);
+  }
+}
+
+@keyframes ct-shimmer-text {
+  to {
+    background-position: -200% center;
+  }
+}
+
+@keyframes ct-float {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-16px) rotate(5deg);
+  }
+}
+
+@keyframes ct-glow-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-5%, 4%) scale(1.1);
+  }
+}
+
+@keyframes ct-wiggle {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  20% {
+    rotate: -16deg;
+  }
+  40% {
+    rotate: 13deg;
+  }
+  60% {
+    rotate: -8deg;
+  }
+  80% {
+    rotate: 4deg;
+  }
+}
+
+@keyframes ct-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ct-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes ct-pole {
+  to {
+    background-position: 56px 0;
+  }
+}
+
+@keyframes ct-snip {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  50% {
+    rotate: -22deg;
+  }
+}
+
+/* --- Oldalak és tartalom ------------------------------------------------------ */
+
+/* Minden oldalváltáskor finom beúszás (src/app/template.tsx) */
+.ct-page {
+  animation: ct-fade-up 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Betöltéskor sorban beúszó elemek: style={{ "--i": n }} adja a sorrendet */
+.ct-enter {
+  animation: ct-fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 110ms);
+}
+
+/* Görgetésre megjelenő elemek (Reveal komponens) */
+.ct-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(min(var(--i, 0), 8) * 70ms);
+}
+.ct-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Kártya: rámutatva kicsit megemelkedik, arany fénnyel */
+.ct-lift {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.ct-lift:hover {
+  transform: translateY(-3px);
+  border-color: rgb(212 169 94 / 0.7);
+  box-shadow: 0 14px 34px -14px rgb(212 169 94 / 0.45);
+}
+
+/* --- Gombok --------------------------------------------------------------- */
+
+/* Arany gomb: rámutatva végigfut rajta egy fénycsík */
+.ct-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ct-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+  transform: translateX(-150%) skewX(-20deg);
+  pointer-events: none;
+}
+.ct-shine:hover::after {
+  animation: ct-shine 0.85s ease;
+}
+
+/* --- Kezdőlap --------------------------------------------------------------- */
+
+/* Csillogó arany szöveg */
+.ct-gold-text {
+  background: linear-gradient(100deg, #c99a4b 20%, #f6dfa6 40%, #d4a95e 55%, #c99a4b 75%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ct-shimmer-text 6s linear infinite;
+}
+
+.ct-float {
+  animation: ct-float 9s ease-in-out infinite;
+}
+
+.ct-glow {
+  animation: ct-glow-drift 16s ease-in-out infinite;
+}
+
+/* „Barber pole” csík: ferde arany-sötét sávok lassan haladnak */
+.ct-pole {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgb(212 169 94 / 0.85) 0 14px,
+    rgb(19 16 13) 14px 28px
+  );
+  background-size: 56px 100%;
+  animation: ct-pole 1.6s linear infinite;
+}
+
+/* --- Apróságok --------------------------------------------------------------- */
+
+/* A logó ollója rámutatva „csattint” */
+.ct-snip:hover .ct-snip-icon {
+  animation: ct-snip 0.45s ease;
+}
+
+/* A harang megrázkódik, ha új értesítés jön */
+.ct-wiggle {
+  transform-origin: 50% 10%;
+  animation: ct-wiggle 0.9s ease 0.3s both;
+}
+
+/* Pulzáló gyűrű egy pötty mögött (pl. „élő” jelzés) */
+.ct-ping {
+  animation: ct-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* A kiválasztott időpont „pattan” */
+.ct-pop {
+  animation: ct-pop 0.3s ease;
+}
+
+/* Üzenetdoboz beúszik */
+.ct-alert {
+  animation: ct-fade-up 0.35s ease both;
+}
+
+/* Felugró ablak: asztalon rugalmasan nagyodik, telefonon alulról csúszik fel */
+dialog.ct-dialog[open] {
+  animation: ct-scale-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+dialog.ct-dialog[open]::backdrop {
+  animation: ct-fade-in 0.25s ease;
+}
+@media (max-width: 639px) {
+  dialog.ct-dialog[open] {
+    animation: ct-sheet-up 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Animációk kikapcsolva (a készülék beállítása szerint) --------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .ct-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

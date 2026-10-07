@@ -7,6 +7,7 @@ import { MarkAllRead } from "@/frontend/components/notifications/MarkAllRead";
 import { NotificationItem } from "@/frontend/components/notifications/NotificationItem";
 import { PushSettings } from "@/frontend/components/notifications/PushSettings";
 import { Alert } from "@/frontend/components/ui/Alert";
+import { Reveal } from "@/frontend/components/ui/Reveal";
 import { ROUTES } from "@/shared/config/routes";
 
 export const metadata: Metadata = { title: "Értesítések" };
@@ -27,7 +28,11 @@ export default async function NotificationsPage() {
         {notifications.length === 0 ? (
           <Alert tone="info">Még nincs értesítésed. Itt jelenik meg minden, ami a foglalásaiddal történik.</Alert>
         ) : (
-          notifications.map((n) => <NotificationItem key={n.id} notification={n} />)
+          notifications.map((n, i) => (
+            <Reveal key={n.id} index={i}>
+              <NotificationItem notification={n} />
+            </Reveal>
+          ))
         )}
       </section>
     </PageContainer>

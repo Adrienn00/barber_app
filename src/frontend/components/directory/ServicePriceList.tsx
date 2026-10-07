@@ -28,7 +28,7 @@ export function ServicePriceList({ services, bookingHref }: ServicePriceListProp
           <Link
             key={s.id}
             href={bookingHref(s.id)}
-            className="space-y-2 rounded-xl border border-line bg-surface p-5 transition hover:border-brass"
+            className="ct-lift space-y-2 rounded-xl border border-line bg-surface p-5"
           >
             {content}
           </Link>
