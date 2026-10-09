@@ -110,3 +110,22 @@ export async function setShopStatus(
   const { error } = await q.setShopStatus(await createClient(), shopId, status, reason);
   return error ? { ok: false, error: dbErrorMessage(error, "Nem sikerült a státuszváltás.") } : { ok: true };
 }
+
+// -----------------------------------------------------------------------------
+// Adminok kezelése
+// -----------------------------------------------------------------------------
+
+export type AdminUser = { id: string; name: string | null; email: string; isMe: boolean };
+
+export async function listAdmins(): Promise<AdminUser[]> {
+  const { data } = await q.selectAdmins(await createClient());
+  return (data ?? []).map((a) => ({ id: a.id, name: a.full_name, email: a.email, isMe: a.is_me }));
+}
+
+export async function setUserAdmin(email: string, admin: boolean): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { error } = await q.setUserAdmin(await createClient(), email, admin);
+  if (!error) return { ok: true };
+  // A függvény magyar üzenetei közvetlenül megjeleníthetők
+  const own = ["22023", "42501"].includes(error.code ?? "") ? error.message : null;
+  return { ok: false, error: own ?? dbErrorMessage(error, "Nem sikerült menteni.") };
+}

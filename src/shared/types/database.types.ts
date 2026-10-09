@@ -858,6 +858,15 @@ export type Database = {
         }[]
       }
       leave_shop: { Args: never; Returns: undefined }
+      list_admins: {
+        Args: never
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+          is_me: boolean
+        }[]
+      }
       list_directory: {
         Args: { p_search?: string }
         Returns: {
@@ -910,6 +919,10 @@ export type Database = {
         Returns: undefined
       }
       set_my_working_hours: { Args: { p_slots: Json }; Returns: undefined }
+      set_user_admin: {
+        Args: { p_admin: boolean; p_email: string }
+        Returns: undefined
+      }
       timemultirange: { Args: never; Returns: unknown }
       withdraw_reschedule: {
         Args: { p_reschedule_id: string }

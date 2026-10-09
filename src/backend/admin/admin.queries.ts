@@ -40,3 +40,13 @@ export function setShopStatus(db: DbClient, shopId: string, status: BarberStatus
     p_reason: reason || undefined,
   });
 }
+
+/** Az adminok listája (csak admin hívhatja) */
+export function selectAdmins(db: DbClient) {
+  return db.rpc("list_admins");
+}
+
+/** Admin jog megadása / elvétele e-mail-cím alapján */
+export function setUserAdmin(db: DbClient, email: string, admin: boolean) {
+  return db.rpc("set_user_admin", { p_email: email, p_admin: admin });
+}

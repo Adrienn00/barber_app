@@ -163,3 +163,46 @@ describe("Barberjelentkezés és admin döntés", () => {
     expect(data).toMatchObject({ barbers_approved: expect.any(Number), customers: expect.any(Number) });
   });
 });
+
+describe("Admin jog kiosztása a felületről", () => {
+  it("admin adhat és vehet el admin jogot e-mail alapján; az új admin értesítést kap", async () => {
+    const email = `uj-admin-${Date.now()}@teszt.test`;
+    const { data: created } = await service.auth.admin.createUser({
+      email, password: PASSWORD, email_confirm: true,
+      user_metadata: { full_name: "Új Admin", phone: "+40745000666", terms_accepted: "true" },
+    });
+    createdUsers.push(created.user!.id);
+    const admin = await userClient("admin@barber.test");
+
+    expect((await admin.rpc("set_user_admin", { p_email: email.toUpperCase(), p_admin: true })).error).toBeNull();
+    const { data: profile } = await service.from("profiles").select("is_admin").eq("id", created.user!.id).single();
+    expect(profile!.is_admin).toBe(true);
+    const { data: notes } = await service.from("notifications").select("type").eq("user_id", created.user!.id);
+    expect(notes!.map((n) => n.type)).toContain("admin_granted");
+
+    const { data: list } = await admin.rpc("list_admins");
+    const rows = list as { email: string; is_me: boolean }[];
+    expect(rows.find((r) => r.email === email)?.is_me).toBe(false);
+    expect(rows.find((r) => r.email === "admin@barber.test")?.is_me).toBe(true);
+
+    // Az új admin elveheti a jogot másiktól, de saját magától nem
+    const fresh = await userClient(email);
+    expect((await fresh.rpc("set_user_admin", { p_email: email, p_admin: false })).error?.code).toBe("22023");
+    expect((await admin.rpc("set_user_admin", { p_email: email, p_admin: false })).error).toBeNull();
+    const { data: after } = await service.from("profiles").select("is_admin").eq("id", created.user!.id).single();
+    expect(after!.is_admin).toBe(false);
+  });
+
+  it("nem admin, látogató nem adhat és nem láthat; ismeretlen e-mail hiba; saját magától az admin nem veheti el", async () => {
+    const anna = await userClient("anna@vendeg.test");
+    expect((await anna.rpc("set_user_admin", { p_email: "anna@vendeg.test", p_admin: true })).error?.code).toBe("42501");
+    expect((await anna.rpc("list_admins")).error?.code).toBe("42501");
+    expect((await anonClient().rpc("set_user_admin", { p_email: "anna@vendeg.test", p_admin: true })).error).not.toBeNull();
+    // Közvetlenül a profiljában sem állíthatja magát adminná
+    expect((await anna.from("profiles").update({ is_admin: true }).eq("id", ID.users.anna)).error).not.toBeNull();
+
+    const admin = await userClient("admin@barber.test");
+    expect((await admin.rpc("set_user_admin", { p_email: "nincs-ilyen@sehol.test", p_admin: true })).error?.code).toBe("22023");
+    expect((await admin.rpc("set_user_admin", { p_email: "admin@barber.test", p_admin: false })).error?.code).toBe("22023");
+  });
+});

@@ -16,7 +16,7 @@
 | `components/directory/` | Nyilvános oldalak: `DirectoryCard`, `DirectorySearch`, `ProfileHero` (barber/egység nyitó rész), `ServicePriceList`, `OpeningHours`, `TeamMemberCard` |
 | `components/booking/` | Foglalás: `BookingWizard` (3 lépés), `ServicePicker`, `DayPicker`, `SlotGrid`, `MyBookingCard`, `CancelMyBooking`, `AlternativeSlots` (2–3 másik időpont, egy kattintásos újrafoglalás), `ProposalResponse` (a vendég válasza az áthelyezési javaslatra) |
 | `components/requests/` | Döntések: `RequestCard` (függő kérés), `BookingDecision` (jóváhagyás / elutasítás / lemondás gombok – a naptárban is), `RescheduleForm` (áthelyezés: javaslat vagy közvetlen, „Biztos?” lépéssel), `RescheduleCard` (javaslat állapota, döntés utána), `ProposalDetails`, `WithdrawProposalButton`, `LiveRefresh` (élő frissítés) |
-| `components/admin/` | Platform admin: `StatsGrid`, `BarberAdminCard`, `ShopAdminCard`, `BarberDetails`, `StatusActions` (jóváhagyás/elutasítás/felfüggesztés gombok) |
+| `components/admin/` | Platform admin: `StatsGrid`, `BarberAdminCard`, `ShopAdminCard`, `BarberDetails`, `StatusActions` (jóváhagyás/elutasítás/felfüggesztés gombok), `AdminManager` (adminok listája, admin jog megadása / elvétele) |
 | `components/shops/` | Egységek: `ShopForm`, `ShopStatusCard`, `MembersList`, `InviteForm` (link másolással), `PendingInvitesList`, `ShopCalendarOverview` (a vezető áttekintése), `MembershipCard` (tagként kilépés), `InviteAnswer` (meghívó elfogadása) |
 | `components/system/` | `SystemStatusCard` (az `/allapot` oldalhoz), `ServiceWorkerRegistrar` (a service worker betöltése) |
 | `components/notifications/` | Értesítések: `NotificationItem`, `PushSettings` (be-/kikapcsolás ezen az eszközön, próba, iPhone-útmutató), `MarkAllRead` |

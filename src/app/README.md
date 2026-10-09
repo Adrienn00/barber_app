@@ -32,7 +32,7 @@ egy oldal lekéri az adatot a `backend/`-ből, és átadja a `frontend/` kompone
 | `b/[slug]/foglalas/page.tsx` | `/b/…/foglalas` | mindenki (küldéshez belépés) | foglalás: szolgáltatás → időpont → megerősítés |
 | `u/[slug]/page.tsx` | `/u/…` | mindenki | egység oldala a csapattal |
 | `foglalasaim/page.tsx` | `/foglalasaim` | bejelentkezett | a vendég foglalásai: lemondás, másik időpont kérése, válasz az áthelyezési javaslatra; élőben frissül |
-| `platform/page.tsx` | `/platform` | admin | barberek és egységek jóváhagyása, alapszámok |
+| `platform/page.tsx` | `/platform` | admin | barberek és egységek jóváhagyása, alapszámok; adminok kezelése |
 | `allapot/page.tsx` | `/allapot` | mindenki | technikai állapot |
 | `aszf/`, `adatvedelem/` | `/aszf`, `/adatvedelem` | mindenki | jogi oldalak (tervezet; az üzemeltető adatai: `shared/config/legal.ts`) |
 

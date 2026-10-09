@@ -1,16 +1,23 @@
-import { getAdminStats, listBarbersForAdmin, listShopsForAdmin } from "@/backend/admin/admin.service";
+import { getAdminStats, listAdmins, listBarbersForAdmin, listShopsForAdmin } from "@/backend/admin/admin.service";
 import { requireAdmin } from "@/backend/auth/auth.service";
+import { AdminManager } from "@/frontend/components/admin/AdminManager";
 import { BarberAdminCard } from "@/frontend/components/admin/BarberAdminCard";
 import { ShopAdminCard } from "@/frontend/components/admin/ShopAdminCard";
 import { StatsGrid } from "@/frontend/components/admin/StatsGrid";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
+import { CollapsibleSection } from "@/frontend/components/ui/CollapsibleSection";
 import { ROUTES } from "@/shared/config/routes";
 
-// /platform – platform admin: függő jelentkezések (barber + egység), barberek, egységek, alapszámok
+// /platform – platform admin: függő jelentkezések (barber + egység), barberek, egységek, alapszámok, adminok kezelése
 export default async function PlatformPage() {
   await requireAdmin(ROUTES.platform);
-  const [stats, barbers, shops] = await Promise.all([getAdminStats(), listBarbersForAdmin(), listShopsForAdmin()]);
+  const [stats, barbers, shops, admins] = await Promise.all([
+    getAdminStats(),
+    listBarbersForAdmin(),
+    listShopsForAdmin(),
+    listAdmins(),
+  ]);
 
   const pendingBarbers = barbers.filter((b) => b.status === "pending");
   const pendingShops = shops.filter((s) => s.status === "pending");
@@ -49,6 +56,14 @@ export default async function PlatformPage() {
             <BarberAdminCard key={barber.id} barber={barber} />
           ))}
       </section>
+
+      <CollapsibleSection
+        id="adminok"
+        title="Adminok"
+        summary={`${admins.length} admin: ${admins.map((a) => a.name ?? a.email).join(", ")}`}
+      >
+        <AdminManager admins={admins} />
+      </CollapsibleSection>
     </PageContainer>
   );
 }

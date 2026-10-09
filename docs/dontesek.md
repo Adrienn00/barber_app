@@ -73,3 +73,9 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 28. **Biztonsági szigorítás:** a látogató nem látja a barberek/egységek belső azonosítóját és az admin indoklását;
     jóváhagyáskor (visszaállításkor) a régi indoklás törlődik. A feltöltött képnél a szerver a fájl tartalmából
     ellenőrzi a típust (JPG/PNG/WebP), nem a böngésző állításából.
+
+## Adminok – 2026-10-09
+
+29. **Admin jogot a felületről lehet adni** (Platform admin → Adminok): e-mail-cím alapján, a személynek előbb regisztrálnia
+    kell. Admin jogot csak admin adhat és vehet el; saját magától senki nem veheti el, így mindig marad legalább egy admin.
+    Aki admin jogot kap, értesítést kap róla. (Ez felülírja a korábbi „az admin szerepet kézzel állítjuk be” megoldást.)
