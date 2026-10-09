@@ -44,3 +44,7 @@ supabase/.branches/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Google OAuth kliens letöltött kulcsa (titkos – soha ne kerüljön gitbe)
+google_auth.json
+client_secret*.json
