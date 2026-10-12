@@ -99,3 +99,35 @@
   border: 2px dotted var(--color-brass);
   opacity: 0.9;
 }
+
+/* --- Telefonon (érintés): a hosszan megnyomott foglalás alján jól fogható fogantyú ------------
+   A FullCalendar érintésnél csak a kijelölt (hosszan nyomott) eseményt engedi húzni / nyújtani. */
+.fc .fc-event-selected {
+  box-shadow: 0 0 0 2px var(--color-brass);
+}
+.fc .fc-timegrid-event.fc-event-selected .fc-event-resizer-end {
+  display: block;
+  left: 50%;
+  right: auto;
+  bottom: -14px;
+  width: 52px;
+  height: 26px;
+  margin-left: -26px;
+  border: 2px solid var(--color-background);
+  border-radius: 999px;
+  background: var(--color-brass);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.45);
+  z-index: 5;
+}
+/* Két vízszintes „markolat” csík a fogantyún */
+.fc .fc-timegrid-event.fc-event-selected .fc-event-resizer-end::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  top: 8px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-background);
+  box-shadow: 0 5px 0 var(--color-background);
+}

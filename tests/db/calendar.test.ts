@@ -292,12 +292,14 @@ describe("Kézi foglalás telefonszám nélkül, időtartam módosítása", () =
       local("2034-03-07T10:25"),
     ]);
     // Visszahosszabbítva a következőig fér (30 perc + 5 puffer = 10:35), tovább nem
+    // Percre pontosan is (pl. 22 perc), majd vissza 30-ra
+    expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: 22 })).error).toBeNull();
     expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: 30 })).error).toBeNull();
     expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: 35 })).error?.code).toBe("23P01");
     r = await row(first);
     expect(new Date(r.ends_at).toISOString()).toBe(local("2034-03-07T10:30"));
 
-    for (const bad of [0, 3, 7, 485]) {
+    for (const bad of [0, 3, 485]) {
       expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: bad })).error?.code).toBe("22023");
     }
     // Más barber és a vendég nem módosíthatja

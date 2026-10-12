@@ -84,6 +84,7 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 
 30. **Kézi foglalásnál a telefonszám nem kötelező** – a fiók nélküli vendégnél elég a név (ha megadják a telefont,
     érvényesnek kell lennie).
-31. **Egy foglalás időtartama módosítható** (függő és megerősített): a naptárban a foglalás végét húzva, vagy a foglalás
-    ablakában az „Időtartam” választóval (5 perctől 4 óráig, 5 perces lépésben). A kezdés marad, a puffer vele megy;
+31. **Egy foglalás időtartama módosítható** (függő és megerősített): a naptárban a foglalás végét húzva (telefonon: hosszan
+    nyomva kijelölni, majd az arany fogantyút húzni), vagy a foglalás ablakában a „Befejezés” időpont beírásával (percre
+    pontosan, 5 perc – 8 óra). Érintésnél a legfeljebb 10 perces véletlen elmozdulás nem számít áthelyezésnek. A kezdés marad, a puffer vele megy;
     ütközésnél nem engedi. A vendég nem kap róla külön értesítést (a foglalásainál a frissített idő látszik).

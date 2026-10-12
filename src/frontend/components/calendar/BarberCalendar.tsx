@@ -140,6 +140,12 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
   async function handleEventChange(arg: EventChangeArg) {
     const item = arg.event.extendedProps.item as CalendarItem;
     const { start, end } = arg.event;
+    // Telefonon a hosszú nyomás (kijelölés) vagy egy ujjremegés apró elmozdulásnak számíthat –
+    // a legfeljebb 10 perces érintéses elmozdulást nem vesszük áthelyezésnek
+    const jsEvent = (arg as { jsEvent?: Event }).jsEvent;
+    const shiftMin =
+      start && arg.oldEvent.start ? Math.abs(start.getTime() - arg.oldEvent.start.getTime()) / 60_000 : 0;
+    if (jsEvent?.type.startsWith("touch") && shiftMin <= 10) return arg.revert();
     // Foglalás áthúzása: visszaugrik, és megnyílik az áthelyezés ablaka az új hellyel kitöltve
     if (item.kind === "booking" && start) {
       arg.revert();
@@ -246,7 +252,9 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
       <CalendarLegend />
       <p className="text-sm text-muted">
         Tipp: húzd végig az ujjad vagy az egeret egy üres sávon, és beírhatsz bármilyen hosszú programot (akár 10 percet is).
-        A programokat áthúzhatod vagy a szélüknél nyújthatod.
+        A programokat és a foglalásokat áthúzhatod, a hosszukat az aljuknál állíthatod.
+        Telefonon előbb tartsd nyomva a bejegyzést, amíg arany keretet kap – utána húzhatod, a hosszát pedig az alján
+        megjelenő arany fogantyúval állíthatod.
       </p>
 
       <Dialog
