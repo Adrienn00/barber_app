@@ -232,3 +232,11 @@ export async function movePrivateEvent(
   const { data: conflicts } = await q.selectPrivateEventConflicts(db, eventId);
   return { ok: true, conflicts: (conflicts ?? []).map((c) => formatDateTimeHu(c.starts_at)) };
 }
+
+/** Foglalás rövidebbre / hosszabbra vétele (pl. nem kell mindenkinek a teljes 30 perc) */
+export async function setBookingDuration(bookingId: string, durationMin: number): Promise<Result> {
+  const { error } = await q.setBookingDuration(await createClient(), bookingId, durationMin);
+  if (!error) return { ok: true };
+  const ownMessage = ["22023", "23P01", "42501"].includes(error.code ?? "") ? error.message : null;
+  return { ok: false, error: ownMessage ?? dbErrorMessage(error, "Nem sikerült módosítani.") };
+}

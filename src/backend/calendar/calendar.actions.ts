@@ -10,6 +10,7 @@ import {
   createManualBooking,
   createQuickBreak,
   movePrivateEvent,
+  setBookingDuration,
   getCalendar,
   getPrivateEventForEdit,
   removePrivateEvent,
@@ -137,4 +138,14 @@ export async function movePrivateEventAction(eventId: string, startsAt: string, 
 
   revalidatePath(ROUTES.barberCalendar);
   return { success: "Program áthelyezve.", warning: conflictWarning(result.conflicts) };
+}
+
+/** Foglalás időtartamának módosítása (a naptárban húzással vagy a foglalás ablakában) */
+export async function setBookingDurationAction(bookingId: string, durationMin: number): Promise<FormState> {
+  await currentBarberId();
+  if (!Number.isInteger(durationMin)) return { error: "Érvénytelen időtartam." };
+  const result = await setBookingDuration(bookingId, durationMin);
+  if (!result.ok) return { error: result.error };
+  revalidatePath(ROUTES.barberCalendar);
+  return { success: `Időtartam módosítva: ${durationMin} perc.` };
 }

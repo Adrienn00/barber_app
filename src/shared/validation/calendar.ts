@@ -99,7 +99,7 @@ export type ManualBookingInput = {
   serviceId: string;
   date: string;
   time: string;
-  /** Korábbi vendég azonosítója; üres = új vendég név + telefon alapján */
+  /** Korábbi vendég azonosítója; üres = új vendég név (+ nem kötelező telefon) alapján */
   customerId: string;
   guestName: string;
   guestPhone: string;
@@ -124,8 +124,10 @@ export function validateManualBooking(input: ManualBookingInput): Validated<Manu
   let guestPhone: string | null = null;
   if (!input.customerId) {
     if (input.guestName.trim().length < 2) errors.guestName = "Add meg a vendég nevét.";
-    guestPhone = normalizePhone(input.guestPhone);
-    if (!guestPhone) errors.guestPhone = "Adj meg egy érvényes telefonszámot.";
+    if (input.guestPhone.trim()) {
+      guestPhone = normalizePhone(input.guestPhone);
+      if (!guestPhone) errors.guestPhone = "Érvénytelen telefonszám – javítsd, vagy hagyd üresen.";
+    }
   }
   if (input.note.length > 500) errors.note = "A megjegyzés legfeljebb 500 karakter lehet.";
 

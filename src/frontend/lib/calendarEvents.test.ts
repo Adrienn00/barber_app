@@ -109,8 +109,8 @@ describe("toEventInputs", () => {
     expect(byId("private:e2:2026-10-07")).toMatchObject({ editable: false });
   });
 
-  it("megerősített foglalás húzható (áthelyezés), de nem nyújtható; a javaslat külön, mozdíthatatlan esemény", () => {
-    expect(byId("booking:b2")).toMatchObject({ editable: true, durationEditable: false });
+  it("megerősített foglalás húzható (áthelyezés) és a vége állítható (időtartam); a javaslat mozdíthatatlan", () => {
+    expect(byId("booking:b2")).toMatchObject({ editable: true, durationEditable: true });
     expect(byId("proposal:r1")).toMatchObject({
       title: "Javaslat: Fekete Béla · Szakáll",
       start: "2026-10-06T11:00:00",

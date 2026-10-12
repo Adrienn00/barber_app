@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BookingDecision } from "@/frontend/components/requests/BookingDecision";
+import { BookingDurationSelect } from "./BookingDurationSelect";
 import { WithdrawProposalButton } from "@/frontend/components/requests/WithdrawProposalButton";
 import { Button } from "@/frontend/components/ui/Button";
 import { Badge } from "@/frontend/components/ui/Badge";
@@ -56,6 +57,10 @@ export function BookingDetails({ booking, onDone, onReschedule }: BookingDetails
           <span className="text-muted">Megjegyzés: </span>
           {booking.note}
         </p>
+      )}
+
+      {isFuture && (booking.status === "pending" || booking.status === "confirmed") && (
+        <BookingDurationSelect bookingId={booking.id} startsAt={booking.startsAt} endsAt={booking.endsAt} onDone={onDone} />
       )}
 
       {booking.proposal && (

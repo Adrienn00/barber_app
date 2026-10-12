@@ -918,6 +918,10 @@ export type Database = {
         Args: { p_key: string; p_value: string }
         Returns: undefined
       }
+      set_booking_duration: {
+        Args: { p_booking_id: string; p_duration_min: number }
+        Returns: undefined
+      }
       set_my_working_hours: { Args: { p_slots: Json }; Returns: undefined }
       set_user_admin: {
         Args: { p_admin: boolean; p_email: string }

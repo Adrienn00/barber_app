@@ -258,3 +258,51 @@ describe("Kézi foglalás (create_manual_booking)", () => {
     expect((await manual(anna, args)).error?.code).toBe("42501");
   });
 });
+
+describe("Kézi foglalás telefonszám nélkül, időtartam módosítása", () => {
+  async function manualBooking(startsAt: string, extra: Record<string, unknown> = {}) {
+    const res = await peti.rpc("create_manual_booking", {
+      p_service_id: ID.services.petiHajvagas,
+      p_starts_at: startsAt,
+      p_guest_name: "Telefon Nélküli Tóbiás",
+      ...extra,
+    });
+    if (res.data) createdBookings.push(res.data as string);
+    return res;
+  }
+  const row = async (id: string) =>
+    (await service.from("bookings").select("ends_at, block_end, guest_phone").eq("id", id).single()).data!;
+
+  it("fiók nélküli vendégnek elég a név; hibás telefonszámot továbbra sem fogad el", async () => {
+    const ok = await manualBooking(local("2034-03-06T09:00"));
+    expect(ok.error).toBeNull();
+    expect((await row(ok.data as string)).guest_phone).toBeNull();
+    expect((await manualBooking(local("2034-03-06T11:00"), { p_guest_phone: "123" })).error).not.toBeNull();
+    expect((await manualBooking(local("2034-03-06T12:00"), { p_guest_name: "  " })).error?.code).toBe("22023");
+  });
+
+  it("a barber rövidebbre / hosszabbra veheti; a puffer vele megy; ütközésre és rossz értékre nem", async () => {
+    const first = (await manualBooking(local("2034-03-07T10:00"))).data as string; // 30 perc + 5 puffer
+    const next = (await manualBooking(local("2034-03-07T10:35"))).data as string;
+
+    expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: 20 })).error).toBeNull();
+    let r = await row(first);
+    expect([new Date(r.ends_at).toISOString(), new Date(r.block_end).toISOString()]).toEqual([
+      local("2034-03-07T10:20"),
+      local("2034-03-07T10:25"),
+    ]);
+    // Visszahosszabbítva a következőig fér (30 perc + 5 puffer = 10:35), tovább nem
+    expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: 30 })).error).toBeNull();
+    expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: 35 })).error?.code).toBe("23P01");
+    r = await row(first);
+    expect(new Date(r.ends_at).toISOString()).toBe(local("2034-03-07T10:30"));
+
+    for (const bad of [0, 3, 7, 485]) {
+      expect((await peti.rpc("set_booking_duration", { p_booking_id: first, p_duration_min: bad })).error?.code).toBe("22023");
+    }
+    // Más barber és a vendég nem módosíthatja
+    expect((await laci.rpc("set_booking_duration", { p_booking_id: next, p_duration_min: 20 })).error?.code).toBe("42501");
+    expect((await anna.rpc("set_booking_duration", { p_booking_id: next, p_duration_min: 20 })).error?.code).toBe("42501");
+    expect((await anonClient().rpc("set_booking_duration", { p_booking_id: next, p_duration_min: 20 })).error).not.toBeNull();
+  });
+});

@@ -57,7 +57,7 @@ export function ManualBookingForm({ services, customers, date, time, onSaved }: 
         value={customerId}
         onChange={(e) => setCustomerId(e.target.value)}
         options={[
-          { value: "", label: "Új vendég (név + telefon)" },
+          { value: "", label: "Új vendég" },
           ...customers.map((c) => ({ value: c.id, label: c.phone ? `${c.name} · ${c.phone}` : c.name })),
         ]}
       />
@@ -66,7 +66,7 @@ export function ManualBookingForm({ services, customers, date, time, onSaved }: 
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField label="Vendég neve" name="guestName" defaultValue={values.guestName} error={state.fieldErrors?.guestName} />
           <TextField
-            label="Telefonszám"
+            label="Telefonszám (nem kötelező)"
             name="guestPhone"
             type="tel"
             inputMode="tel"

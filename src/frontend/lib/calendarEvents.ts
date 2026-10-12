@@ -43,10 +43,11 @@ export function toEventInputs(data: CalendarData): EventInput[] {
     end: item.endLocal,
     allDay: item.kind === "private" && item.allDay,
     classNames: classNamesFor(item),
-    // Az egyszeri magánprogram húzható és nyújtható; a megerősített foglalás csak húzható
-    // (az áthelyezés ablakát nyitja meg); a függő kérés, a javaslat és a heti sorozat nem mozdítható
+    // Az egyszeri magánprogram húzható és nyújtható; a megerősített foglalás húzható (az áthelyezés
+    // ablakát nyitja meg) és a vége nyújtható / rövidíthető (időtartam); a függő kérés, a javaslat és
+    // a heti sorozat nem mozdítható
     editable: (item.kind === "private" && item.repeat === "none") || (item.kind === "booking" && item.status === "confirmed"),
-    durationEditable: item.kind === "private",
+    durationEditable: item.kind === "private" || item.kind === "booking",
     extendedProps: { item },
   }));
 }

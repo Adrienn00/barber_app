@@ -121,3 +121,8 @@ export function selectMyCustomers(db: DbClient, barberId: string) {
     .select("customer_id, customer:profiles!barber_customers_customer_id_fkey(full_name, phone)")
     .eq("barber_id", barberId);
 }
+
+/** Foglalás időtartamának módosítása (a kezdés marad, a puffer vele megy) */
+export function setBookingDuration(db: DbClient, bookingId: string, durationMin: number) {
+  return db.rpc("set_booking_duration", { p_booking_id: bookingId, p_duration_min: durationMin });
+}

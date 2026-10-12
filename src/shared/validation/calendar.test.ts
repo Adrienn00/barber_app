@@ -72,6 +72,11 @@ describe("validateManualBooking", () => {
     expect(r.ok && r.data).toMatchObject({ customerId: "cust", guestName: null, guestPhone: null });
   });
 
+  it("új vendégnél a telefonszám nem kötelező", () => {
+    const r = validateManualBooking({ ...input, guestPhone: "  " });
+    expect(r.ok && r.data).toMatchObject({ guestName: "Telefonos Tibor", guestPhone: null });
+  });
+
   it("hiányzó adatoknál mezőnkénti hiba", () => {
     const r = validateManualBooking({ ...input, serviceId: "", time: "25:00", guestName: "", guestPhone: "12" });
     expect(r.ok).toBe(false);

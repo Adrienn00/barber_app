@@ -11,6 +11,7 @@ import {
   loadCalendarAction,
   loadPrivateEventAction,
   movePrivateEventAction,
+  setBookingDurationAction,
 } from "@/backend/calendar/calendar.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { Button } from "@/frontend/components/ui/Button";
@@ -124,6 +125,18 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
     setDialog({ type: "details", item: arg.event.extendedProps.item as CalendarItem });
   }
 
+  /** A foglalás vége húzva: időtartam módosítása (a kezdés marad); egyébként mint az áthelyezés */
+  async function handleEventResize(arg: EventChangeArg) {
+    const item = arg.event.extendedProps.item as CalendarItem;
+    const { start, end } = arg.event;
+    if (item.kind !== "booking") return handleEventChange(arg);
+    if (!start || !end) return arg.revert();
+    const minutes = Math.round((end.getTime() - start.getTime()) / 60_000);
+    const result = await setBookingDurationAction(item.id, minutes);
+    if (result.error) arg.revert();
+    handleDone(result);
+  }
+
   async function handleEventChange(arg: EventChangeArg) {
     const item = arg.event.extendedProps.item as CalendarItem;
     const { start, end } = arg.event;
@@ -223,7 +236,7 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
             select={handleSelect}
             eventClick={handleEventClick}
             eventDrop={handleEventChange}
-            eventResize={handleEventChange}
+            eventResize={handleEventResize}
           />
         ) : (
           <div className="h-[560px] animate-pulse rounded-lg bg-background" />
