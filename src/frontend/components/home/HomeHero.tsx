@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { InstallAppButton } from "@/frontend/components/system/InstallAppButton";
 import { LinkButton } from "@/frontend/components/ui/Button";
 import { Eyebrow } from "@/frontend/components/ui/Eyebrow";
 import { Icon } from "@/frontend/components/ui/Icon";
@@ -58,6 +59,9 @@ export function HomeHero() {
           <LinkButton href={ROUTES.becomeBarber} variant="secondary">
             Barber vagyok, csatlakozom
           </LinkButton>
+        </div>
+        <div className="ct-enter" style={order(5)}>
+          <InstallAppButton />
         </div>
       </div>
 

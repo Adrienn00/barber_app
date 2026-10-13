@@ -4,6 +4,7 @@ import { getMyBookings } from "@/backend/booking/booking.service";
 import { MyBookingCard } from "@/frontend/components/booking/MyBookingCard";
 import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
+import { InstallAppButton } from "@/frontend/components/system/InstallAppButton";
 import { LiveRefresh } from "@/frontend/components/requests/LiveRefresh";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { LinkButton } from "@/frontend/components/ui/Button";
@@ -20,6 +21,7 @@ export default async function MyBookingsPage() {
   return (
     <PageContainer width="wide">
       <PageHeader eyebrow="Vendég" title="Foglalásaim" />
+      <InstallAppButton />
       {/* A barber döntése azonnal megjelenik */}
       <LiveRefresh filter={`customer_id=eq.${user.id}`} />
 

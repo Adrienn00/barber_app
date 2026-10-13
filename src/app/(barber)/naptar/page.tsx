@@ -3,6 +3,7 @@ import { listMyCustomers, listMyServices } from "@/backend/calendar/calendar.ser
 import { getSetupStatus } from "@/backend/schedule/schedule.service";
 import { SetupChecklist } from "@/frontend/components/barber/SetupChecklist";
 import { ShareLinkButton } from "@/frontend/components/barber/ShareLinkButton";
+import { InstallAppButton } from "@/frontend/components/system/InstallAppButton";
 import { BarberCalendar } from "@/frontend/components/calendar/BarberCalendar";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { ROUTES, barberPath } from "@/shared/config/routes";
@@ -23,7 +24,10 @@ export default async function CalendarPage() {
     <main className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-3 py-8 sm:px-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageHeader eyebrow="Barber felület" title="Naptáram" />
-        {setup.isReady && <ShareLinkButton path={publicPath} />}
+        <div className="flex flex-wrap items-start gap-3">
+          <InstallAppButton />
+          {setup.isReady && <ShareLinkButton path={publicPath} />}
+        </div>
       </div>
       <SetupChecklist status={setup} publicPath={publicPath} />
       <BarberCalendar barberId={barberId} services={services} customers={customers} />
