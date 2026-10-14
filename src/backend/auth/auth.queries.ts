@@ -7,7 +7,7 @@ import type { DbClient } from "@/backend/core/server-client";
 // =============================================================================
 
 export function selectProfile(db: DbClient, userId: string) {
-  return db.from("profiles").select("full_name, phone, is_admin, terms_accepted_at").eq("id", userId).maybeSingle();
+  return db.from("profiles").select("full_name, phone, is_admin, terms_accepted_at, rebook_reminders").eq("id", userId).maybeSingle();
 }
 
 export function selectBarberOfUser(db: DbClient, userId: string) {

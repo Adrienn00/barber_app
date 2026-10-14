@@ -39,6 +39,8 @@ export type CurrentUser = {
   phone: string | null;
   isAdmin: boolean;
   termsAccepted: boolean;
+  /** Kér-e „Ideje vágatni” emlékeztetőt */
+  rebookReminders: boolean;
   /** Barberjelentkezés / barberprofil, ha van */
   barber: BarberSummary | null;
   /** Az általa vezetett egység, ha van */
@@ -66,6 +68,7 @@ async function loadUserContext(db: DbClient, userId: string, email: string): Pro
     phone,
     isAdmin: profile?.is_admin ?? false,
     termsAccepted,
+    rebookReminders: profile?.rebook_reminders ?? true,
     barber: barber
       ? {
           id: barber.id,

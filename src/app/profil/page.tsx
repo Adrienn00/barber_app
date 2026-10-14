@@ -3,6 +3,7 @@ import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { DeleteAccount } from "@/frontend/components/profile/DeleteAccount";
 import { ProfileForm } from "@/frontend/components/profile/ProfileForm";
+import { RebookReminderToggle } from "@/frontend/components/profile/RebookReminderToggle";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { CollapsibleSection } from "@/frontend/components/ui/CollapsibleSection";
 import { ROUTES, safeNextPath } from "@/shared/config/routes";
@@ -33,6 +34,13 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profil">
           needsTerms={!user.termsAccepted}
           next={next}
         />
+      </CollapsibleSection>
+      <CollapsibleSection
+        id="emlekeztetok"
+        title="Emlékeztetők"
+        summary={user.rebookReminders ? "„Ideje vágatni” emlékeztető: bekapcsolva" : "„Ideje vágatni” emlékeztető: kikapcsolva"}
+      >
+        <RebookReminderToggle enabled={user.rebookReminders} />
       </CollapsibleSection>
       <DeleteAccount isBarber={Boolean(user.barber)} isAdmin={user.isAdmin} />
     </PageContainer>

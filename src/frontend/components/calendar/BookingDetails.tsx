@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BookingDecision } from "@/frontend/components/requests/BookingDecision";
+import { CutLogPanel } from "@/frontend/components/cutlog/CutLogPanel";
 import { BookingEndTime } from "./BookingEndTime";
 import { WithdrawProposalButton } from "@/frontend/components/requests/WithdrawProposalButton";
 import { Button } from "@/frontend/components/ui/Button";
@@ -20,7 +21,7 @@ type BookingDetailsProps = {
   onReschedule: () => void;
 };
 
-/** Egy foglalás részletei: vendég, telefon (hívható), szolgáltatás, időpont, megjegyzés – és a döntés gombjai. */
+/** Egy foglalás részletei: vendég, telefon (hívható), szolgáltatás, időpont, megjegyzés, vágásnapló – és a döntés gombjai. */
 export function BookingDetails({ booking, onDone, onReschedule }: BookingDetailsProps) {
   // A megnyitás pillanatához mérve (a múltbeli foglaláson már nincs mit dönteni)
   const [openedAt] = useState(() => Date.now());
@@ -58,6 +59,9 @@ export function BookingDetails({ booking, onDone, onReschedule }: BookingDetails
           {booking.note}
         </p>
       )}
+
+      {/* Lezajlott foglalásnál fotó + jegyzet; mindig: a vendég korábbi vágásai */}
+      <CutLogPanel bookingId={booking.id} />
 
       {isFuture && (booking.status === "pending" || booking.status === "confirmed") && (
         <BookingEndTime bookingId={booking.id} startsAt={booking.startsAt} endsAt={booking.endsAt} onDone={onDone} />

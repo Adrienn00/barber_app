@@ -12,6 +12,7 @@ backend/
   profile/     saját profil (név, telefon); fiók törlése
   barbers/     barberjelentkezés, barberprofil (jóváhagyás után is), profilkép (Storage), megjelenés a listában
   customers/   a barber vendégei: látogatások, megbízható vendég jelölése
+  cutlog/      vágásnapló: fotó (privát „cuts” tár, lejáró linkkel) + jegyzet egy lezajlott foglaláshoz
   admin/       platform admin: jóváhagyás, felfüggesztés, statisztika
   calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás, gyors szünet
   pricelist/   a barber árlistája: szolgáltatások saját időtartammal és árral
@@ -42,7 +43,7 @@ backend/
 | `session.ts` | Minden kérés előtt: bejelentkezés frissítése, védett oldalak átirányítása (a `src/proxy.ts` hívja) |
 | `errors.ts` | Supabase-hibák magyar üzenetre fordítása |
 | `origin.ts` | Az app címe (linkek összerakásához, pl. meghívó link) |
-| `avatar.ts` | Profilkép / egységlogó: valódi típus ellenőrzése (első bájtok), 512 px-es webp, feltöltés, törlés |
+| `avatar.ts` | Profilkép / egységlogó: valódi típus ellenőrzése (első bájtok), 512 px-es webp, feltöltés, törlés; vágásfotó (vágás nélkül, max. 1280 px) |
 | `admin-client.ts` | Teljes jogú kapcsolat (titkos kulccsal) – csak háttérfeladatra, pl. a push-küldőnek |
 
 **Hol van maga az adatbázis?** A projekt gyökerében, a `supabase/` mappában: táblák és jogosultságok (`migrations/`), tesztadatok (`seed.sql`).

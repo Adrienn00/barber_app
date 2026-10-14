@@ -88,3 +88,16 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     nyomva kijelölni, majd az arany fogantyút húzni), vagy a foglalás ablakában a „Befejezés” időpont beírásával (percre
     pontosan, 5 perc – 8 óra). Érintésnél a legfeljebb 10 perces véletlen elmozdulás nem számít áthelyezésnek. A kezdés marad, a puffer vele megy;
     ütközésnél nem engedi. A vendég nem kap róla külön értesítést (a foglalásainál a frissített idő látszik).
+
+## Visszatérő vendégek – 2026-10-14
+
+32. **Vágásnapló:** a barber a lezajlott (megerősített, már elkezdődött) foglaláshoz fotót és rövid jegyzetet menthet
+    (a naptárban, a foglalás ablakában). Legközelebb ugyanott látja a vendég korábbi vágásait nála. A vendég a
+    „Foglalásaim” oldalon látja (a jegyzet nem titkos – ezt a barber a mezőnél olvassa), és „Ugyanezt kérem újra” gombbal
+    egy koppintással újra foglalhat. Más barber nem látja. A fotók privát tárban vannak, csak rövid ideig érvényes linkkel
+    nyithatók meg; fióktörléskor (vendég vagy barber) a fotók és jegyzetek is törlődnek.
+33. **„Ideje vágatni” emlékeztető:** ha a vendég szokásos ideje (az utolsó legfeljebb 5 látogatás közti idő átlaga,
+    legalább 2 hét; egyetlen látogatásnál 4 hét) letelt egy barbernél, és nincs nála új foglalása, értesítést kap a
+    legközelebbi szabad időponttal (2 héten belül, ugyanarra a szolgáltatásra) – a koppintás egyenesen a foglalás
+    megerősítéséhez visz. Látogatásonként legfeljebb egyszer, napközben (10–20 óra), és csak a szokásos idő utáni
+    3 hétben; aki 10 hétnél ritkábban jár, nem kap. A Profilom oldalon kikapcsolható.

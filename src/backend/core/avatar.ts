@@ -1,10 +1,11 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import sharp from "sharp";
+import sharp, { type ResizeOptions } from "sharp";
 import type { DbClient } from "./server-client";
 
 // =============================================================================
 // Profilkép / logó (barber és egység közös): ellenőrzés, 512 px-es négyzetes webp, feltöltés, törlés.
+// A vágásnapló fotója ugyanígy ellenőrizve, de vágás nélkül (processPhotoFile).
 // A Storage-szabály (20261009090000_avatars.sql) csak a saját mappába enged írni:
 //   barbers/<barber_id>/…, shops/<shop_id>/…
 // =============================================================================
@@ -24,11 +25,13 @@ export function detectImageType(bytes: Uint8Array): "jpeg" | "png" | "webp" | nu
   return null;
 }
 
+type Processed = { ok: true; bytes: Buffer } | { ok: false; error: string };
+
 /**
- * A feltöltött képet négyzetesre vágja, 512 px-esre kicsinyíti, webp-be kódolja. Az újrakódolás a
- * telefonos fotók rejtett adatait (pl. GPS-helyet) is eltávolítja.
+ * Ellenőrzés + átméretezés + webp. Az újrakódolás a telefonos fotók rejtett adatait (pl. GPS-helyet)
+ * is eltávolítja.
  */
-export async function processAvatarFile(file: File): Promise<{ ok: true; bytes: Buffer } | { ok: false; error: string }> {
+async function processImage(file: File, resize: ResizeOptions): Promise<Processed> {
   if (!TYPES.includes(file.type)) return { ok: false, error: "JPG, PNG vagy WebP képet tölts fel." };
   if (file.size > MAX_BYTES) return { ok: false, error: "A kép legfeljebb 3 MB lehet." };
   const input = Buffer.from(await file.arrayBuffer());
@@ -36,15 +39,21 @@ export async function processAvatarFile(file: File): Promise<{ ok: true; bytes: 
   if (!type) return { ok: false, error: "JPG, PNG vagy WebP képet tölts fel." };
   try {
     // A feldolgozó csak a felismert formátumot fogadja el (más formátumot nem próbál értelmezni)
-    const bytes = await sharp(input, { failOn: "error" })
-      .rotate()
-      .resize(512, 512, { fit: "cover" })
-      .webp({ quality: 82 })
-      .toBuffer();
+    const bytes = await sharp(input, { failOn: "error" }).rotate().resize(resize).webp({ quality: 82 }).toBuffer();
     return { ok: true, bytes };
   } catch {
     return { ok: false, error: "Ezt a képet nem sikerült beolvasni. Próbálj egy másikat." };
   }
+}
+
+/** Profilkép / logó: négyzetesre vágva, 512 px */
+export function processAvatarFile(file: File): Promise<Processed> {
+  return processImage(file, { width: 512, height: 512, fit: "cover" });
+}
+
+/** Vágásfotó: nem vágjuk meg, a hosszabbik oldala legfeljebb 1280 px */
+export function processPhotoFile(file: File): Promise<Processed> {
+  return processImage(file, { width: 1280, height: 1280, fit: "inside", withoutEnlargement: true });
 }
 
 /** Új, egyedi fájlnév a megadott mappában (pl. barbers/<id>) */

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { MyBooking } from "@/backend/booking/booking.service";
+import { CutEntryView } from "@/frontend/components/cutlog/CutEntryView";
 import { Badge, type BadgeTone } from "@/frontend/components/ui/Badge";
+import { LinkButton } from "@/frontend/components/ui/Button";
 import { Icon } from "@/frontend/components/ui/Icon";
 import { AlternativeSlots } from "./AlternativeSlots";
 import { CancelMyBooking } from "./CancelMyBooking";
 import { ProposalResponse } from "./ProposalResponse";
-import { barberPath } from "@/shared/config/routes";
+import { barberPath, bookingPath } from "@/shared/config/routes";
 import { formatDateTimeHu, toBucharestTime } from "@/shared/datetime/datetime";
 import type { BookingStatus } from "@/shared/types/domain";
 
@@ -19,7 +21,8 @@ const STATUS: Record<BookingStatus, { label: string; tone: BadgeTone }> = {
 
 /**
  * Egy foglalás a „Foglalásaim” oldalon: barber, szolgáltatás, időpont, állapot, cím –
- * lemondás gombbal, meghiúsult foglalásnál másik időpontok ajánlásával.
+ * lemondás gombbal, meghiúsult foglalásnál másik időpontok ajánlásával; lezajlottnál a vágásnaplóval és
+ * egy koppintásos újrafoglalással.
  */
 export function MyBookingCard({ booking }: { booking: MyBooking }) {
   const status = STATUS[booking.status];
@@ -71,6 +74,19 @@ export function MyBookingCard({ booking }: { booking: MyBooking }) {
       )}
       {booking.offerAlternatives && (
         <AlternativeSlots bookingId={booking.id} serviceId={booking.serviceId} />
+      )}
+      {booking.cut && (
+        <div className="space-y-2 rounded-lg bg-background px-4 py-3">
+          <p className="flex items-center gap-2 text-sm font-semibold text-brass">
+            <Icon name="scissors" size={16} /> Vágásnapló – {booking.barberName} jegyzete
+          </p>
+          <CutEntryView entry={booking.cut} showDate={false} />
+        </div>
+      )}
+      {booking.canRebook && (
+        <LinkButton href={bookingPath(booking.barberSlug, booking.serviceId)} variant="secondary">
+          <Icon name="repeat" size={18} /> {booking.cut ? "Ugyanezt kérem újra" : "Újra foglalok"}
+        </LinkButton>
       )}
     </article>
   );

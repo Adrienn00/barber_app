@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser, homePathFor, signOut } from "@/backend/auth/auth.service";
-import { deleteMyAccount, updateMyProfile } from "@/backend/profile/profile.service";
+import { deleteMyAccount, setMyRebookReminders, updateMyProfile } from "@/backend/profile/profile.service";
 import { DELETE_CONFIRM_WORD } from "@/shared/config/app";
 import { ROUTES, loginPath, safeNextPath } from "@/shared/config/routes";
 import { type FormState, field } from "@/shared/types/form";
@@ -30,6 +30,17 @@ export async function updateProfileAction(_prev: FormState, formData: FormData):
     redirect(next ?? homePathFor({ ...user, isProfileComplete: true }));
   }
   return { success: "A profilod elmentve.", values };
+}
+
+/** „Ideje vágatni” emlékeztető be- / kikapcsolása */
+export async function setRebookRemindersAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await getCurrentUser();
+  if (!user) redirect(loginPath(ROUTES.profile));
+  const enabled = field(formData, "enabled") === "true";
+  const result = await setMyRebookReminders(user.id, enabled);
+  if (!result.ok) return { error: result.error };
+  revalidatePath(ROUTES.profile);
+  return { success: enabled ? "Szólunk, ha ideje vágatni." : "Nem küldünk „Ideje vágatni” emlékeztetőt." };
 }
 
 /** Fiók végleges törlése – a biztonság kedvéért be kell írni: TÖRLÉS */

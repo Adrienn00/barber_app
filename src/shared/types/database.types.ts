@@ -338,6 +338,45 @@ export type Database = {
           },
         ]
       }
+      cut_notes: {
+        Row: {
+          barber_id: string
+          booking_id: string
+          note: string | null
+          photo_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          barber_id: string
+          booking_id: string
+          note?: string | null
+          photo_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          barber_id?: string
+          booking_id?: string
+          note?: string | null
+          photo_path?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cut_notes_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cut_notes_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -465,6 +504,7 @@ export type Database = {
           id: string
           is_admin: boolean
           phone: string | null
+          rebook_reminders: boolean
           terms_accepted_at: string | null
         }
         Insert: {
@@ -473,6 +513,7 @@ export type Database = {
           id: string
           is_admin?: boolean
           phone?: string | null
+          rebook_reminders?: boolean
           terms_accepted_at?: string | null
         }
         Update: {
@@ -481,6 +522,7 @@ export type Database = {
           id?: string
           is_admin?: boolean
           phone?: string | null
+          rebook_reminders?: boolean
           terms_accepted_at?: string | null
         }
         Relationships: []
@@ -914,6 +956,7 @@ export type Database = {
         Returns: undefined
       }
       send_due_reminders: { Args: never; Returns: number }
+      send_rebook_reminders: { Args: { p_any_time?: boolean }; Returns: number }
       set_app_config: {
         Args: { p_key: string; p_value: string }
         Returns: undefined

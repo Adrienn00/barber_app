@@ -1,7 +1,9 @@
 import "server-only";
 import { dbErrorMessage } from "@/backend/core/errors";
 import { createClient } from "@/backend/core/server-client";
+import { getCutEntriesForBookings } from "@/backend/cutlog/cutlog.service";
 import { toBucharestTime } from "@/shared/datetime/datetime";
+import type { CutEntry } from "@/shared/types/cutlog";
 import type { Slot } from "@/shared/types/directory";
 import type { BookingStatus } from "@/shared/types/domain";
 import { formatPhone } from "@/shared/validation/phone";
@@ -59,6 +61,10 @@ export type MyBooking = {
   cancelDeadlinePassed: boolean;
   /** Másik időpontot ajánlunk-e (elutasított, lejárt, vagy a barber mondta le – egy héten belül) */
   offerAlternatives: boolean;
+  /** A barber vágásnaplója ehhez a foglaláshoz (fotó, jegyzet) */
+  cut: CutEntry | null;
+  /** Lezajlott foglalás: egy koppintással újra foglalható ugyanez (ugyanannál a barbernél) */
+  canRebook: boolean;
 };
 
 export type MyBookingGroups = { upcoming: MyBooking[]; past: MyBooking[]; closed: MyBooking[] };
@@ -106,8 +112,15 @@ export async function getMyBookings(): Promise<MyBookingGroups> {
       canCancel: start > now && (b.status === "pending" || (b.status === "confirmed" && beforeDeadline)),
       cancelDeadlinePassed: b.status === "confirmed" && start > now && !beforeDeadline,
       offerAlternatives: failed && start > now - 7 * 86_400_000,
+      cut: null,
+      canRebook: b.status === "confirmed" && new Date(b.ends_at).getTime() <= now,
     };
   });
+
+  // Vágásnapló a már elkezdődött, megerősített foglalásokhoz
+  const started = all.filter((b) => b.status === "confirmed" && new Date(b.startsAt).getTime() <= now);
+  const cuts = await getCutEntriesForBookings(started.map((b) => b.id));
+  for (const b of started) b.cut = cuts.get(b.id) ?? null;
 
   const active = (b: MyBooking) => b.status === "pending" || b.status === "confirmed";
   return {

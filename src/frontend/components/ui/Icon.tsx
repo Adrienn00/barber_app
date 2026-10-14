@@ -46,6 +46,20 @@ const PATHS = {
       <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
     </>
   ),
+  camera: (
+    <>
+      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+      <circle cx="12" cy="13" r="3" />
+    </>
+  ),
+  repeat: (
+    <>
+      <path d="m17 2 4 4-4 4" />
+      <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
+      <path d="m7 22-4-4 4-4" />
+      <path d="M21 13v1a4 4 0 0 1-4 4H3" />
+    </>
+  ),
   chevronDown: <path d="m6 9 6 6 6-6" />,
   arrowRight: (
     <>
