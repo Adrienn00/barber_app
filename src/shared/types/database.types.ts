@@ -855,6 +855,21 @@ export type Database = {
           title: string
         }[]
       }
+      get_open_slots: {
+        Args: { p_date: string; p_max_barbers?: number; p_per_barber?: number }
+        Returns: {
+          address: string
+          avatar_path: string
+          barber_name: string
+          barber_slug: string
+          city: string
+          duration_min: number
+          price: number
+          service_id: string
+          service_name: string
+          starts_at: string
+        }[]
+      }
       get_private_event_conflicts: {
         Args: { p_event_id: string }
         Returns: {

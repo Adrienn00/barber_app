@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/backend/core/server-client";
-import type { DirectoryEntry, OpeningDay, PublicBarber, PublicShop } from "@/shared/types/directory";
+import { addDaysToDate, toBucharestDate, toBucharestTime } from "@/shared/datetime/datetime";
+import type { DirectoryEntry, OpenSlots, OpenSlotsBarber, OpeningDay, PublicBarber, PublicShop } from "@/shared/types/directory";
 import { avatarUrl } from "@/shared/config/storage";
 import { formatPhone } from "@/shared/validation/phone";
 import { WEEK_DAYS } from "@/shared/validation/schedule";
@@ -23,6 +24,35 @@ export async function getDirectory(search: string | null): Promise<DirectoryEntr
     memberCount: r.member_count,
     minPrice: r.min_price === null ? null : Number(r.min_price),
   }));
+}
+
+/**
+ * „Ma még szabad” a kezdőlapra: a ma még ráérő barberek (legkorábbi elöl), barberenként pár időponttal.
+ * Ha ma már senki nem ér rá (pl. este), a holnapiak. Ha holnap sincs, üres.
+ */
+export async function getOpenSlots(): Promise<OpenSlots> {
+  const db = await createClient();
+  const today = toBucharestDate(new Date());
+  for (const [day, date] of [["today", today], ["tomorrow", addDaysToDate(today, 1)]] as const) {
+    const { data } = await q.selectOpenSlots(db, date);
+    if (!data?.length) continue;
+    const barbers = new Map<string, OpenSlotsBarber>();
+    for (const r of data) {
+      const entry = barbers.get(r.barber_slug) ?? {
+        slug: r.barber_slug,
+        name: r.barber_name,
+        city: r.city,
+        address: r.address,
+        avatarUrl: avatarUrl(r.avatar_path),
+        service: { id: r.service_id, name: r.service_name, durationMin: r.duration_min, price: Number(r.price) },
+        slots: [],
+      };
+      entry.slots.push({ startsAt: r.starts_at, time: toBucharestTime(r.starts_at) });
+      barbers.set(r.barber_slug, entry);
+    }
+    return { day, barbers: [...barbers.values()] };
+  }
+  return { day: "today", barbers: [] };
 }
 
 /** Egy barber nyilvános adatai szolgáltatásokkal és nyitvatartással; null, ha nincs ilyen (jóváhagyott) */

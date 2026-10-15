@@ -10,6 +10,11 @@ export function listDirectory(db: DbClient, search: string | null) {
   return db.rpc("list_directory", { p_search: search ?? undefined });
 }
 
+/** Listázott barberek első szabad időpontjai egy napon (fő szolgáltatás) */
+export function selectOpenSlots(db: DbClient, date: string) {
+  return db.rpc("get_open_slots", { p_date: date, p_per_barber: 4, p_max_barbers: 9 });
+}
+
 export function selectBarberBySlug(db: DbClient, slug: string) {
   return db
     .from("barbers")

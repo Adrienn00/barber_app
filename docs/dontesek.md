@@ -101,3 +101,12 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     legközelebbi szabad időponttal (2 héten belül, ugyanarra a szolgáltatásra) – a koppintás egyenesen a foglalás
     megerősítéséhez visz. Látogatásonként legfeljebb egyszer, napközben (10–20 óra), és csak a szokásos idő utáni
     3 hétben; aki 10 hétnél ritkábban jár, nem kap. A Profilom oldalon kikapcsolható.
+
+## Kezdőlap – 2026-10-15
+
+34. **„Ma még szabad”** a kezdőlapon: a listázott, foglalható barberek (egységtagok is) közül a ma még ráérők, a
+    legkorábban ráérő elöl (legfeljebb 9 barber, barberenként 4 időpont), a fő szolgáltatásukra (az árlista első aktív
+    tétele). Ha ma már senki nem ér rá, a holnapiak („Holnap szabad”); ha holnap sincs, a rész nem látszik. Egy
+    időpontra koppintva a foglalás egyből a megerősítéssel indul. Ugyanazok a szabályok, mint a foglalásnál
+    (munkaidő, foglalások, magánprogramok, legkorábbi foglalhatóság). A kimaradó vendégek külön kezelése nem kell
+    (a barber úgyis jóváhagyja a kéréseket).

@@ -4,7 +4,7 @@
 | --- | --- |
 | `components/ui/` | Általános építőkockák, bárhol használhatók: `Button`/`LinkButton`, `SubmitButton`, `TextField`, `TextArea`, `Checkbox`, `Alert`, `Badge`, `Card`, `Divider`, `ConfirmActionButton` (kétlépéses „Biztosan?” gomb), `Dialog` (felugró ablak), `Select` (legördülő lista), `Eyebrow` (kis arany felirat), `Icon` (ikonok), `StatusRow`, `Avatar` (profilkép vagy kezdőbetűk), `StepIndicator` (lépésjelző, kitöltődő vonallal), `Reveal` (görgetésre beúszó tartalom), `CollapsibleSection` (összecsukható rész összefoglalóval; mentés után visszacsukódik) |
 | `components/layout/` | Oldalkeretek: `AppHeader` (felső sáv), `Logo`, `UserMenu` (lenyíló menü; kijelentkezéskor az eszköz push-feliratkozását is törli), `NotificationBell` (harang számjelzővel), `PageContainer` (tartalom oszlop), `PageHeader` (cím) |
-| `components/home/` | Kezdőlap: `HomeHero` (nyitó rész), `FeatureRow` (ikonos információs sor) |
+| `components/home/` | Kezdőlap: `HomeHero` (nyitó rész), `OpenSlotsSection` („Ma még szabad” – egy kattintással a foglalás megerősítéséhez), `FeatureRow` (ikonos információs sor) |
 | `components/auth/` | Belépés/regisztráció: `LoginForm`, `RegisterForm`, `GoogleSignInButton`, `TermsCheckbox`, `ForgotPasswordForm`, `NewPasswordForm` |
 | `components/profile/` | `ProfileForm` (név, telefon), `DeleteAccount` (fiók törlése „TÖRLÉS” beírásával) |
 | `components/legal/` | Jogi oldalak: `TermsContent`, `PrivacyContent`, `LegalSection`, `DraftNotice` (amíg az üzemeltető adatai hiányoznak) |

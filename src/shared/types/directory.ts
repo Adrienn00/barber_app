@@ -54,3 +54,17 @@ export type PublicShop = {
 
 /** Egy szabad kezdési időpont */
 export type Slot = { startsAt: string; time: string };
+
+/** „Ma még szabad”: egy barber első szabad időpontjai a fő szolgáltatására */
+export type OpenSlotsBarber = {
+  slug: string;
+  name: string;
+  city: string;
+  address: string;
+  avatarUrl: string | null;
+  service: PublicService;
+  slots: Slot[];
+};
+
+/** A kezdőlap „Ma még szabad” része (este, ha ma már nincs semmi: holnap) */
+export type OpenSlots = { day: "today" | "tomorrow"; barbers: OpenSlotsBarber[] };

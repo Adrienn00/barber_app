@@ -17,7 +17,7 @@ backend/
   calendar/    barber naptár: foglalások, magánprogramok (heti ismétlődés), kézi foglalás, gyors szünet
   pricelist/   a barber árlistája: szolgáltatások saját időtartammal és árral
   schedule/    munkaidő (heti sávok) és foglalási szabályok
-  directory/   nyilvános oldalak: barberlista (keresés), barber oldala, egység oldala
+  directory/   nyilvános oldalak: barberlista (keresés), barber oldala, egység oldala, „Ma még szabad” (kezdőlap)
   booking/     vendég foglalás: szabad időpontok, foglalási kérés, „Foglalásaim”, alternatív időpontok
   notifications/ értesítések: lista, olvasottság, push-feliratkozás; a push-küldő (notifications.push.ts),
                e-mail csatorna előkészítve, kikapcsolva (notifications.email.ts)

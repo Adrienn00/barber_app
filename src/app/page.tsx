@@ -1,11 +1,14 @@
+import { getOpenSlots } from "@/backend/directory/directory.service";
 import { FeatureRow } from "@/frontend/components/home/FeatureRow";
 import { HomeHero } from "@/frontend/components/home/HomeHero";
+import { OpenSlotsSection } from "@/frontend/components/home/OpenSlotsSection";
 import { Alert } from "@/frontend/components/ui/Alert";
 
-// Kezdőlap: nyitó rész (vendégeknek és barbereknek) + ikonos információs sor.
+// Kezdőlap: nyitó rész (vendégeknek és barbereknek), „Ma még szabad” időpontok, ikonos információs sor.
 // Fióktörlés után (?fiok=torolve) visszajelzés a tetején.
 export default async function HomePage({ searchParams }: PageProps<"/">) {
-  const deleted = (await searchParams).fiok === "torolve";
+  const [query, openSlots] = await Promise.all([searchParams, getOpenSlots()]);
+  const deleted = query.fiok === "torolve";
   return (
     <main className="flex-1">
       {deleted && (
@@ -14,6 +17,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
         </div>
       )}
       <HomeHero />
+      <OpenSlotsSection data={openSlots} />
       <FeatureRow />
     </main>
   );

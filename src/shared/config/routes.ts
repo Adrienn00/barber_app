@@ -80,8 +80,10 @@ export function loginPath(next?: string): string {
 
 /** Barber nyilvános oldala */
 export const barberPath = (slug: string) => `${ROUTES.barberPage}/${slug}`;
-/** Foglalás egy barbernél (opcionálisan előre kiválasztott szolgáltatással) */
-export const bookingPath = (slug: string, serviceId?: string) =>
-  `${ROUTES.barberPage}/${slug}/foglalas${serviceId ? `?szolgaltatas=${serviceId}` : ""}`;
+/** Foglalás egy barbernél (opcionálisan előre kiválasztott szolgáltatással, sőt időponttal – akkor a megerősítéssel indul) */
+export const bookingPath = (slug: string, serviceId?: string, startsAt?: string) =>
+  `${ROUTES.barberPage}/${slug}/foglalas${serviceId ? `?szolgaltatas=${serviceId}` : ""}${
+    serviceId && startsAt ? `&idopont=${encodeURIComponent(startsAt)}` : ""
+  }`;
 /** Egység nyilvános oldala */
 export const shopPath = (slug: string) => `${ROUTES.shopPage}/${slug}`;
