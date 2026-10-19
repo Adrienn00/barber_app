@@ -41,7 +41,7 @@ export function UserMenu({ user }: { user: UserMenuUser }) {
             label: "Függő kérések",
             count: user.pendingCount,
           },
-          { href: ROUTES.barberSettings, label: "Szolgáltatásaim és árak" },
+          { href: ROUTES.barberSettings, label: "Beállítások" },
           { href: ROUTES.myShop, label: "Egységem" },
         ]
       : []),
