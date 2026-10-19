@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { requireApprovedBarber } from "@/backend/auth/auth.service";
 import { ROUTES } from "@/shared/config/routes";
+import { START_PAGES, isStartPage } from "@/shared/config/startPage";
 import { type FormState, field } from "@/shared/types/form";
 import { type BookingRules, type DayHours, validateBookingRules, validateWorkingHours } from "@/shared/validation/schedule";
-import { saveBookingRules, saveWorkingWeek } from "./schedule.service";
+import { saveBookingRules, saveStartPage, saveWorkingWeek } from "./schedule.service";
 
 async function currentBarberId(): Promise<string> {
   const user = await requireApprovedBarber(ROUTES.barberSettings);
@@ -64,4 +65,16 @@ export async function saveBookingRulesAction(_prev: FormState, formData: FormDat
 
   refresh();
   return { success: "Foglalási szabályok elmentve." };
+}
+
+/** Mi nyíljon meg az app megnyitásakor (kezdőlap / naptár / új kézi foglalás) */
+export async function saveStartPageAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const barberId = await currentBarberId();
+  const page = field(formData, "startPage");
+  if (!isStartPage(page)) return { error: "Érvénytelen választás." };
+  const result = await saveStartPage(barberId, page);
+  if (!result.ok) return { error: result.error };
+  revalidatePath(ROUTES.barberSettings);
+  const label = START_PAGES.find((p) => p.value === page)!.label;
+  return { success: `Az app megnyitásakor: ${label}.` };
 }

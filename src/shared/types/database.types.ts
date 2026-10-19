@@ -79,6 +79,7 @@ export type Database = {
           max_days_ahead: number
           min_notice_min: number
           slot_step_min: number
+          start_page: string
         }
         Insert: {
           approval_timeout_min?: number
@@ -88,6 +89,7 @@ export type Database = {
           max_days_ahead?: number
           min_notice_min?: number
           slot_step_min?: number
+          start_page?: string
         }
         Update: {
           approval_timeout_min?: number
@@ -97,6 +99,7 @@ export type Database = {
           max_days_ahead?: number
           min_notice_min?: number
           slot_step_min?: number
+          start_page?: string
         }
         Relationships: [
           {

@@ -116,3 +116,7 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
 35. **Kézi foglalásnál a befejezés is megadható:** a „Befejezés” magától kitöltődik (kezdés + a szolgáltatás
     hossza), de a barber átírhatja (percre pontosan, 5 perc – 8 óra, ugyanazon a napon); a „vissza a szokásosra”
     linkkel visszaállítható. A pufferidő a megadott befejezés után jön; ütközésnél nem engedi.
+36. **Indulóoldal a barbernek:** Beállítások → „Az app megnyitásakor”: Kezdőlap (alapból, mint eddig) / Naptáram /
+    Új kézi foglalás (a naptár, rögtön a kézi foglalás űrlapjával: mostani időpont, az árlista első szolgáltatása,
+    kitöltött befejezés). Csak az app (oldal) megnyitásakor számít – appon belül a logó a kezdőlapra visz. A naptárban
+    két külön gomb: „+ Foglalás” (rögtön kézi foglalás) és „+ Szünet / program”. Közvetlen link: `/naptar?uj=foglalas`.

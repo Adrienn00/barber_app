@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   loadCalendarAction,
   loadPrivateEventAction,
@@ -27,7 +27,7 @@ import { RescheduleForm } from "@/frontend/components/requests/RescheduleForm";
 import type { CalendarBooking } from "@/shared/types/calendar";
 import { BookingDetails } from "./BookingDetails";
 import { CalendarLegend } from "./CalendarLegend";
-import { NewEntryPanel } from "./NewEntryPanel";
+import { NewEntryPanel, type NewEntryTab } from "./NewEntryPanel";
 import { PrivateEventDetails } from "./PrivateEventDetails";
 import { PrivateEventForm } from "./PrivateEventForm";
 import { QuickBreakBar } from "./QuickBreakBar";
@@ -37,18 +37,31 @@ type BarberCalendarProps = {
   barberId: string;
   services: ServiceOption[];
   customers: CustomerOption[];
+  /** Megnyitáskor rögtön a kézi foglalás űrlapja (a mostani időponttal) */
+  openNewBooking?: boolean;
 };
 
 type Slot = { date: string; startTime: string; endTime: string; allDay: boolean };
 
 type DialogState =
-  | { type: "new"; slot: Slot }
+  | { type: "new"; slot: Slot; tab?: NewEntryTab }
   | { type: "details"; item: CalendarItem }
   | { type: "edit"; initial: PrivateEventInput & { id: string } }
   | { type: "reschedule"; booking: CalendarBooking; date: string; time: string }
   | null;
 
 type Notice = Pick<FormState, "success" | "warning" | "error">;
+
+/** Új bejegyzés a mostani időponttól (negyedórára felfelé kerekítve), egy órára */
+function newNow(tab: NewEntryTab): DialogState {
+  const now = toBucharestLocal(new Date());
+  const minutes = Math.ceil(Number(now.slice(14, 16)) / 15) * 15;
+  const hour = Number(now.slice(11, 13)) + Math.floor(minutes / 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const startTime = `${pad(hour % 24)}:${pad(minutes % 60)}`;
+  const endTime = `${pad((hour + 1) % 24)}:${pad(minutes % 60)}`;
+  return { type: "new", slot: { date: now.slice(0, 10), startTime, endTime, allDay: false }, tab };
+}
 
 const EMPTY: CalendarData = { bookings: [], proposals: [], privateEvents: [], workingHours: [] };
 
@@ -66,12 +79,12 @@ function subscribeToMobile(onChange: () => void) {
  * A barber naptára (Google Naptár-szerű): nap / hét / hónap nézet, színkódolt foglalások és
  * magánprogramok, gyors szünet, kijelöléssel új program vagy kézi foglalás, húzással áthelyezés.
  */
-export function BarberCalendar({ barberId, services, customers }: BarberCalendarProps) {
+export function BarberCalendar({ barberId, services, customers, openNewBooking = false }: BarberCalendarProps) {
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const isMobile = useSyncExternalStore(subscribeToMobile, isMobileScreen, () => false);
   const [data, setData] = useState<CalendarData>(EMPTY);
   const [loading, setLoading] = useState(false);
-  const [dialog, setDialog] = useState<DialogState>(null);
+  const [dialog, setDialog] = useState<DialogState>(() => (openNewBooking ? newNow("booking") : null));
   const [notice, setNotice] = useState<Notice | null>(null);
   const range = useRef<{ from: string; to: string } | null>(null);
 
@@ -171,21 +184,25 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
   }
 
   /** „+ Új” gomb: a következő 15 perces időponttól */
-  function openNewNow() {
-    const now = toBucharestLocal(new Date());
-    const minutes = Math.ceil(Number(now.slice(14, 16)) / 15) * 15;
-    const hour = Number(now.slice(11, 13)) + Math.floor(minutes / 60);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    const startTime = `${pad(hour % 24)}:${pad(minutes % 60)}`;
-    const endTime = `${pad((hour + 1) % 24)}:${pad(minutes % 60)}`;
-    setDialog({ type: "new", slot: { date: now.slice(0, 10), startTime, endTime, allDay: false } });
+  function openNewNow(tab: NewEntryTab) {
+    setDialog(newNow(tab));
   }
+
+  // A ?uj=foglalas paramétert eltüntetjük, hogy frissítéskor ne nyíljon meg újra
+  useEffect(() => {
+    if (openNewBooking) window.history.replaceState(null, "", window.location.pathname);
+  }, [openNewBooking]);
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <QuickBreakBar onDone={handleDone} />
-        <Button onClick={openNewNow}>+ Új bejegyzés</Button>
+        <div className="grid grid-cols-2 gap-2 sm:flex">
+          <Button onClick={() => openNewNow("booking")}>+ Foglalás</Button>
+          <Button variant="secondary" onClick={() => openNewNow("private")}>
+            + Szünet / program
+          </Button>
+        </div>
       </div>
 
       {notice?.error && <Alert tone="error">{notice.error}</Alert>}
@@ -275,7 +292,13 @@ export function BarberCalendar({ barberId, services, customers }: BarberCalendar
         }
       >
         {dialog?.type === "new" && (
-          <NewEntryPanel slot={dialog.slot} services={services} customers={customers} onSaved={handleDone} />
+          <NewEntryPanel
+            slot={dialog.slot}
+            services={services}
+            customers={customers}
+            onSaved={handleDone}
+            initialTab={dialog.tab}
+          />
         )}
         {dialog?.type === "edit" && <PrivateEventForm initial={dialog.initial} onSaved={handleDone} />}
         {dialog?.type === "details" && dialog.item.kind === "booking" && (

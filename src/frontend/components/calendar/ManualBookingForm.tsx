@@ -32,7 +32,8 @@ export function ManualBookingForm({ services, customers, date, time, onSaved }: 
   useOnActionResult(state, onSaved, true);
   const values: Record<string, string | undefined> = { date, time, ...state.values };
   const [customerId, setCustomerId] = useState(values.customerId ?? "");
-  const [serviceId, setServiceId] = useState(values.serviceId ?? "");
+  // Alapból az árlista első tétele (a leggyakoribb) – gyorsabb, ha pl. vágás közben hívnak
+  const [serviceId, setServiceId] = useState(values.serviceId ?? services[0]?.id ?? "");
   const [start, setStart] = useState(values.time ?? "");
   // Saját befejezés (ha a barber átírta); különben a szolgáltatás hosszából számoljuk
   const [customEnd, setCustomEnd] = useState<string | null>(values.endTime || null);

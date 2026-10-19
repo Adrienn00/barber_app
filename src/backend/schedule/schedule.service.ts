@@ -2,6 +2,7 @@ import "server-only";
 import { dbErrorMessage } from "@/backend/core/errors";
 import { createClient } from "@/backend/core/server-client";
 import { type BookingRules, type DayHours, WEEK_DAYS, type WorkingHoursSlot } from "@/shared/validation/schedule";
+import { type StartPage, isStartPage } from "@/shared/config/startPage";
 import * as q from "./schedule.queries";
 
 // =============================================================================
@@ -51,6 +52,17 @@ export async function saveBookingRules(barberId: string, rules: BookingRules): P
     buffer_min: rules.bufferMin,
     slot_step_min: rules.slotStepMin,
   });
+  return error || !data ? { ok: false, error: dbErrorMessage(error, "Nem sikerült menteni.") } : { ok: true };
+}
+
+/** Mi nyíljon meg az app megnyitásakor (alapból a kezdőlap) */
+export async function getMyStartPage(barberId: string): Promise<StartPage> {
+  const { data } = await q.selectStartPage(await createClient(), barberId);
+  return data && isStartPage(data.start_page) ? data.start_page : "home";
+}
+
+export async function saveStartPage(barberId: string, page: StartPage): Promise<Result> {
+  const { data, error } = await q.updateSettings(await createClient(), barberId, { start_page: page });
   return error || !data ? { ok: false, error: dbErrorMessage(error, "Nem sikerült menteni.") } : { ok: true };
 }
 

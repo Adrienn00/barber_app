@@ -13,11 +13,15 @@ type NewEntryPanelProps = {
   services: ServiceOption[];
   customers: CustomerOption[];
   onSaved: (state: FormState) => void;
+  /** Melyik fül legyen nyitva (alapból: program / szünet) */
+  initialTab?: NewEntryTab;
 };
 
+export type NewEntryTab = "private" | "booking";
+
 /** Üres időre kattintva: választás magánprogram/szünet és kézi foglalás között. */
-export function NewEntryPanel({ slot, services, customers, onSaved }: NewEntryPanelProps) {
-  const [tab, setTab] = useState<"private" | "booking">("private");
+export function NewEntryPanel({ slot, services, customers, onSaved, initialTab = "private" }: NewEntryPanelProps) {
+  const [tab, setTab] = useState<NewEntryTab>(initialTab);
 
   const privateInitial: PrivateEventInput = {
     title: "",

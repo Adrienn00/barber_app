@@ -3,7 +3,7 @@ import { removeAvatarAction, saveBarberProfileAction, uploadAvatarAction } from 
 import { getMyBarberApplication } from "@/backend/barbers/barbers.service";
 import { listMyCustomers } from "@/backend/customers/customers.service";
 import { listMyServicesForEdit } from "@/backend/pricelist/pricelist.service";
-import { getMyBookingRules, getMyWorkingWeek } from "@/backend/schedule/schedule.service";
+import { getMyBookingRules, getMyStartPage, getMyWorkingWeek } from "@/backend/schedule/schedule.service";
 import { AvatarUpload } from "@/frontend/components/barber/AvatarUpload";
 import { BarberApplicationForm } from "@/frontend/components/barber/BarberApplicationForm";
 import { ListingToggle } from "@/frontend/components/barber/ListingToggle";
@@ -12,9 +12,11 @@ import { PageContainer } from "@/frontend/components/layout/PageContainer";
 import { PageHeader } from "@/frontend/components/layout/PageHeader";
 import { PriceListEditor } from "@/frontend/components/pricelist/PriceListEditor";
 import { BookingRulesForm } from "@/frontend/components/schedule/BookingRulesForm";
+import { StartPagePicker } from "@/frontend/components/schedule/StartPagePicker";
 import { WorkingHoursEditor } from "@/frontend/components/schedule/WorkingHoursEditor";
 import { CollapsibleSection } from "@/frontend/components/ui/CollapsibleSection";
 import { ROUTES } from "@/shared/config/routes";
+import { START_PAGES } from "@/shared/config/startPage";
 import { summarizeRules, summarizeWeek } from "@/shared/validation/schedule";
 
 const SECTIONS = [
@@ -23,6 +25,7 @@ const SECTIONS = [
   { id: "munkaido", label: "Munkaidő" },
   { id: "szabalyok", label: "Foglalási szabályok" },
   { id: "vendegek", label: "Vendégeim" },
+  { id: "app", label: "App megnyitása" },
 ];
 
 /** Pl. „3 aktív szolgáltatás · 40–70 lej” */
@@ -37,16 +40,17 @@ function servicesSummary(services: { price: number; isActive: boolean }[]): stri
 
 // Minden rész összecsukható: összecsukva egy rövid összefoglaló látszik, mentés után magától visszacsukódik.
 // /beallitasok – a barber beállításai: profil (kép, adatok, listában megjelenés), szolgáltatások,
-// munkaidő, foglalási szabályok, vendégek (megbízható jelölés).
+// munkaidő, foglalási szabályok, vendégek (megbízható jelölés), mi nyíljon meg az app megnyitásakor.
 export default async function SettingsPage() {
   const user = await requireApprovedBarber(ROUTES.barberSettings);
   const barberId = user.barber!.id;
-  const [profile, services, week, rules, customers] = await Promise.all([
+  const [profile, services, week, rules, customers, startPage] = await Promise.all([
     getMyBarberApplication(user.id),
     listMyServicesForEdit(barberId),
     getMyWorkingWeek(barberId),
     getMyBookingRules(barberId),
     listMyCustomers(barberId),
+    getMyStartPage(barberId),
   ]);
 
   return (
@@ -122,6 +126,13 @@ export default async function SettingsPage() {
           megerősítésre kerül. Jelöld így a törzsvendégeidet.
         </p>
         <CustomerList customers={customers} />
+      </CollapsibleSection>
+      <CollapsibleSection
+        id="app"
+        title="Az app megnyitásakor"
+        summary={START_PAGES.find((s) => s.value === startPage)!.label}
+      >
+        <StartPagePicker value={startPage} />
       </CollapsibleSection>
     </PageContainer>
   );

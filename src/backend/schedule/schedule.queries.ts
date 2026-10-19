@@ -23,6 +23,10 @@ export function replaceWorkingHours(db: DbClient, slots: WorkingHoursSlot[]) {
   return db.rpc("set_my_working_hours", { p_slots: slots });
 }
 
+export function selectStartPage(db: DbClient, barberId: string) {
+  return db.from("barber_settings").select("start_page").eq("barber_id", barberId).maybeSingle();
+}
+
 export function selectSettings(db: DbClient, barberId: string) {
   return db
     .from("barber_settings")

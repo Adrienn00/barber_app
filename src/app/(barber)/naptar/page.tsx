@@ -10,7 +10,8 @@ import { ROUTES, barberPath } from "@/shared/config/routes";
 
 // /naptar – a barber naptára: foglalások, magánprogramok, gyors szünet, kézi foglalás.
 // Új barbernél fölötte a „Kezdő lépések” (szolgáltatások, munkaidő), amíg nem foglalható.
-export default async function CalendarPage() {
+// ?uj=foglalas → rögtön a kézi foglalás űrlapja a mostani időponttal.
+export default async function CalendarPage({ searchParams }: PageProps<"/naptar">) {
   const user = await requireApprovedBarber(ROUTES.barberCalendar);
   const barberId = user.barber!.id;
   const [services, customers, setup] = await Promise.all([
@@ -19,6 +20,8 @@ export default async function CalendarPage() {
     getSetupStatus(barberId),
   ]);
   const publicPath = barberPath(user.barber!.slug);
+  // ?uj=foglalas: rögtön a kézi foglalás űrlapja (indulóoldal, vagy gyors link)
+  const openNewBooking = (await searchParams).uj === "foglalas";
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-3 py-8 sm:px-5">
@@ -30,7 +33,7 @@ export default async function CalendarPage() {
         </div>
       </div>
       <SetupChecklist status={setup} publicPath={publicPath} />
-      <BarberCalendar barberId={barberId} services={services} customers={customers} />
+      <BarberCalendar barberId={barberId} services={services} customers={customers} openNewBooking={openNewBooking} />
     </main>
   );
 }
