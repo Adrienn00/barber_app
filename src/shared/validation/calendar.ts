@@ -99,6 +99,8 @@ export type ManualBookingInput = {
   serviceId: string;
   date: string;
   time: string;
+  /** Befejezés (HH:MM, ugyanazon a napon); üres = a szolgáltatás szokásos hossza */
+  endTime: string;
   /** Korábbi vendég azonosítója; üres = új vendég név (+ nem kötelező telefon) alapján */
   customerId: string;
   guestName: string;
@@ -109,6 +111,8 @@ export type ManualBookingInput = {
 export type ManualBookingData = {
   serviceId: string;
   startsAt: string;
+  /** A barber által megadott hossz percben; null = a szolgáltatás szokásos hossza */
+  durationMin: number | null;
   customerId: string | null;
   guestName: string | null;
   guestPhone: string | null;
@@ -120,6 +124,19 @@ export function validateManualBooking(input: ManualBookingInput): Validated<Manu
   if (!input.serviceId) errors.serviceId = "Válaszd ki a szolgáltatást.";
   if (!DATE_RE.test(input.date)) errors.date = "Válaszd ki a napot.";
   if (!TIME_RE.test(input.time)) errors.time = "Add meg a kezdés idejét.";
+
+  // Befejezés: a kezdés után, legalább 5 perc, legfeljebb 8 óra (ugyanazon a napon)
+  let durationMin: number | null = null;
+  if (input.endTime) {
+    if (!TIME_RE.test(input.endTime)) errors.endTime = "Add meg a befejezés idejét.";
+    else if (!errors.time) {
+      const minutes = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+      durationMin = minutes(input.endTime) - minutes(input.time);
+      if (durationMin <= 0) errors.endTime = "A befejezés legyen a kezdés után.";
+      else if (durationMin < 5) errors.endTime = "A foglalás legalább 5 perc legyen.";
+      else if (durationMin > 480) errors.endTime = "A foglalás legfeljebb 8 óra lehet.";
+    }
+  }
 
   let guestPhone: string | null = null;
   if (!input.customerId) {
@@ -134,6 +151,7 @@ export function validateManualBooking(input: ManualBookingInput): Validated<Manu
   return result(errors, {
     serviceId: input.serviceId,
     startsAt: errors.date || errors.time ? "" : bucharestToUtc(`${input.date}T${input.time}`).toISOString(),
+    durationMin,
     customerId: input.customerId || null,
     guestName: input.customerId ? null : input.guestName.trim(),
     guestPhone: input.customerId ? null : guestPhone,

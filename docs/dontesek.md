@@ -110,3 +110,9 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     időpontra koppintva a foglalás egyből a megerősítéssel indul. Ugyanazok a szabályok, mint a foglalásnál
     (munkaidő, foglalások, magánprogramok, legkorábbi foglalhatóság). A kimaradó vendégek külön kezelése nem kell
     (a barber úgyis jóváhagyja a kéréseket).
+
+## Naptár – 2026-10-19
+
+35. **Kézi foglalásnál a befejezés is megadható:** a „Befejezés” magától kitöltődik (kezdés + a szolgáltatás
+    hossza), de a barber átírhatja (percre pontosan, 5 perc – 8 óra, ugyanazon a napon); a „vissza a szokásosra”
+    linkkel visszaállítható. A pufferidő a megadott befejezés után jön; ütközésnél nem engedi.

@@ -51,6 +51,7 @@ describe("validateManualBooking", () => {
     serviceId: "svc",
     date: "2026-10-26",
     time: "14:30",
+    endTime: "",
     customerId: "",
     guestName: "Telefonos Tibor",
     guestPhone: "0755 111 222",
@@ -65,6 +66,22 @@ describe("validateManualBooking", () => {
       guestName: "Telefonos Tibor",
       guestPhone: "+40755111222",
     });
+  });
+
+  it("befejezés nélkül a szolgáltatás hossza számít; megadva a különbség percben", () => {
+    const none = validateManualBooking(input);
+    expect(none.ok && none.data.durationMin).toBeNull();
+    const r = validateManualBooking({ ...input, endTime: "15:45" });
+    expect(r.ok && r.data.durationMin).toBe(75);
+  });
+
+  it("a befejezés a kezdés után, 5 perc – 8 óra", () => {
+    for (const endTime of ["14:30", "14:00", "14:33", "22:31", "1430"]) {
+      const r = validateManualBooking({ ...input, endTime });
+      expect(!r.ok && r.fieldErrors.endTime).toBeTruthy();
+    }
+    expect(validateManualBooking({ ...input, endTime: "14:35" }).ok).toBe(true);
+    expect(validateManualBooking({ ...input, endTime: "22:30" }).ok).toBe(true);
   });
 
   it("korábbi vendégnél nem kell név és telefon", () => {

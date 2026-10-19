@@ -791,6 +791,7 @@ export type Database = {
       create_manual_booking: {
         Args: {
           p_customer_id?: string
+          p_duration_min?: number
           p_guest_name?: string
           p_guest_phone?: string
           p_note?: string

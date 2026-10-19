@@ -96,6 +96,7 @@ export async function createManualBookingAction(_prev: FormState, formData: Form
     serviceId: field(formData, "serviceId"),
     date: field(formData, "date"),
     time: field(formData, "time"),
+    endTime: field(formData, "endTime"),
     customerId: field(formData, "customerId"),
     guestName: field(formData, "guestName"),
     guestPhone: field(formData, "guestPhone"),

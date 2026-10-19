@@ -5,6 +5,7 @@ import { setBookingDurationAction } from "@/backend/calendar/calendar.actions";
 import { Alert } from "@/frontend/components/ui/Alert";
 import { Button } from "@/frontend/components/ui/Button";
 import { TextField } from "@/frontend/components/ui/TextField";
+import { lengthLabel, toMinutes } from "@/shared/datetime/clock";
 import { toBucharestTime } from "@/shared/datetime/datetime";
 import type { FormState } from "@/shared/types/form";
 
@@ -15,18 +16,6 @@ type BookingEndTimeProps = {
   /** Sikeres módosítás után (a naptár frissül, az ablak bezárul) */
   onDone: (state: FormState) => void;
 };
-
-/** „HH:MM” → percek a nap kezdetétől */
-function toMinutes(time: string): number | null {
-  const match = /^(\d{2}):(\d{2})$/.exec(time);
-  return match ? Number(match[1]) * 60 + Number(match[2]) : null;
-}
-
-function lengthLabel(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return h ? `${h} óra${m ? ` ${m} perc` : ""}` : `${m} perc`;
-}
 
 /**
  * A foglalás befejezése – a barber beírja, meddig tart (pl. 15:20 a 15:30 helyett). A kezdés marad;

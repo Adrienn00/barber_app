@@ -246,6 +246,33 @@ describe("Kézi foglalás (create_manual_booking)", () => {
     ).toBe("22023");
   });
 
+  it("saját befejezéssel: a megadott hossz számít (a puffer utána jön); 5 perc – 8 óra, ütközés nem mehet", async () => {
+    const res = await manual(peti, {
+      p_service_id: ID.services.petiHajvagas,
+      p_starts_at: local("2031-02-07T10:00"),
+      p_guest_name: "Hosszú Henrik",
+      p_duration_min: 75,
+    });
+    expect(res.error).toBeNull();
+    const { data } = await service.from("bookings").select("ends_at, block_end").eq("id", res.data).single();
+    expect(new Date(data!.ends_at).toISOString()).toBe(local("2031-02-07T11:15"));
+    expect(new Date(data!.block_end).toISOString()).toBe(local("2031-02-07T11:20"));
+
+    // A hosszabb foglalás miatt 11:00 már foglalt
+    const clash = await manual(peti, { p_service_id: ID.services.petiHajvagas, p_starts_at: local("2031-02-07T11:00"), p_guest_name: "Y" });
+    expect(clash.error?.code).toBe("23P01");
+
+    for (const minutes of [0, 4, 481, -30]) {
+      const bad = await manual(peti, {
+        p_service_id: ID.services.petiHajvagas,
+        p_starts_at: local("2031-02-07T15:00"),
+        p_guest_name: "Z",
+        p_duration_min: minutes,
+      });
+      expect(bad.error?.code).toBe("22023");
+    }
+  });
+
   it("vendég és függő barber nem vehet fel kézi foglalást", async () => {
     const zoli = await userClient("zoli@barber.test");
     const args = {

@@ -89,6 +89,7 @@ export function createManualBooking(
   args: {
     serviceId: string;
     startsAt: string;
+    durationMin: number | null;
     customerId: string | null;
     guestName: string | null;
     guestPhone: string | null;
@@ -102,6 +103,7 @@ export function createManualBooking(
     p_guest_name: args.guestName ?? undefined,
     p_guest_phone: args.guestPhone ?? undefined,
     p_note: args.note ?? undefined,
+    p_duration_min: args.durationMin ?? undefined,
   });
 }
 
