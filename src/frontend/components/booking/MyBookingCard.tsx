@@ -51,7 +51,7 @@ export function MyBookingCard({ booking }: { booking: MyBooking }) {
       {booking.movedFrom && booking.status === "confirmed" && (
         <p className="text-sm text-brass">Áthelyezve (korábban: {formatDateTimeHu(booking.movedFrom)}).</p>
       )}
-      {booking.proposal && <ProposalResponse proposal={booking.proposal} />}
+      {booking.proposal && <ProposalResponse proposal={booking.proposal} forRequest={booking.status === "pending"} />}
       {booking.awaitingBarberDecision && booking.status === "confirmed" && (
         <p className="rounded-lg bg-background px-3 py-2 text-sm">
           A javasolt új időpont nem jött létre – a régi időpontod él. Ha a barbernek mégsem jó, itt látni fogod.
@@ -63,7 +63,7 @@ export function MyBookingCard({ booking }: { booking: MyBooking }) {
           {booking.decisionNote}
         </p>
       )}
-      {booking.status === "pending" && booking.expiresAt && (
+      {booking.status === "pending" && booking.expiresAt && !booking.proposal && (
         <p className="text-sm text-muted">Ha {formatDateTimeHu(booking.expiresAt)}-ig nem dönt a barber, a kérés lejár.</p>
       )}
       {booking.canCancel && <CancelMyBooking bookingId={booking.id} isPending={booking.status === "pending"} />}

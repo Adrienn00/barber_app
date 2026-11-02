@@ -39,7 +39,7 @@ export function RequestCard({ request }: { request: PendingRequest }) {
 
       <p className="text-sm text-muted">Dönts {formatDateTimeHu(request.expiresAt)}-ig, különben a kérés lejár.</p>
 
-      <BookingDecision bookingId={request.id} status="pending" />
+      <BookingDecision bookingId={request.id} status="pending" startsAt={request.startsAt} endsAt={request.endsAt} />
     </article>
   );
 }

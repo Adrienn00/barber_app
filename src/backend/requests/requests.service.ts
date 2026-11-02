@@ -24,9 +24,16 @@ export type PendingRequest = {
   customerPhone: string | null;
 };
 
+/** Azok a függő kérések, amelyeknél a vendég épp a barber javaslatáról dönt (ezek most nem a barberre várnak) */
+async function bookingsAwaitingCustomer(db: Awaited<ReturnType<typeof createClient>>, barberId: string): Promise<Set<string>> {
+  const { data } = await q.selectBookingsWithOpenProposal(db, barberId);
+  return new Set((data ?? []).map((r) => r.booking_id));
+}
+
 export async function listPendingRequests(barberId: string): Promise<PendingRequest[]> {
-  const { data } = await q.selectPendingRequests(await createClient(), barberId);
-  return (data ?? []).map((b) => ({
+  const db = await createClient();
+  const [{ data }, awaiting] = await Promise.all([q.selectPendingRequests(db, barberId), bookingsAwaitingCustomer(db, barberId)]);
+  return (data ?? []).filter((b) => !awaiting.has(b.id)).map((b) => ({
     id: b.id,
     startsAt: b.starts_at,
     endsAt: b.ends_at,
@@ -44,11 +51,13 @@ export async function listPendingRequests(barberId: string): Promise<PendingRequ
 /** A menü számjelzője: új foglalási kérések + áthelyezés utáni döntések */
 export async function countPendingRequests(barberId: string): Promise<number> {
   const db = await createClient();
-  const [requests, decisions] = await Promise.all([
-    q.countPendingRequests(db, barberId),
+  const [requests, decisions, awaiting] = await Promise.all([
+    q.selectPendingRequestIds(db, barberId),
     q.countRescheduleDecisions(db, barberId),
+    bookingsAwaitingCustomer(db, barberId),
   ]);
-  return (requests.count ?? 0) + (decisions.count ?? 0);
+  const open = (requests.data ?? []).filter((r) => !awaiting.has(r.id)).length;
+  return open + (decisions.count ?? 0);
 }
 
 // A függvények saját üzenetei magyarok (lejárt, határidő, jogosultság, ütközés)
@@ -61,6 +70,19 @@ function toResult(error: { code?: string; message?: string } | null, fallback: s
 export async function approveRequest(bookingId: string): Promise<Result> {
   const { error } = await q.approveBooking(await createClient(), bookingId);
   return toResult(error, "Nem sikerült jóváhagyni.");
+}
+
+/** Jóváhagyás módosított idővel – a kimenet: azonnal jóváhagyva, vagy javaslat ment a vendégnek */
+export async function approveRequestWithTime(
+  bookingId: string,
+  startsAt: string,
+  durationMin: number,
+  note: string | null,
+): Promise<{ ok: true; outcome: "approved" | "proposed" } | { ok: false; error: string }> {
+  const { data, error } = await q.approveBookingWithTime(await createClient(), bookingId, startsAt, durationMin, note);
+  const result = toResult(error, "Nem sikerült jóváhagyni.");
+  if (!result.ok) return result;
+  return { ok: true, outcome: data === "proposed" ? "proposed" : "approved" };
 }
 
 export async function rejectRequest(bookingId: string, note: string | null): Promise<Result> {
@@ -83,6 +105,8 @@ export type OpenReschedule = {
   /** pending: a vendég válaszára vár; declined / expired: a barbernek kell döntenie */
   status: "pending" | "declined" | "expired";
   needsDecision: boolean;
+  /** Függő kérésre adott javaslat (a jóváhagyáskor más kezdés) – nem áthelyezés */
+  forRequest: boolean;
   bookingId: string;
   oldStartsAt: string;
   oldEndsAt: string;
@@ -101,6 +125,7 @@ export async function listOpenReschedules(barberId: string): Promise<OpenResched
     id: r.id,
     status: r.status as OpenReschedule["status"],
     needsDecision: r.needs_decision,
+    forRequest: r.booking?.status === "pending",
     bookingId: r.booking?.id ?? "",
     oldStartsAt: r.booking?.starts_at ?? "",
     oldEndsAt: r.booking?.ends_at ?? "",

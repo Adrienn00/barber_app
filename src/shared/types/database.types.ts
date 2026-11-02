@@ -765,6 +765,15 @@ export type Database = {
       }
       admin_stats: { Args: never; Returns: Json }
       approve_booking: { Args: { p_booking_id: string }; Returns: undefined }
+      approve_booking_with_time: {
+        Args: {
+          p_booking_id: string
+          p_duration_min: number
+          p_note?: string
+          p_starts_at: string
+        }
+        Returns: string
+      }
       cancel_booking: {
         Args: { p_booking_id: string; p_note?: string }
         Returns: undefined

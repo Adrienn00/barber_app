@@ -5,9 +5,10 @@ import { requireApprovedBarber, requireUser } from "@/backend/auth/auth.service"
 import { ROUTES } from "@/shared/config/routes";
 import { formatDateTimeHu } from "@/shared/datetime/datetime";
 import { type FormState, field } from "@/shared/types/form";
-import { validateReschedule } from "@/shared/validation/calendar";
+import { validateApprovalTime, validateReschedule } from "@/shared/validation/calendar";
 import {
   approveRequest,
+  approveRequestWithTime,
   cancelBooking,
   rejectRequest,
   rescheduleBooking,
@@ -53,6 +54,33 @@ export async function decideBookingAction(_prev: FormState, formData: FormData):
   return { success: DECISIONS[decision].success };
 }
 
+/**
+ * Barber: jóváhagyás módosított idővel. Ha csak a befejezés változik, azonnal megerősítve; ha a kezdés is,
+ * a vendég javaslatot kap (addig a kérés függő marad, nemet mondva újra a barber dönt).
+ */
+export async function approveWithTimeAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireApprovedBarber(ROUTES.barberRequests);
+  const values = {
+    date: field(formData, "date"),
+    time: field(formData, "time"),
+    endTime: field(formData, "endTime"),
+    note: field(formData, "note"),
+  };
+  const checked = validateApprovalTime(values);
+  if (!checked.ok) return { fieldErrors: checked.fieldErrors, values };
+
+  const { startsAt, durationMin, note: text } = checked.data;
+  const result = await approveRequestWithTime(field(formData, "bookingId"), startsAt, durationMin, text);
+  if (!result.ok) return { error: result.error, values };
+  refresh();
+  return {
+    success:
+      result.outcome === "approved"
+        ? `Jóváhagyva – ${values.time}–${values.endTime}.`
+        : `Új időpontot javasoltál (${formatDateTimeHu(startsAt)}) – ha a vendég elfogadja, a foglalás megerősített.`,
+  };
+}
+
 /** Vendég: saját foglalás lemondása (függőt bármikor, megerősítettet a lemondási határidő előtt) */
 export async function cancelBookingAction(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireUser(ROUTES.myBookings);
@@ -96,7 +124,7 @@ export async function withdrawRescheduleAction(_prev: FormState, formData: FormD
   const result = await withdrawReschedule(field(formData, "rescheduleId"));
   if (!result.ok) return { error: result.error };
   refresh();
-  return { success: "Javaslat visszavonva – a régi időpont marad." };
+  return { success: "Javaslat visszavonva." };
 }
 
 /** Barber: elutasított / lejárt javaslat után marad a régi, vagy lemondja (indoklással) */
@@ -116,9 +144,17 @@ export async function resolveRescheduleAction(_prev: FormState, formData: FormDa
 export async function respondRescheduleAction(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireUser(ROUTES.myBookings);
   const accept = field(formData, "answer") === "accept";
+  const forRequest = field(formData, "forRequest") === "true";
   const result = await respondReschedule(field(formData, "rescheduleId"), accept);
   if (!result.ok) return { error: result.error };
   refresh();
+  if (forRequest) {
+    return {
+      success: accept
+        ? "Elfogadva – a foglalásod megerősítve az új időpontra."
+        : "Rendben, jeleztük a barbernek – az eredeti kérésedről ő dönt.",
+    };
+  }
   return {
     success: accept
       ? "Elfogadva – a foglalásod átkerült az új időpontra."

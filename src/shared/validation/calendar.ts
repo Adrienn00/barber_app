@@ -181,3 +181,32 @@ export function validateReschedule(input: RescheduleInput): Validated<Reschedule
     note: input.note.trim() || null,
   });
 }
+
+// -----------------------------------------------------------------------------
+// Jóváhagyás módosított idővel: nap + kezdés + befejezés (ugyanazon a napon), üzenet
+// -----------------------------------------------------------------------------
+export type ApprovalTimeInput = { date: string; time: string; endTime: string; note: string };
+
+export type ApprovalTimeData = { startsAt: string; durationMin: number; note: string | null };
+
+export function validateApprovalTime(input: ApprovalTimeInput): Validated<ApprovalTimeData> {
+  const errors: Record<string, string> = {};
+  if (!DATE_RE.test(input.date)) errors.date = "Válaszd ki a napot.";
+  if (!TIME_RE.test(input.time)) errors.time = "Add meg a kezdést.";
+  let durationMin = 0;
+  if (!TIME_RE.test(input.endTime)) errors.endTime = "Add meg a befejezést.";
+  else if (!errors.time) {
+    const minutes = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+    durationMin = minutes(input.endTime) - minutes(input.time);
+    if (durationMin <= 0) errors.endTime = "A befejezés legyen a kezdés után.";
+    else if (durationMin < 5) errors.endTime = "A foglalás legalább 5 perc legyen.";
+    else if (durationMin > 480) errors.endTime = "A foglalás legfeljebb 8 óra lehet.";
+  }
+  if (input.note.length > 500) errors.note = "Az üzenet legfeljebb 500 karakter lehet.";
+
+  return result(errors, {
+    startsAt: errors.date || errors.time ? "" : bucharestToUtc(`${input.date}T${input.time}`).toISOString(),
+    durationMin,
+    note: input.note.trim() || null,
+  });
+}

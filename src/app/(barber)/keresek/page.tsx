@@ -51,7 +51,7 @@ export default async function RequestsPage() {
 
       {waiting.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-2xl font-bold">Áthelyezés – a vendég válaszára vár</h2>
+          <h2 className="text-2xl font-bold">A vendég válaszára vár</h2>
           {waiting.map((r, i) => (
             <Reveal key={r.id} index={i}>
               <RescheduleCard item={r} />

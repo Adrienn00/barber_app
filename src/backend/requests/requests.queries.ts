@@ -21,11 +21,11 @@ export function selectPendingRequests(db: DbClient, barberId: string) {
     .order("starts_at");
 }
 
-/** A függő kérések száma (a menü számjelzőjéhez) */
-export function countPendingRequests(db: DbClient, barberId: string) {
+/** A még érvényes függő kérések azonosítói (a menü számjelzőjéhez) */
+export function selectPendingRequestIds(db: DbClient, barberId: string) {
   return db
     .from("bookings")
-    .select("id", { count: "exact", head: true })
+    .select("id")
     .eq("barber_id", barberId)
     .eq("status", "pending")
     .gt("expires_at", new Date().toISOString());
@@ -33,6 +33,27 @@ export function countPendingRequests(db: DbClient, barberId: string) {
 
 export function approveBooking(db: DbClient, bookingId: string) {
   return db.rpc("approve_booking", { p_booking_id: bookingId });
+}
+
+/** Jóváhagyás módosított idővel: ugyanaz a kezdés → 'approved'; más kezdés → javaslat a vendégnek ('proposed') */
+export function approveBookingWithTime(db: DbClient, bookingId: string, startsAt: string, durationMin: number, note: string | null) {
+  return db.rpc("approve_booking_with_time", {
+    p_booking_id: bookingId,
+    p_starts_at: startsAt,
+    p_duration_min: durationMin,
+    p_note: note ?? undefined,
+  });
+}
+
+/** Függő kérések, amelyekre a barber más időpontot javasolt, és a vendég még dönt (ezek nem várnak a barberre) */
+export function selectBookingsWithOpenProposal(db: DbClient, barberId: string) {
+  return db
+    .from("booking_reschedules")
+    .select("booking_id, booking:bookings!inner(status)")
+    .eq("barber_id", barberId)
+    .eq("status", "pending")
+    .gt("expires_at", new Date().toISOString())
+    .eq("booking.status", "pending");
 }
 
 export function rejectBooking(db: DbClient, bookingId: string, note: string | null) {
@@ -53,7 +74,7 @@ export function selectOpenReschedules(db: DbClient, barberId: string) {
     .from("booking_reschedules")
     .select(
       `id, status, starts_at, ends_at, expires_at, note, needs_decision,
-       booking:bookings(id, starts_at, ends_at, service:services(name)),
+       booking:bookings(id, status, starts_at, ends_at, service:services(name)),
        customer:profiles(full_name, phone)`,
     )
     .eq("barber_id", barberId)

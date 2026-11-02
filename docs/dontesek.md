@@ -120,3 +120,13 @@ Egyeztetve: 2026-09-24. Ahol ez eltér a PDF-től, ez az érvényes.
     Új kézi foglalás (a naptár, rögtön a kézi foglalás űrlapjával: mostani időpont, az árlista első szolgáltatása,
     kitöltött befejezés). Csak az app (oldal) megnyitásakor számít – appon belül a logó a kezdőlapra visz. A naptárban
     két külön gomb: „+ Foglalás” (rögtön kézi foglalás) és „+ Szünet / program”. Közvetlen link: `/naptar?uj=foglalas`.
+
+## Jóváhagyás – 2026-11-02
+
+37. **Jóváhagyás más idővel:** függő kérésnél a „Jóváhagyás más idővel” gombbal a barber átállíthatja a napot, a
+    kezdést és a befejezést. Ha **csak a befejezés** változik (rövidebb vagy hosszabb), a foglalás azonnal megerősített
+    az új hosszal – a vendégnek nem kell újra döntenie. Ha **a kezdés (vagy a nap)** változik, a vendég javaslatot kap
+    (üzenettel); elfogadva a foglalás az új időponttal megerősített. Ha nemet mond, nem válaszol, vagy a barber
+    visszavonja, **a kérés függő marad az eredeti időponttal**, és a barber újra dönt (jóváhagyja, elutasítja, vagy új
+    időpontot javasol). Amíg a vendég dönt, a kérés nem jár le (a lejárata: a javaslat határideje + a jóváhagyási idő),
+    és a „Függő kérések” között „A vendég válaszára vár” részben látszik.

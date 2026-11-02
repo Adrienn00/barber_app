@@ -7,23 +7,41 @@ import { Button } from "@/frontend/components/ui/Button";
 import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { TextArea } from "@/frontend/components/ui/TextArea";
 import { useOnActionResult } from "@/frontend/lib/useOnActionResult";
+import { ApproveWithTimeForm } from "./ApproveWithTimeForm";
 import type { FormState } from "@/shared/types/form";
 
 type BookingDecisionProps = {
   bookingId: string;
   status: "pending" | "confirmed";
+  /** A kért időpont – függő kérésnél ezzel lehet más idővel jóváhagyni */
+  startsAt?: string;
+  endsAt?: string;
   /** A döntés eredménye (pl. a naptár frissítéséhez); ha nincs, az üzenet itt jelenik meg */
   onDone?: (state: FormState) => void;
 };
 
 /**
  * A barber gombjai egy foglaláshoz:
- * függő → Jóváhagyás / Elutasítás (nem kötelező üzenettel); megerősített → Lemondás (kötelező indoklással).
+ * függő → Jóváhagyás / Más idővel (a befejezés azonnal, más kezdés a vendég elfogadásával) / Elutasítás
+ * (nem kötelező üzenettel); megerősített → Lemondás (kötelező indoklással).
  */
-export function BookingDecision({ bookingId, status, onDone }: BookingDecisionProps) {
+export function BookingDecision({ bookingId, status, startsAt, endsAt, onDone }: BookingDecisionProps) {
+  const [customTime, setCustomTime] = useState(false);
   const [state, formAction] = useActionState<FormState, FormData>(decideBookingAction, {});
   const [reasonFor, setReasonFor] = useState<"reject" | "cancel" | null>(null);
   useOnActionResult(state, (result) => onDone?.(result), true);
+
+  if (customTime && startsAt && endsAt) {
+    return (
+      <ApproveWithTimeForm
+        bookingId={bookingId}
+        startsAt={startsAt}
+        endsAt={endsAt}
+        onDone={onDone}
+        onCancel={() => setCustomTime(false)}
+      />
+    );
+  }
 
   return (
     <form action={formAction} className="space-y-3">
@@ -53,13 +71,20 @@ export function BookingDecision({ bookingId, status, onDone }: BookingDecisionPr
           </div>
         </>
       ) : status === "pending" ? (
-        <div className="flex gap-2">
-          <SubmitButton name="decision" value="approve" pendingText="Mentés…">
-            Jóváhagyás
-          </SubmitButton>
-          <Button variant="secondary" fullWidth onClick={() => setReasonFor("reject")}>
-            Elutasítás
-          </Button>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <SubmitButton name="decision" value="approve" pendingText="Mentés…">
+              Jóváhagyás
+            </SubmitButton>
+            <Button variant="secondary" fullWidth onClick={() => setReasonFor("reject")}>
+              Elutasítás
+            </Button>
+          </div>
+          {startsAt && endsAt && (
+            <Button variant="ghost" fullWidth onClick={() => setCustomTime(true)}>
+              Jóváhagyás más idővel (rövidebb / más kezdés)
+            </Button>
+          )}
         </div>
       ) : (
         <Button variant="secondary" onClick={() => setReasonFor("cancel")}>

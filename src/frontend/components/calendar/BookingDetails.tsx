@@ -74,7 +74,7 @@ export function BookingDetails({ booking, onDone, onReschedule }: BookingDetails
             <br />
             <span className="text-muted">A vendég válaszára vár ({formatDateTimeHu(booking.proposal.expiresAt)}-ig).</span>
           </p>
-          <WithdrawProposalButton rescheduleId={booking.proposal.id} onDone={onDone} />
+          <WithdrawProposalButton rescheduleId={booking.proposal.id} forRequest={booking.status === "pending"} onDone={onDone} />
         </div>
       )}
 
@@ -84,7 +84,13 @@ export function BookingDetails({ booking, onDone, onReschedule }: BookingDetails
         </Button>
       )}
       {isFuture && (booking.status === "pending" || booking.status === "confirmed") && (
-        <BookingDecision bookingId={booking.id} status={booking.status} onDone={onDone} />
+        <BookingDecision
+          bookingId={booking.id}
+          status={booking.status}
+          startsAt={booking.startsAt}
+          endsAt={booking.endsAt}
+          onDone={onDone}
+        />
       )}
     </div>
   );

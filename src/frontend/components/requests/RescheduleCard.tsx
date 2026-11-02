@@ -31,12 +31,12 @@ export function RescheduleCard({ item }: { item: OpenReschedule }) {
         {item.needsDecision ? (
           <Badge tone="danger">{item.status === "declined" ? "Nem fogadta el" : "Nem válaszolt"}</Badge>
         ) : (
-          <Badge tone="warning">Válaszra vár</Badge>
+          <Badge tone="warning">{item.forRequest ? "Kérésre javasolva – válaszra vár" : "Válaszra vár"}</Badge>
         )}
       </div>
 
       <p className="rounded-lg bg-background px-4 py-3">
-        <span className="text-muted">Most: </span>
+        <span className="text-muted">{item.forRequest ? "Kérte: " : "Most: "}</span>
         <span className="font-semibold">{formatDateTimeHu(item.oldStartsAt)}</span>
         <br />
         <span className="text-muted">Javasolt: </span>
@@ -54,7 +54,7 @@ export function RescheduleCard({ item }: { item: OpenReschedule }) {
       {!item.needsDecision ? (
         <>
           <p className="text-sm text-muted">Válaszolhat: {formatDateTimeHu(item.expiresAt)}-ig.</p>
-          <WithdrawProposalButton rescheduleId={item.id} />
+          <WithdrawProposalButton rescheduleId={item.id} forRequest={item.forRequest} />
         </>
       ) : state.success ? (
         <Alert tone="success">{state.success}</Alert>

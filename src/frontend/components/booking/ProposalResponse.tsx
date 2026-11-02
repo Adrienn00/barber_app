@@ -8,15 +8,25 @@ import { SubmitButton } from "@/frontend/components/ui/SubmitButton";
 import { formatDateTimeHu, toBucharestTime } from "@/shared/datetime/datetime";
 import type { FormState } from "@/shared/types/form";
 
-/** Vendég: a barber új időpontot javasol – elfogadja, vagy marad a régi (a barber dönt róla). */
-export function ProposalResponse({ proposal }: { proposal: NonNullable<MyBooking["proposal"]> }) {
+type ProposalResponseProps = {
+  proposal: NonNullable<MyBooking["proposal"]>;
+  /** A még függő kérésre jött javaslat (a jóváhagyáskor más kezdés): elfogadva egyben megerősített */
+  forRequest?: boolean;
+};
+
+/**
+ * Vendég: a barber új időpontot javasol – elfogadja, vagy nem.
+ * Megerősített foglalásnál nemet mondva marad a régi (a barber dönt róla); függő kérésnél a barber dönt újra.
+ */
+export function ProposalResponse({ proposal, forRequest = false }: ProposalResponseProps) {
   const [state, formAction] = useActionState<FormState, FormData>(respondRescheduleAction, {});
   if (state.success) return <Alert tone="success">{state.success}</Alert>;
 
   return (
     <form action={formAction} className="space-y-3 rounded-lg border-2 border-dotted border-brass bg-brass/10 p-4">
       <input type="hidden" name="rescheduleId" value={proposal.id} />
-      <p className="font-semibold">A barber új időpontot javasol:</p>
+      {forRequest && <input type="hidden" name="forRequest" value="true" />}
+      <p className="font-semibold">{forRequest ? "A barber a kérésedre más időpontot javasol:" : "A barber új időpontot javasol:"}</p>
       <p className="font-display text-xl font-semibold text-brass">
         {formatDateTimeHu(proposal.startsAt)} – {toBucharestTime(proposal.endsAt)}
       </p>
@@ -26,7 +36,12 @@ export function ProposalResponse({ proposal }: { proposal: NonNullable<MyBooking
           {proposal.note}
         </p>
       )}
-      <p className="text-sm text-muted">Válaszolj {formatDateTimeHu(proposal.expiresAt)}-ig. Addig a régi időpontod is megmarad.</p>
+      <p className="text-sm text-muted">
+        Válaszolj {formatDateTimeHu(proposal.expiresAt)}-ig.{" "}
+        {forRequest
+          ? "Ha elfogadod, a foglalásod rögtön megerősített; ha nem, a barber az eredeti kérésedről dönt."
+          : "Addig a régi időpontod is megmarad."}
+      </p>
       {state.error && <Alert tone="error">{state.error}</Alert>}
       <div className="flex gap-2">
         <SubmitButton name="answer" value="accept" pendingText="Küldés…">
